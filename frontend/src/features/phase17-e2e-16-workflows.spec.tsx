@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -22,7 +22,7 @@ describe("Phase 17 Frontend: Comprehensive E2E Test Suite (16 Workflows)", () =>
     expect(localStorage.getItem("hes_access_token")).toContain("eyJhbGci");
   });
 
-  // Workflow 2: Agency Isolation & Multi-tenant Profile
+  // Workflow 2: Multi-Agency Isolation Profile
   it("Workflow 2 (Agencies): reflects active agency scope in user session", () => {
     const userSession = {
       id: "u-1",

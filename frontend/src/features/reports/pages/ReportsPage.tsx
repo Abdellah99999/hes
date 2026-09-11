@@ -263,7 +263,7 @@ export const ReportsPage: React.FC<ReportsPageProps> = ({ initialReportType = "S
                 Centre de Rapports &amp; Exports
               </h1>
               <p className="text-xs text-slate-400 mt-1">
-                Extraction granulaire, audit multi-tenant et génération de fichiers PDF / Excel certifiés.
+                Extraction granulaire, audit multi-agences et génération de fichiers PDF / Excel certifiés.
               </p>
             </div>
           </div>
@@ -302,12 +302,12 @@ export const ReportsPage: React.FC<ReportsPageProps> = ({ initialReportType = "S
         </div>
       </div>
 
-      {/* Security & Multi-tenant banner */}
+      {/* Security & Multi-Agency banner */}
       <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-900/40 border border-slate-800/80 text-xs text-slate-400">
         <div className="flex items-center gap-2.5">
           <ShieldCheck className="w-4 h-4 text-emerald-400" />
           <span>
-            <strong className="text-slate-200">Isolation Multi-Tenant :</strong> Les données affichées et exportées sont strictement confinées à vos permissions (Agence / Rôle). Plafond de sécurité : 10 000 lignes par export.
+            <strong className="text-slate-200">Isolation Multi-Agences :</strong> Les données affichées et exportées sont strictement confinées à vos permissions (Agence / Rôle). Plafond de sécurité : 10 000 lignes par export.
           </span>
         </div>
         <div className="hidden sm:flex items-center gap-1 text-[11px] font-mono text-cyan-400">

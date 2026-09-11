@@ -3,7 +3,8 @@ import { ValidationPipe } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import helmet from "helmet";
-import cookieParser from "cookie-parser";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const cookieParser = require("cookie-parser");
 import { AppModule } from "./app.module";
 import { StructuredLoggerService } from "./common/logger/structured-logger.service";
 

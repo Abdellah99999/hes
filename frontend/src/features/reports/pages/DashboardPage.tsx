@@ -651,7 +651,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigateToReport
           </div>
 
           <div className="mt-6 pt-4 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
-            <span>Conformité RBAC &amp; Tenant</span>
+            <span>Conformité RBAC &amp; Agence</span>
             <span className="text-emerald-400 font-semibold">Strictement Scruté</span>
           </div>
         </div>

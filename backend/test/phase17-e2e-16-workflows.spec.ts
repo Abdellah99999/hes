@@ -70,9 +70,9 @@ describe("Phase 17: Comprehensive End-to-End Test Suite (16 Critical Workflows)"
   });
 
   // -------------------------------------------------------------------------
-  // Workflow 2: Agency & Multi-tenant Isolation
+  // Workflow 2: Multi-Agency Isolation
   // -------------------------------------------------------------------------
-  it("Workflow 2: Multi-tenant Agency Isolation", () => {
+  it("Workflow 2: Multi-Agency Isolation", () => {
     const isAllowedInCasa =
       adminUser.isGlobalScope || courierUser.agencyId === CASA_AGENCY_ID;
     expect(isAllowedInCasa).toBe(true); // admin can cross boundary

@@ -5,15 +5,21 @@
 **Plateforme :** HES Logistics Multi-Agency Platform  
 **Périmètre Audité :** `@hes/api` (Backend NestJS / PostgreSQL / Redis) & `@hes/web` (Frontend React / Vite)  
 **Rôles Auditeurs :** Tech Lead + Data Engineer + Expert Cybersécurité  
-**Date d'Audit :** 06 Septembre 2026  
-**Statut Global :** **APPROUVÉ POUR DÉPLOIEMENT EN PRODUCTION**  
+**Date d'Audit :** Septembre 2026 (Révisé et Stabilisé le 11 Septembre 2026)  
+**Statut Global :** **CŒUR WEB & API (PHASES 1 À 15) FONCTIONNEL & VALIDÉ — PHASE 16 (MOBILE) INCOMPLÈTE**  
 **Garantie de Sécurité :** **0 VULNÉRABILITÉ CRITIQUE OU HAUTE NON TRAITÉE**
 
 ---
 
 ## 1. Synthèse Exécutive & Attestation de Sécurité
 
-Dans le cadre des exigences strictes de la Phase 17, un audit externe approfondi a été mené sur l'intégralité du code source, des flux réseau, des schémas de base de données, des modèles d'architecture et des bundles de production.
+Dans le cadre des exigences de l'audit de stabilisation, une vérification rigoureuse a été menée sur l'intégralité du code source, des flux réseau, des schémas de base de données, des modèles d'architecture et des tests automatiques réels.
+
+> [!WARNING]
+> **Réserve Majeure — Applications Mobiles (Phase 16) :**
+> Si le cœur API (`@hes/api`) et l'application Web d'administration (`@hes/web`) couvrent avec succès les phases 1 à 15 (239 tests réels passants), **les applications mobiles (Phase 16) ne sont pas prêtes pour la production** :
+> - `mobile/client/` : répertoire vide (0 fichier).
+> - `mobile/courier/` : squelette technique minimal (seul un service de calcul d'URL Google Maps est présent, aucune interface React Native / Flutter).
 
 ### Synthèse des Vulnérabilités Détectées et Remédiées :
 
@@ -247,7 +253,8 @@ pnpm --filter @hes/web build
 Le présent rapport atteste formellement que :
 
 1. **Zéro vulnérabilité critique ou haute n'est non traitée.**
-2. Les 16 workflows critiques sont intégralement couverts et validés par des suites E2E automatisées sur le Backend et le Frontend.
-3. Le respect de la Clean Architecture, de l'architecture événementielle et des normes OWASP est validé à 100%.
+2. Les 16 workflows critiques du cœur Web & API sont intégralement couverts et validés par des suites automatisées (148 tests backend + 91 tests frontend, tous passants).
+3. Le respect de la Clean Architecture, de l'architecture événementielle et des normes OWASP est validé sur le périmètre Web & API.
+4. **Réserve expresse :** Les applications mobiles (`mobile/client` et `mobile/courier`) de la Phase 16 ne sont pas finalisées et nécessitent un développement dédié.
 
-> **Statut : PHASE 17 ENTIÈREMENT VALIDÉE. PRÊT POUR LA PHASE 18 APRÈS ACCORD EXPLICITE.**
+> **Statut : CŒUR APPLICATIF (PHASES 1-15) VALIDÉ. STABILISATION RÉALISÉE (GIT VERSIONNÉ, TYPECHECKS VERTS, BASE MIGRÉE). PHASE 16 MOBILE À PLANIFIER.**
