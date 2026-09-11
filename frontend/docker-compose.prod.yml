@@ -1,0 +1,35 @@
+# =============================================================================
+# HES Logistics Platform - Frontend Production Docker Compose
+# Standalone Web Client (React 18 SPA served via hardened Nginx)
+# =============================================================================
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: hes-web:${IMAGE_TAG:-latest}
+    container_name: hes_web_prod
+    restart: always
+    # Expose port internally to the Docker network for Nginx Gateway
+    expose:
+      - "80"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:80/ || exit 1"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+    networks:
+      - hes_frontend_prod_net
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 256M
+        reservations:
+          cpus: "0.2"
+          memory: 64M
+
+networks:
+  hes_frontend_prod_net:
+    driver: bridge

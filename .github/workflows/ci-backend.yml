@@ -1,0 +1,60 @@
+name: CI - Backend API
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "backend/**"
+      - "infrastructure/**"
+      - "docker-compose.yml"
+      - ".github/workflows/ci-backend.yml"
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "backend/**"
+      - "infrastructure/**"
+      - "docker-compose.yml"
+      - ".github/workflows/ci-backend.yml"
+
+jobs:
+  backend-checks:
+    name: Lint, Typecheck & Tests (API)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 11.5.2
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile=false
+
+      - name: Dependency Vulnerability Audit
+        run: pnpm --dir backend audit --audit-level=high
+
+      - name: Generate Prisma Client
+        run: pnpm --dir backend prisma:generate
+
+      - name: Lint API
+        run: pnpm --dir backend lint
+
+      - name: Typecheck API
+        run: pnpm --dir backend typecheck
+
+      - name: Run Unit Tests
+        run: pnpm --dir backend test
+
+      - name: Build API Bundle
+        run: pnpm --dir backend build
+
+      - name: Verify Dockerfile Build
+        run: docker build -f backend/Dockerfile -t hes-api:test backend

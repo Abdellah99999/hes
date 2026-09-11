@@ -1,0 +1,162 @@
+services:
+  postgres:
+    image: postgres:18-alpine
+    container_name: hes_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-0000}
+      POSTGRES_DB: ${DB_NAME:-delivery}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-delivery}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - hes_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: hes_redis
+    restart: unless-stopped
+    command:
+      [
+        "redis-server",
+        "--requirepass",
+        "${REDIS_PASSWORD:-hes_redis_dev_password_2026}",
+      ]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "redis-cli",
+          "-a",
+          "${REDIS_PASSWORD:-hes_redis_dev_password_2026}",
+          "ping",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - hes_network
+
+  minio:
+    image: minio/minio:RELEASE.2024-01-01T16-36-33Z
+    container_name: hes_minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-hes_minio_admin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-hes_minio_secret_key_2026}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - hes_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: hes_api
+    restart: unless-stopped
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: 3000
+      API_PREFIX: api/v1
+      DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-0000}@postgres:5432/${DB_NAME:-delivery}?schema=public
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-hes_redis_dev_password_2026}
+      REDIS_URL: redis://:${REDIS_PASSWORD:-hes_redis_dev_password_2026}@redis:6379
+      MINIO_ENDPOINT: minio
+      MINIO_PORT: 9000
+      MINIO_USE_SSL: "false"
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-hes_minio_admin}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-hes_minio_secret_key_2026}
+      MINIO_BUCKET_DOCS: ${MINIO_BUCKET_DOCS:-hes-documents}
+      MINIO_BUCKET_POD: ${MINIO_BUCKET_POD:-hes-proof-of-delivery}
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-hes_jwt_access_secret_super_secure_key_change_in_production}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-hes_jwt_refresh_secret_super_secure_key_change_in_production}
+      CORS_ORIGIN: "http://localhost,http://localhost:8080,http://localhost:5173"
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test:
+        ["CMD-SHELL", "wget -qO- http://localhost:3000/api/v1/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - hes_network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: hes_web
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:80/ || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    networks:
+      - hes_network
+
+  nginx:
+    build:
+      context: ./infrastructure
+      dockerfile: docker/nginx/Dockerfile
+    container_name: hes_gateway
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - frontend
+    healthcheck:
+      test:
+        ["CMD-SHELL", "wget -qO- http://localhost:80/nginx-health || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    networks:
+      - hes_network
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
+
+networks:
+  hes_network:
+    driver: bridge

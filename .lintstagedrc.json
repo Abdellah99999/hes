@@ -1,0 +1,11 @@
+{
+  "backend/src/**/*.{ts,js}": [
+    "pnpm --dir backend eslint --max-warnings 0 --fix",
+    "prettier --write"
+  ],
+  "frontend/src/**/*.{ts,tsx,js,jsx}": [
+    "pnpm --dir frontend eslint --max-warnings 0 --fix",
+    "prettier --write"
+  ],
+  "*.{json,md,yml,yaml}": ["prettier --write"]
+}

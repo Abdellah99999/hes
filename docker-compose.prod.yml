@@ -1,0 +1,210 @@
+# =============================================================================
+# HES Logistics Platform - Global Production Orchestrator
+# Complete Stack with Isolated Internal Network and Nginx HTTPS Gateway
+# CYBERSECURITY COMPLIANCE:
+# - ZERO public ports for PostgreSQL, Redis, MinIO, API or Web
+# - ONLY Nginx Gateway exposes port 80 (HTTP redirect) and 443 (HTTPS)
+# =============================================================================
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    container_name: hes_postgres_prod
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER:-hes_db_admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD required}
+      POSTGRES_DB: ${DB_NAME:-delivery}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    expose:
+      - "5432"
+    volumes:
+      - hes_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - hes_internal_network
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2048M
+
+  redis:
+    image: redis:7-alpine
+    container_name: hes_redis_prod
+    restart: always
+    command:
+      [
+        "redis-server",
+        "--requirepass",
+        "${REDIS_PASSWORD:?REDIS_PASSWORD required}",
+        "--appendonly",
+        "yes",
+        "--maxmemory",
+        "512mb",
+        "--maxmemory-policy",
+        "noeviction",
+      ]
+    expose:
+      - "6379"
+    volumes:
+      - hes_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - hes_internal_network
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+
+  minio:
+    image: minio/minio:RELEASE.2024-01-01T16-36-33Z
+    container_name: hes_minio_prod
+    restart: always
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:?MINIO_ACCESS_KEY required}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:?MINIO_SECRET_KEY required}
+    expose:
+      - "9000"
+      - "9001"
+    volumes:
+      - hes_minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - hes_internal_network
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1024M
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: hes-api:${IMAGE_TAG:-latest}
+    container_name: hes_api_prod
+    restart: always
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      API_PREFIX: api/v1
+      DATABASE_URL: postgresql://${DB_USER:-hes_db_admin}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-delivery}?schema=public
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+      MINIO_ENDPOINT: minio
+      MINIO_PORT: 9000
+      MINIO_USE_SSL: "false"
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+      MINIO_BUCKET_DOCS: ${MINIO_BUCKET_DOCS:-hes-documents}
+      MINIO_BUCKET_POD: ${MINIO_BUCKET_POD:-hes-proof-of-delivery}
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:?JWT_ACCESS_SECRET required}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET required}
+      CORS_ORIGIN: ${CORS_ORIGIN:-https://app.hes.ma,https://admin.hes.ma}
+    expose:
+      - "3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget -qO- http://localhost:3000/api/v1/health/liveness || exit 1",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 25s
+    networks:
+      - hes_internal_network
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1536M
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: hes-web:${IMAGE_TAG:-latest}
+    container_name: hes_web_prod
+    restart: always
+    expose:
+      - "80"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:80/ || exit 1"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+    networks:
+      - hes_internal_network
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 256M
+
+  nginx:
+    build:
+      context: ./infrastructure
+      dockerfile: docker/nginx/Dockerfile
+    image: hes-gateway:${IMAGE_TAG:-latest}
+    container_name: hes_gateway_prod
+    restart: always
+    # ONLY public ingress ports exposed to the Internet
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infrastructure/docker/nginx/nginx.prod.conf:/etc/nginx/nginx.conf:ro
+      - ./infrastructure/docker/nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - backend
+      - frontend
+    healthcheck:
+      test:
+        ["CMD-SHELL", "wget -qO- http://localhost:80/nginx-health || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    networks:
+      - hes_internal_network
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 256M
+
+volumes:
+  hes_postgres_data:
+  hes_redis_data:
+  hes_minio_data:
+
+networks:
+  hes_internal_network:
+    driver: bridge
+    internal: false

@@ -1,0 +1,40 @@
+{
+  "name": "transport-logistique",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@11.5.2",
+  "scripts": {
+    "dev:backend": "pnpm --dir backend dev",
+    "dev:frontend": "pnpm --dir frontend dev",
+    "build:backend": "pnpm --dir backend build",
+    "build:frontend": "pnpm --dir frontend build",
+    "test:backend": "pnpm --dir backend test",
+    "test:frontend": "pnpm --dir frontend test",
+    "typecheck:backend": "pnpm --dir backend typecheck",
+    "typecheck:frontend": "pnpm --dir frontend typecheck",
+    "lint:backend": "pnpm --dir backend lint",
+    "lint:frontend": "pnpm --dir frontend lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json,md,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,json,md,yml,yaml}\"",
+    "openapi:export": "pnpm --dir backend openapi:export",
+    "check:secrets": "node infrastructure/scripts/check-frontend-secrets.mjs",
+    "docker:up": "docker compose up -d --build",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3",
+    "prettier": "^3.5.2",
+    "turbo": "^2.4.4",
+    "typescript": "^5.7.3"
+  },
+  "overrides": {
+    "js-yaml": ">=4.3.1",
+    "deepmerge-ts": ">=8.0.0",
+    "orval": ">=8.22.0",
+    "lodash": ">=4.17.24",
+    "tmp": ">=0.2.6",
+    "multer": ">=2.2.0"
+  }
+}

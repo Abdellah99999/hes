@@ -1,0 +1,67 @@
+name: CI - Frontend Web
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "frontend/**"
+      - "infrastructure/**"
+      - "docker-compose.yml"
+      - ".github/workflows/ci-frontend.yml"
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "frontend/**"
+      - "infrastructure/**"
+      - "docker-compose.yml"
+      - ".github/workflows/ci-frontend.yml"
+
+jobs:
+  frontend-checks:
+    name: Lint, Typecheck, Tests & Secret Audit (Web)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 11.5.2
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile=false
+
+      - name: Dependency Vulnerability Audit
+        run: pnpm --dir frontend audit --audit-level=high
+
+      - name: Contract Testing - Verify API Client Sync with OpenAPI
+        run: |
+          pnpm --dir backend prisma:generate
+          pnpm --dir backend openapi:export
+          pnpm --dir frontend gen:api
+          git diff --exit-code frontend/src/api/
+
+      - name: Lint Web
+        run: pnpm --dir frontend lint
+
+      - name: Typecheck Web
+        run: pnpm --dir frontend typecheck
+
+      - name: Run Unit & Component Tests
+        run: pnpm --dir frontend test
+
+      - name: Build Web Production SPA
+        run: pnpm --dir frontend build
+
+      - name: Security Check - Verify No Leaked Secrets in Bundle
+        run: node infrastructure/scripts/check-frontend-secrets.mjs
+
+      - name: Verify Dockerfile Build
+        run: docker build -f frontend/Dockerfile -t hes-web:test frontend

@@ -1,0 +1,1937 @@
+// Prisma Schema - HES Logistics Platform
+// Clean rebuild for local PostgreSQL development
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model SystemInitLog {
+  id        String   @id @default(uuid())
+  version   String
+  status    String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("system_init_logs")
+}
+
+enum AgencyStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum CustomerStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  LOCKED
+  SUSPENDED
+}
+
+enum RoleCode {
+  SUPER_ADMIN
+  ADMIN
+  MANAGER
+  DISPATCHER
+  COURIER
+  AGENT
+  FINANCE
+  CUSTOMER_SERVICE
+  SUPPORT
+}
+
+enum PermissionModule {
+  AUTH
+  AGENCY
+  CUSTOMER
+  SHIPMENT
+  TRANSFER
+  COLLECTION
+  DELIVERY
+  RETURN
+  INCIDENT
+  FINANCE
+  DOCUMENT
+  NOTIFICATION
+  AUDIT
+  REPORT
+}
+
+enum PermissionAction {
+  READ
+  CREATE
+  UPDATE
+  DELETE
+  APPROVE
+  DISPATCH
+  PROCESS
+  VERIFY
+  EXPORT
+}
+
+enum ChangeMethod {
+  SCAN
+  MANUAL
+  SYSTEM
+}
+
+enum EventResult {
+  SUCCESS
+  FAILED
+  DUPLICATE
+  INVALID
+  REJECTED
+}
+
+enum ShipmentStatus {
+  DRAFT
+  REGISTERED
+  CANCELLED
+  EXCEPTION
+  CREATED
+  WAITING_FOR_COLLECTION
+  COLLECTED
+  ARRIVED_AGENCY
+  IN_TRANSIT
+  ARRIVED_DESTINATION_AGENCY
+  ASSIGNED_TO_COURIER
+  OUT_FOR_DELIVERY
+  DELIVERED
+  PARTIALLY_DELIVERED
+  RECIPIENT_ABSENT
+  REFUSED
+  ADDRESS_INCORRECT
+  DAMAGED
+  LOST
+  DELAYED
+  VEHICLE_BREAKDOWN
+  ACCIDENT
+  PAYMENT_ISSUE
+  RETURNED
+}
+
+enum ParcelStatus {
+  PICKED_UP
+  REGISTERED
+  AT_HUB
+  CANCELLED
+  DELIVERY_FAILED
+  CREATED
+  WAITING_FOR_COLLECTION
+  COLLECTED
+  ARRIVED_AGENCY
+  IN_TRANSIT
+  ARRIVED_DESTINATION_AGENCY
+  ASSIGNED_TO_COURIER
+  OUT_FOR_DELIVERY
+  DELIVERED
+  PARTIALLY_DELIVERED
+  RECIPIENT_ABSENT
+  REFUSED
+  ADDRESS_INCORRECT
+  DAMAGED
+  LOST
+  DELAYED
+  RETURNED
+}
+
+enum CollectionStatus {
+  REQUESTED
+  ASSIGNED
+  PICKED_UP
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum TransferStatus {
+  DRAFT
+  PREPARED
+  IN_TRANSIT
+  RECEIVED
+  RECEIVED_WITH_DISCREPANCY
+  CANCELLED
+}
+
+enum DeliveryStatus {
+  ASSIGNED
+  PICKED_UP
+  IN_PROGRESS
+  DELIVERED
+  PARTIALLY_DELIVERED
+  FAILED
+  REFUSED
+  RETURNED
+}
+
+enum ReturnStatus {
+  INITIATED
+  PICKED_UP
+  RECEIVED_AT_HUB
+  IN_TRANSIT_RETURN
+  DELIVERED_TO_SENDER
+  CANCELLED
+}
+
+enum ReturnType {
+  REFUSAL_RETURN
+  UNDELIVERABLE_RETURN
+  CUSTOMER_RETURN
+  CANCELLED_ORDER_RETURN
+}
+
+enum CourierVehicleType {
+  MOTORCYCLE
+  CAR
+  VAN
+  BICYCLE
+  TRUCK
+}
+
+enum RefusalReasonCode {
+  DAMAGED_PACKAGE
+  CONTENT_MISMATCH
+  COD_AMOUNT_DISPUTED
+  ORDER_CANCELLED
+  REFUSED_WITHOUT_REASON
+  FRAUD_SUSPECTED
+}
+
+enum IncidentType {
+  LOSS
+  DAMAGE
+  THEFT
+  DELIVERY_DISPUTE
+  OTHER
+}
+
+enum IncidentSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum IncidentStatus {
+  REPORTED
+  INVESTIGATING
+  RESOLVED
+  COMPENSATED
+  REJECTED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  ISSUED
+  PARTIALLY_PAID
+  PAID
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  CASH_ON_DELIVERY
+  BANK_TRANSFER
+  CUSTOMER_ACCOUNT
+  CHEQUE
+  BILL_OF_EXCHANGE
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  PARTIALLY_PAID
+  FAILED
+  REFUNDED
+}
+
+enum ProofType {
+  SIGNATURE
+  DIGITAL_SIGNATURE
+  PAPER_BL_STAMPED
+  PAPER_POD_PHOTO
+  PHOTO
+  OTHER
+}
+
+enum DocumentType {
+  BILL_OF_LADING
+  PARCEL_LABEL
+  INVOICE
+  RECEIPT
+  COLLECTION_BORDEREAU
+  TRANSFER_BORDEREAU
+  DELIVERY_RUN_SHEET
+  REPORT
+}
+
+enum NotificationChannel {
+  IN_APP
+  EMAIL
+  SMS
+  PUSH
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  FAILED
+  READ
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  LOGIN
+  LOGOUT
+  APPROVE
+  DISPATCH
+  SCAN
+  PAYMENT
+  DELIVERY
+  RETURN
+  INCIDENT
+}
+
+enum StockLocationType {
+  AGENCY
+  TRANSFER
+  DELIVERY
+  RETURN
+}
+
+enum StockState {
+  AVAILABLE
+  IN_TRANSIT
+  DELIVERED
+  RETURNED
+  LOST
+  DAMAGED
+  REFUSED
+}
+
+model City {
+  id        String    @id @default(uuid())
+  code      String    @unique
+  name      String
+  country   String    @default("MA")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  agencies Agency[]
+  zones    Zone[]
+  customers Customer[]
+
+  @@index([name])
+  @@map("cities")
+}
+
+model Agency {
+  courierProfiles CourierProfile[]
+  isActive       Boolean    @default(true) @map("is_active")
+  city           String     @default("")
+  addresses      Address[]
+  outgoingRoutes Route[]    @relation("RouteOriginAgency")
+  incomingRoutes Route[]    @relation("RouteDestinationAgency")
+  outgoingRouteSegments RouteSegment[] @relation("RouteSegmentFromAgency")
+  incomingRouteSegments RouteSegment[] @relation("RouteSegmentToAgency")
+  shipmentSequences ShipmentSequence[]
+  id               String      @id @default(uuid())
+  code             String      @unique
+  name             String
+  cityId           String?     @map("city_id")
+  address          String?
+  phone            String?
+  email            String?
+  status           AgencyStatus @default(ACTIVE)
+  createdAt        DateTime    @default(now()) @map("created_at")
+  updatedAt        DateTime    @updatedAt @map("updated_at")
+  deletedAt        DateTime?   @map("deleted_at")
+  deletedBy        String?     @map("deleted_by")
+  deletionReason   String?     @map("deletion_reason")
+
+  cityRef              City?                  @relation(fields: [cityId], references: [id], onDelete: SetNull)
+  zones                Zone[]
+  users                User[]
+  customers            Customer[]
+  trackingEvents       TrackingEvent[]        @relation("TrackingEventAgency")
+  scanEvents           ScanEvent[]            @relation("ScanEventAgency")
+  statusHistory        StatusHistory[]        @relation("StatusHistoryAgency")
+  outboundShipments    Shipment[]             @relation("ShipmentOriginAgency")
+  currentShipments     Shipment[]             @relation("ShipmentCurrentAgency")
+  inboundShipments     Shipment[]             @relation("ShipmentDestinationAgency")
+  outboundParcels      Parcel[]               @relation("ParcelOriginAgency")
+  currentParcels       Parcel[]               @relation("ParcelCurrentAgency")
+  inboundParcels       Parcel[]               @relation("ParcelDestinationAgency")
+  collections          Collection[]
+  outboundTransfers    Transfer[]             @relation("TransferOriginAgency")
+  inboundTransfers     Transfer[]             @relation("TransferDestinationAgency")
+  agencyStocks         AgencyStock[]
+  deliveryRuns         DeliveryRun[]
+  deliveries           Delivery[]
+  outgoingReturns      Return[]               @relation("ReturnOriginAgency")
+  incomingReturns      Return[]               @relation("ReturnDestinationAgency")
+  incidents            Incident[]
+  invoices             Invoice[]
+  documents            Document[]
+  auditLogs            AuditLog[]
+  expenses             Expense[]
+
+  @@index([cityId, status])
+  @@index([status])
+  @@index([code])
+  @@map("agencies")
+}
+
+model Zone {
+  addresses      Address[]
+  id          String      @id @default(uuid())
+  code        String
+  name        String
+  cityId           String?     @map("city_id")
+  agencyId    String      @map("agency_id")
+  description String?
+  status      AgencyStatus @default(ACTIVE)
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+  deletedAt   DateTime?   @map("deleted_at")
+
+  city        City?         @relation(fields: [cityId], references: [id], onDelete: SetNull)
+  agency      Agency        @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  users       User[]
+  customers   Customer[]    @relation("CustomerZone")
+  parcels     Parcel[]
+  collections Collection[]
+  deliveryRuns DeliveryRun[]
+  deliveries  Delivery[]
+
+  @@unique([agencyId, code])
+  @@index([agencyId])
+  @@index([cityId])
+  @@index([status])
+  @@map("zones")
+}
+
+model Role {
+  rolePermissions RolePermission[] @relation("RoleDirectPermissions")
+  usersDirect User[] @relation("UserRoleDirect")
+  id          String   @id @default(uuid())
+  code        RoleCode @unique
+  name        String
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  users       UserRole[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id          String            @id @default(uuid())
+  code        String            @unique
+  module      PermissionModule
+  action      PermissionAction
+  name        String
+  description String?
+  createdAt   DateTime          @default(now()) @map("created_at")
+
+  roles  RolePermission[]
+  users  UserPermission[]
+
+  @@map("permissions")
+}
+
+model UserRole {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  roleId    String   @map("role_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+  @@index([userId])
+  @@index([roleId])
+  @@map("user_roles")
+}
+
+model RolePermission {
+  id           String   @id @default(uuid())
+  roleId       String   @map("role_id")
+  permissionId String   @map("permission_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  role       Role       @relation("RoleDirectPermissions", fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@index([roleId])
+  @@index([permissionId])
+  @@map("role_permissions")
+}
+
+model UserPermission {
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  permissionId String   @map("permission_id")
+  granted      Boolean  @default(true)
+  effect       UserPermissionEffect @default(GRANT)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, permissionId])
+  @@index([userId])
+  @@index([permissionId])
+  @@map("user_permissions")
+}
+
+model User {
+  courierProfile    CourierProfile?
+  generatedDocuments GeneratedDocument[]
+  incidentHistories  IncidentHistory[]
+  assignedByManagers CustomerInternalManager[] @relation("ManagerAssignmentAssignedBy")
+  courierParcels    Parcel[] @relation("ParcelAssignedCourier")
+  firstName      String     @default("") @map("first_name")
+  lastName       String     @default("") @map("last_name")
+  isActive       Boolean    @default(true) @map("is_active")
+  tokenVersion   Int        @default(0) @map("token_version")
+  roleId         String?    @map("role_id")
+  role           Role?      @relation("UserRoleDirect", fields: [roleId], references: [id], onDelete: SetNull)
+  refreshTokens  RefreshToken[]
+  deliveryAttempts DeliveryAttempt[]
+  managedCustomerAssignments CustomerInternalManager[] @relation("ManagerAssignmentUser")
+  collectionsAssignedCourier Collection[] @relation("CollectionAssignedCourier")
+  invoicesCreated Invoice[] @relation("InvoiceCreatedBy")
+  id             String     @id @default(uuid())
+  email          String     @unique
+  passwordHash   String     @map("password_hash")
+  fullName       String     @map("full_name")
+  phone          String?
+  status         UserStatus @default(ACTIVE)
+  agencyId       String?    @map("agency_id")
+  zoneId         String?    @map("zone_id")
+  lastLoginAt    DateTime?  @map("last_login_at")
+  failedAttempts Int        @default(0) @map("failed_attempts")
+  lockedUntil    DateTime?  @map("locked_until")
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+  deletedAt      DateTime?  @map("deleted_at")
+  deletedBy      String?    @map("deleted_by")
+  deletionReason String?    @map("deletion_reason")
+
+  agency          Agency?                 @relation(fields: [agencyId], references: [id], onDelete: SetNull)
+  zone            Zone?                  @relation(fields: [zoneId], references: [id], onDelete: SetNull)
+  roles           UserRole[]
+  userPermissions UserPermission[]
+  customerId      String?                 @map("customer_id")
+  customer        Customer?               @relation("CustomerUsers", fields: [customerId], references: [id])
+  shipmentsCreated Shipment[]             @relation("ShipmentCreatedByUser")
+  scanEvents      ScanEvent[]            @relation("ScanEventUser")
+  trackingEvents  TrackingEvent[]        @relation("TrackingEventUser")
+  statusHistory   StatusHistory[]        @relation("StatusHistoryUser")
+  collectionsCreated Collection[]        @relation("CollectionCreatedByUser")
+  collectionsAssigned Collection[]      @relation("CollectionAssignedToUser")
+  transfersCreated Transfer[]            @relation("TransferCreatedByUser")
+  transfersReceived Transfer[]           @relation("TransferReceivedByUser")
+  deliveriesCreated Delivery[]           @relation("DeliveryCreatedByUser")
+  deliveriesAssigned Delivery[]          @relation("DeliveryAssignedToUser")
+  deliveryRunsAssigned DeliveryRun[]      @relation("DeliveryRunAssignedToUser")
+  deliveryAssignmentsAssigned DeliveryAssignment[] @relation("DeliveryAssignmentAssignedToUser")
+  returnsCreated   Return[]               @relation("ReturnCreatedByUser")
+  returnsHandled   Return[]               @relation("ReturnHandledByUser")
+  incidentsCreated Incident[]             @relation("IncidentCreatedByUser")
+  customerContacts CustomerContact[]
+  notifications   Notification[]
+  notificationPreferences NotificationPreference[]
+  documents       Document[]
+  auditLogs       AuditLog[]
+
+  @@index([agencyId])
+  @@index([zoneId])
+  @@index([status])
+  @@index([email])
+  @@map("users")
+}
+
+model Customer {
+  users         User[]       @relation("CustomerUsers")
+  taxId         String?     @map("tax_id")
+  notes         String?
+  managerAssignments CustomerInternalManager[]
+  senderShipments Shipment[] @relation("ShipmentSenderCustomer")
+  customerTypeId String?     @map("customer_type_id")
+  customerType   CustomerType? @relation(fields: [customerTypeId], references: [id], onDelete: SetNull)
+  ice            String?
+  rc             String?
+  id            String      @id @default(uuid())
+  code          String      @unique
+  agencyId      String      @map("agency_id")
+  cityId        String?     @map("city_id")
+  zoneId        String?     @map("zone_id")
+  legalName     String      @map("legal_name")
+  tradeName     String?     @map("trade_name")
+  phone         String?
+  email         String?
+  status        CustomerStatus @default(ACTIVE)
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+  deletedAt     DateTime?   @map("deleted_at")
+  deletedBy     String?     @map("deleted_by")
+  deletionReason String?    @map("deletion_reason")
+
+  agency      Agency           @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  city        City?            @relation(fields: [cityId], references: [id], onDelete: SetNull)
+  zone        Zone?            @relation("CustomerZone", fields: [zoneId], references: [id], onDelete: SetNull)
+  contacts    CustomerContact[]
+  addresses   Address[]
+  shipments   Shipment[]
+  collections Collection[]
+  invoices    Invoice[]
+  complaints  Complaint[]
+  documents   Document[]
+
+  @@index([agencyId])
+  @@index([cityId])
+  @@index([phone])
+  @@index([status])
+  @@map("customers")
+}
+
+model CustomerContact {
+  id         String    @id @default(uuid())
+  customerId String    @map("customer_id")
+  userId     String?   @map("user_id")
+  firstName  String    @map("first_name")
+  lastName   String    @map("last_name")
+  phone      String?
+  email      String?
+  role       String?
+  isPrimary  Boolean   @default(false) @map("is_primary")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  deletedAt  DateTime? @map("deleted_at")
+  deletedBy  String?   @map("deleted_by")
+  deletionReason String? @map("deletion_reason")
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  user     User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([customerId])
+  @@index([phone])
+  @@index([email])
+  @@map("customer_contacts")
+}
+
+model Address {
+  additionalInfo String? @map("additional_info")
+  senderShipments Shipment[] @relation("ShipmentSenderAddress")
+  id             String    @id @default(uuid())
+  title          String?
+  type           AddressType @default(DELIVERY)
+  customerId     String?   @map("customer_id")
+  agencyId       String?     @map("agency_id")
+  zoneId         String?     @map("zone_id")
+  label          String   @default("")
+  street         String
+  additional     String?
+  city           String
+  postalCode     String?   @map("postal_code")
+  country        String    @default("MA")
+  latitude       Float?
+  longitude      Float?
+  isDefault      Boolean   @default(false) @map("is_default")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
+  deletedBy      String?   @map("deleted_by")
+  deletionReason String?   @map("deletion_reason")
+  agency         Agency?     @relation(fields: [agencyId], references: [id], onDelete: SetNull)
+  zone           Zone?       @relation(fields: [zoneId], references: [id], onDelete: SetNull)
+
+  customer          Customer?  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  originShipments   Shipment[] @relation("ShipmentOriginAddress")
+  destinationShipments Shipment[] @relation("ShipmentDestinationAddress")
+  collections       Collection[]
+
+  @@index([customerId])
+  @@index([city])
+  @@map("addresses")
+}
+
+model Service {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  name        String
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  shipments Shipment[]
+
+  @@map("services")
+}
+
+model PackageType {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  name        String
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  parcels      Parcel[]
+  shipmentItems ShipmentItem[]
+
+  @@map("package_types")
+}
+
+model ProductCategory {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  name        String
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  shipmentItems ShipmentItem[]
+
+  @@map("product_categories")
+}
+
+model Shipment {
+  recipientName       String   @default("") @map("recipient_name")
+  senderCustomerId    String?   @map("sender_customer_id")
+  senderCustomer      Customer? @relation("ShipmentSenderCustomer", fields: [senderCustomerId], references: [id], onDelete: SetNull)
+  senderAddressId     String?   @map("sender_address_id")
+  senderAddress       Address?  @relation("ShipmentSenderAddress", fields: [senderAddressId], references: [id], onDelete: SetNull)
+  recipientPhone      String    @default("") @map("recipient_phone")
+  recipientAddress    String    @default("") @map("recipient_address")
+  totalWeightKg       Decimal?  @map("total_weight_kg")
+  totalDeclaredValue  Decimal?  @map("total_declared_value")
+  totalCodAmount      Decimal?  @map("total_cod_amount")
+  collectionId        String?   @map("collection_id")
+  collection          Collection? @relation("CollectionGeneratedShipment", fields: [collectionId], references: [id], onDelete: SetNull)
+  trackingNumber String?     @map("tracking_number")
+  globalStatus   String?     @map("global_status")
+  id                           String         @id @default(uuid())
+  number                       String         @unique
+  originAgencyId               String         @map("origin_agency_id")
+  currentAgencyId              String?        @map("current_agency_id")
+  destinationAgencyId          String?        @map("destination_agency_id")
+  originAddressId              String?        @map("origin_address_id")
+  destinationAddressId         String?        @map("destination_address_id")
+  customerId                   String?        @map("customer_id")
+  serviceId                    String?        @map("service_id")
+  createdByUserId              String?        @map("created_by_user_id")
+  status                       ShipmentStatus  @default(CREATED)
+  totalParcels                 Int            @default(0) @map("total_parcels")
+  deliveredParcels             Int            @default(0) @map("delivered_parcels")
+  partiallyDeliveredParcels    Int            @default(0) @map("partially_delivered_parcels")
+  returnedParcels              Int            @default(0) @map("returned_parcels")
+  lostParcels                  Int            @default(0) @map("lost_parcels")
+  damagedParcels               Int            @default(0) @map("damaged_parcels")
+  refusedParcels               Int            @default(0) @map("refused_parcels")
+  declaredValue                Decimal?       @db.Decimal(12, 2) @map("declared_value")
+  codAmount                    Decimal?       @db.Decimal(12, 2) @map("cod_amount")
+  shippingFee                  Decimal?       @db.Decimal(12, 2) @map("shipping_fee")
+  notes                        String?
+  createdAt                    DateTime       @default(now()) @map("created_at")
+  updatedAt                    DateTime       @updatedAt @map("updated_at")
+  deletedAt                    DateTime?      @map("deleted_at")
+  deletedBy                    String?        @map("deleted_by")
+  deletionReason               String?        @map("deletion_reason")
+
+  originAgency        Agency            @relation("ShipmentOriginAgency", fields: [originAgencyId], references: [id], onDelete: Restrict)
+  currentAgency       Agency?           @relation("ShipmentCurrentAgency", fields: [currentAgencyId], references: [id], onDelete: SetNull)
+  destinationAgency   Agency?           @relation("ShipmentDestinationAgency", fields: [destinationAgencyId], references: [id], onDelete: SetNull)
+  originAddress       Address?          @relation("ShipmentOriginAddress", fields: [originAddressId], references: [id], onDelete: SetNull)
+  destinationAddress  Address?          @relation("ShipmentDestinationAddress", fields: [destinationAddressId], references: [id], onDelete: SetNull)
+  customer            Customer?         @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  service             Service?          @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  createdByUser       User?             @relation("ShipmentCreatedByUser", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  parcels             Parcel[]
+  items               ShipmentItem[]
+  trackingEvents      TrackingEvent[]
+  scanEvents          ScanEvent[]
+  statusHistory       StatusHistory[]
+  collections         Collection[]
+  returns             Return[]
+  cods               COD[]               @relation("ShipmentCOD")
+  incidents           Incident[]
+  complaints          Complaint[]
+  deliveries          Delivery[]
+  payments            Payment[]
+  documents           Document[]
+
+  @@index([originAgencyId, status])
+  @@index([currentAgencyId, status])
+  @@index([destinationAgencyId, status])
+  @@index([status])
+  @@index([customerId])
+  @@index([createdAt])
+  @@map("shipments")
+}
+
+model Parcel {
+  collectionItemGenerated CollectionItem[] @relation("CollectionItemGeneratedParcel")
+  parcelTypeId        String?      @map("parcel_type_id")
+  parcelType          ParcelType?  @relation(fields: [parcelTypeId], references: [id], onDelete: SetNull)
+  courierId           String?      @map("courier_id")
+  courier             User?        @relation("ParcelAssignedCourier", fields: [courierId], references: [id], onDelete: SetNull)
+  volumetricWeightKg  Decimal?     @map("volumetric_weight_kg")
+  storedAt            DateTime?    @map("stored_at")
+  notes               String?
+  trackingNumber String?     @map("tracking_number")
+  currentTransferId String?  @map("current_transfer_id")
+  deliveryRunItems DeliveryRunItem[]
+  deliveryAttempts DeliveryAttempt[]
+  deliveryProofs DeliveryProof[]
+  id                    String       @id @default(uuid())
+  shipmentId            String       @map("shipment_id")
+  number                String       @unique
+  barcode               String?      @unique
+  qrCode                String?      @unique @map("qr_code")
+  parcelIndex           Int          @map("parcel_index")
+  packageTypeId         String?      @map("package_type_id")
+  originAgencyId        String       @map("origin_agency_id")
+  currentAgencyId       String?      @map("current_agency_id")
+  destinationAgencyId   String?      @map("destination_agency_id")
+  zoneId                String?      @map("zone_id")
+  status                ParcelStatus @default(CREATED)
+  weightKg              Decimal?     @db.Decimal(10, 2) @map("weight_kg")
+  declaredValue         Decimal?     @db.Decimal(12, 2) @map("declared_value")
+  codAmount             Decimal?     @db.Decimal(12, 2) @map("cod_amount")
+  createdAt             DateTime     @default(now()) @map("created_at")
+  updatedAt             DateTime     @updatedAt @map("updated_at")
+  deletedAt             DateTime?    @map("deleted_at")
+  deletedBy             String?      @map("deleted_by")
+  deletionReason        String?      @map("deletion_reason")
+
+  shipment         Shipment          @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  packageType      PackageType?      @relation(fields: [packageTypeId], references: [id], onDelete: SetNull)
+  originAgency     Agency            @relation("ParcelOriginAgency", fields: [originAgencyId], references: [id], onDelete: Restrict)
+  currentAgency    Agency?           @relation("ParcelCurrentAgency", fields: [currentAgencyId], references: [id], onDelete: SetNull)
+  destinationAgency Agency?          @relation("ParcelDestinationAgency", fields: [destinationAgencyId], references: [id], onDelete: SetNull)
+  zone             Zone?            @relation(fields: [zoneId], references: [id], onDelete: SetNull)
+  items            ShipmentItem[]
+  scanEvents       ScanEvent[]
+  trackingEvents   TrackingEvent[]
+  statusHistory    StatusHistory[]
+  agencyStock      AgencyStock[]
+  transferItems    TransferItem[]
+  collectionItems  CollectionItem[]
+  deliveryItems    DeliveryItem[]
+  returnItems      ReturnItem[]
+  returns          Return[]          @relation("ParcelReturns")
+  incidents        Incident[]
+  complaints       Complaint[]
+  documents        Document[]
+
+  @@unique([shipmentId, parcelIndex])
+  @@index([shipmentId])
+  @@index([number])
+  @@index([barcode])
+  @@index([qrCode])
+  @@index([trackingNumber])
+  @@index([currentAgencyId, status])
+  @@index([destinationAgencyId, status])
+  @@index([status])
+  @@map("parcels")
+}
+
+model ShipmentItem {
+  id              String   @id @default(uuid())
+  shipmentId      String   @map("shipment_id")
+  parcelId        String?  @map("parcel_id")
+  productCategoryId String? @map("product_category_id")
+  packageTypeId   String?  @map("package_type_id")
+  description     String?
+  quantity        Int      @default(1)
+  weightKg        Decimal? @db.Decimal(10, 2) @map("weight_kg")
+  declaredValue   Decimal? @db.Decimal(12, 2) @map("declared_value")
+  codAmount       Decimal? @db.Decimal(12, 2) @map("cod_amount")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  shipment        Shipment         @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  parcel          Parcel?          @relation(fields: [parcelId], references: [id], onDelete: SetNull)
+  productCategory ProductCategory? @relation(fields: [productCategoryId], references: [id], onDelete: SetNull)
+  packageType     PackageType?     @relation(fields: [packageTypeId], references: [id], onDelete: SetNull)
+
+  @@index([shipmentId])
+  @@index([parcelId])
+  @@map("shipment_items")
+}
+
+model TrackingEvent {
+  status ParcelStatus @default(CREATED)
+  previousStatus ParcelStatus? @map("previous_status")
+  location       String?
+  scan           ScanEvent?    @relation("TrackingEventScan")
+  source TrackingEventSource @default(MANUAL)
+  id             String        @id @default(uuid())
+  shipmentId     String        @map("shipment_id")
+  parcelId       String?       @map("parcel_id")
+  agencyId       String        @map("agency_id")
+  userId         String?       @map("user_id")
+  eventType      String        @map("event_type")
+  changeMethod   ChangeMethod  @default(SCAN) @map("change_method")
+  oldStatus      ParcelStatus? @map("old_status")
+  newStatus      ParcelStatus? @map("new_status")
+  result         EventResult?  @default(SUCCESS)
+  notes          String?
+  metadata       Json?
+  idempotencyKey String?       @unique @map("idempotency_key")
+  createdAt      DateTime      @default(now()) @map("created_at")
+
+  shipment      Shipment       @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  parcel        Parcel?        @relation(fields: [parcelId], references: [id], onDelete: SetNull)
+  agency        Agency         @relation("TrackingEventAgency", fields: [agencyId], references: [id], onDelete: Restrict)
+  user          User?          @relation("TrackingEventUser", fields: [userId], references: [id], onDelete: SetNull)
+  statusHistory StatusHistory[]
+
+  @@index([shipmentId, createdAt])
+  @@index([parcelId, createdAt])
+  @@index([agencyId, createdAt])
+  @@index([eventType])
+  @@map("tracking_events")
+}
+
+model ScanEvent {
+  id             String       @id @default(uuid())
+  shipmentId     String       @map("shipment_id")
+  parcelId       String?      @map("parcel_id")
+  agencyId       String       @map("agency_id")
+  userId         String?      @map("user_id")
+  trackingEventId String?      @unique @map("tracking_event_id")
+  scanType       String       @default("BARCODE") @map("scan_type")
+  changeMethod   ChangeMethod @default(SCAN) @map("change_method")
+  rawCode        String       @map("raw_code")
+  oldStatus      ParcelStatus? @map("old_status")
+  newStatus      ParcelStatus? @map("new_status")
+  result         EventResult  @default(SUCCESS)
+  idempotencyKey String?      @unique @map("idempotency_key")
+  createdAt      DateTime     @default(now()) @map("created_at")
+
+  shipment      Shipment       @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  parcel        Parcel?        @relation(fields: [parcelId], references: [id], onDelete: SetNull)
+  agency        Agency         @relation("ScanEventAgency", fields: [agencyId], references: [id], onDelete: Restrict)
+  user          User?          @relation("ScanEventUser", fields: [userId], references: [id], onDelete: SetNull)
+  trackingEvent TrackingEvent? @relation("TrackingEventScan", fields: [trackingEventId], references: [id], onDelete: SetNull)
+
+  @@index([shipmentId, createdAt])
+  @@index([parcelId, createdAt])
+  @@index([agencyId, createdAt])
+  @@index([rawCode])
+  @@map("scan_events")
+}
+
+model StatusHistory {
+  id               String        @id @default(uuid())
+  entityType       String        @map("entity_type")
+  entityId         String        @map("entity_id")
+  shipmentId       String?       @map("shipment_id")
+  parcelId         String?       @map("parcel_id")
+  agencyId         String?       @map("agency_id")
+  userId           String?       @map("user_id")
+  trackingEventId  String?       @map("tracking_event_id")
+  fromStatus       ParcelStatus? @map("from_status")
+  toStatus         ParcelStatus? @map("to_status")
+  changeMethod     ChangeMethod  @default(MANUAL) @map("change_method")
+  reason           String?
+  createdAt        DateTime      @default(now()) @map("created_at")
+
+  shipment       Shipment?      @relation(fields: [shipmentId], references: [id], onDelete: SetNull)
+  parcel         Parcel?        @relation(fields: [parcelId], references: [id], onDelete: SetNull)
+  agency         Agency?        @relation("StatusHistoryAgency", fields: [agencyId], references: [id], onDelete: SetNull)
+  user           User?          @relation("StatusHistoryUser", fields: [userId], references: [id], onDelete: SetNull)
+  trackingEvent  TrackingEvent? @relation(fields: [trackingEventId], references: [id], onDelete: SetNull)
+
+  @@index([shipmentId, createdAt])
+  @@index([parcelId, createdAt])
+  @@index([entityType, entityId])
+  @@map("status_history")
+}
+
+model Collection {
+  assignedAt    DateTime?  @map("assigned_at")
+  generatedShipments  Shipment[] @relation("CollectionGeneratedShipment")
+  collectionNumber String?   @unique @map("collection_number")
+  assignedCourierId String?  @map("assigned_courier_id")
+  assignedCourier User?      @relation("CollectionAssignedCourier", fields: [assignedCourierId], references: [id], onDelete: SetNull)
+  scheduledDate   DateTime?  @map("scheduled_date")
+  completedByUserId String?  @map("completed_by_user_id")
+  pickupAddressId String?    @map("pickup_address_id")
+  pickupContactName String?  @map("pickup_contact_name")
+  pickupPhone     String?    @map("pickup_phone")
+  pickupStreet    String?    @map("pickup_street")
+  pickupCity      String?    @map("pickup_city")
+  id               String            @id @default(uuid())
+  number           String            @unique
+  customerId       String            @map("customer_id")
+  agencyId         String            @map("agency_id")
+  zoneId           String?           @map("zone_id")
+  addressId        String?           @map("address_id")
+  assignedToUserId String?           @map("assigned_to_user_id")
+  createdByUserId  String?           @map("created_by_user_id")
+  shipmentId       String?           @map("shipment_id")
+  status           CollectionStatus @default(REQUESTED)
+  scheduledAt      DateTime?         @map("scheduled_at")
+  pickupStartedAt  DateTime?         @map("pickup_started_at")
+  completedAt      DateTime?         @map("completed_at")
+  notes            String?
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt @map("updated_at")
+  deletedAt        DateTime?         @map("deleted_at")
+  deletedBy        String?           @map("deleted_by")
+  deletionReason   String?           @map("deletion_reason")
+
+  customer       Customer       @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  agency         Agency         @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  zone           Zone?          @relation(fields: [zoneId], references: [id], onDelete: SetNull)
+  address        Address?       @relation(fields: [addressId], references: [id], onDelete: SetNull)
+  assignedToUser User?          @relation("CollectionAssignedToUser", fields: [assignedToUserId], references: [id], onDelete: SetNull)
+  createdByUser  User?          @relation("CollectionCreatedByUser", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  shipment       Shipment?      @relation(fields: [shipmentId], references: [id], onDelete: SetNull)
+  items          CollectionItem[]
+
+  @@index([customerId, status])
+  @@index([agencyId, status])
+  @@index([assignedToUserId])
+  @@index([scheduledAt])
+  @@map("collections")
+}
+
+model CollectionItem {
+  generatedParcelId String? @map("generated_parcel_id")
+  generatedParcel   Parcel? @relation("CollectionItemGeneratedParcel", fields: [generatedParcelId], references: [id], onDelete: SetNull)
+  notes String?
+  itemIndex      Int         @default(1) @map("item_index")
+  actualWeightKg Decimal?    @map("actual_weight_kg")
+  declaredWeightKg Decimal?  @map("declared_weight_kg")
+  recipientName  String?     @map("recipient_name")
+  recipientPhone String?     @map("recipient_phone")
+  recipientAddress String?   @map("recipient_address")
+  recipientCity  String?     @map("recipient_city")
+  codAmount      Decimal?    @map("cod_amount")
+  id            String   @id @default(uuid())
+  collectionId  String   @map("collection_id")
+  parcelId      String?  @map("parcel_id")
+  description   String?
+  quantity      Int      @default(1)
+  weightKg      Decimal? @db.Decimal(10, 2) @map("weight_kg")
+  declaredValue Decimal? @db.Decimal(12, 2) @map("declared_value")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  parcel     Parcel?    @relation(fields: [parcelId], references: [id], onDelete: SetNull)
+
+  @@index([collectionId])
+  @@index([parcelId])
+  @@map("collection_items")
+}
+
+model Transfer {
+  transferNumber String?     @map("transfer_number")
+  totalExpectedParcels Int   @default(0) @map("total_expected_parcels")
+  totalReceivedParcels Int   @default(0) @map("total_received_parcels")
+  id                 String         @id @default(uuid())
+  number             String         @unique
+  originAgencyId     String         @map("origin_agency_id")
+  destinationAgencyId String        @map("destination_agency_id")
+  createdByUserId    String?        @map("created_by_user_id")
+  receivedByUserId   String?        @map("received_by_user_id")
+  status             TransferStatus @default(DRAFT)
+  vehiclePlate       String?        @map("vehicle_plate")
+  driverName         String?
+  driverPhone        String?
+  notes              String?
+  dispatchedAt       DateTime?      @map("dispatched_at")
+  receivedAt         DateTime?      @map("received_at")
+  createdAt          DateTime       @default(now()) @map("created_at")
+  updatedAt          DateTime       @updatedAt @map("updated_at")
+
+  originAgency      Agency        @relation("TransferOriginAgency", fields: [originAgencyId], references: [id], onDelete: Restrict)
+  destinationAgency Agency        @relation("TransferDestinationAgency", fields: [destinationAgencyId], references: [id], onDelete: Restrict)
+  createdByUser     User?         @relation("TransferCreatedByUser", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  receivedByUser    User?         @relation("TransferReceivedByUser", fields: [receivedByUserId], references: [id], onDelete: SetNull)
+  items             TransferItem[]
+
+  @@index([originAgencyId, status])
+  @@index([destinationAgencyId, status])
+  @@index([status])
+  @@map("transfers")
+}
+
+model TransferItem {
+  status TransferItemStatus @default(PENDING)
+  id              String    @id @default(uuid())
+  transferId      String    @map("transfer_id")
+  parcelId        String    @map("parcel_id")
+  quantity        Int       @default(1)
+  loadedAt        DateTime? @map("loaded_at")
+  receivedAt      DateTime? @map("received_at")
+  discrepancyNote String?   @map("discrepancy_note")
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  transfer Transfer @relation(fields: [transferId], references: [id], onDelete: Cascade)
+  parcel   Parcel   @relation(fields: [parcelId], references: [id], onDelete: Restrict)
+
+  @@unique([transferId, parcelId])
+  @@index([transferId])
+  @@index([parcelId])
+  @@map("transfer_items")
+}
+
+model AgencyStock {
+  id              String            @id @default(uuid())
+  agencyId        String            @map("agency_id")
+  parcelId        String            @map("parcel_id")
+  quantity        Int               @default(1)
+  stockState      StockState        @default(AVAILABLE) @map("stock_state")
+  locationType    StockLocationType @default(AGENCY) @map("location_type")
+  sourceReference String?           @map("source_reference")
+  sourceType      String?           @map("source_type")
+  lastMovementAt  DateTime?         @map("last_movement_at")
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+
+  agency Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  parcel Parcel @relation(fields: [parcelId], references: [id], onDelete: Cascade)
+
+  @@unique([agencyId, parcelId])
+  @@index([agencyId, stockState])
+  @@index([parcelId])
+  @@map("agency_stock")
+}
+
+model DeliveryRun {
+  shift          RunShift          @default(MORNING)
+  collectedCodAmount Decimal       @default(0) @map("collected_cod_amount")
+  courierId      String?           @map("courier_id")
+  courier        CourierProfile?   @relation(fields: [courierId], references: [id], onDelete: SetNull)
+  id               String   @id @default(uuid())
+  number           String   @unique
+  agencyId         String   @map("agency_id")
+  zoneId           String?  @map("zone_id")
+  assignedToUserId String?  @map("assigned_to_user_id")
+  status           String   @default("PLANNED")
+  runDate          DateTime @map("run_date") @db.Date
+  startedAt        DateTime? @map("started_at")
+  completedAt      DateTime? @map("completed_at")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  agency         Agency             @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  zone           Zone?              @relation(fields: [zoneId], references: [id], onDelete: SetNull)
+  assignedToUser User?              @relation("DeliveryRunAssignedToUser", fields: [assignedToUserId], references: [id], onDelete: SetNull)
+  deliveries     Delivery[]
+  assignments    DeliveryAssignment[]
+  runItems       DeliveryRunItem[]
+
+  @@index([agencyId, runDate])
+  @@index([status])
+  @@map("delivery_runs")
+}
+
+model Delivery {
+  id               String        @id @default(uuid())
+  number           String        @unique
+  agencyId         String        @map("agency_id")
+  zoneId           String?       @map("zone_id")
+  shipmentId       String?       @map("shipment_id")
+  deliveryRunId    String?       @map("delivery_run_id")
+  assignedToUserId String?       @map("assigned_to_user_id")
+  createdByUserId  String?       @map("created_by_user_id")
+  status           DeliveryStatus @default(ASSIGNED)
+  proofType        ProofType?    @map("proof_type")
+  recipientName    String?       @map("recipient_name")
+  recipientPhone   String?       @map("recipient_phone")
+  scheduledAt      DateTime?     @map("scheduled_at")
+  startedAt        DateTime?     @map("started_at")
+  completedAt      DateTime?     @map("completed_at")
+  notes            String?
+  createdAt        DateTime      @default(now()) @map("created_at")
+  updatedAt        DateTime      @updatedAt @map("updated_at")
+
+  agency         Agency             @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  zone           Zone?              @relation(fields: [zoneId], references: [id], onDelete: SetNull)
+  shipment       Shipment?          @relation(fields: [shipmentId], references: [id], onDelete: SetNull)
+  deliveryRun    DeliveryRun?       @relation(fields: [deliveryRunId], references: [id], onDelete: SetNull)
+  assignedToUser User?              @relation("DeliveryAssignedToUser", fields: [assignedToUserId], references: [id], onDelete: SetNull)
+  createdByUser  User?              @relation("DeliveryCreatedByUser", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  items          DeliveryItem[]
+  assignments    DeliveryAssignment[]
+
+  @@index([agencyId, status])
+  @@index([assignedToUserId])
+  @@index([shipmentId])
+  @@index([status])
+  @@map("deliveries")
+}
+
+model DeliveryItem {
+  id           String        @id @default(uuid())
+  deliveryId   String        @map("delivery_id")
+  parcelId     String        @map("parcel_id")
+  status       DeliveryStatus @default(ASSIGNED)
+  proofType    ProofType?    @map("proof_type")
+  recipientName String?      @map("recipient_name")
+  deliveredAt  DateTime?     @map("delivered_at")
+  createdAt    DateTime      @default(now()) @map("created_at")
+
+  delivery Delivery @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
+  parcel   Parcel   @relation(fields: [parcelId], references: [id], onDelete: Restrict)
+
+  @@unique([deliveryId, parcelId])
+  @@index([deliveryId])
+  @@index([parcelId])
+  @@index([status])
+  @@map("delivery_items")
+}
+
+model DeliveryAssignment {
+  id               String   @id @default(uuid())
+  deliveryId       String   @map("delivery_id")
+  deliveryRunId    String?  @map("delivery_run_id")
+  assignedToUserId String?  @map("assigned_to_user_id")
+  assignedAt       DateTime @default(now()) @map("assigned_at")
+
+  delivery       Delivery    @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
+  deliveryRun    DeliveryRun? @relation(fields: [deliveryRunId], references: [id], onDelete: SetNull)
+  assignedToUser User?       @relation("DeliveryAssignmentAssignedToUser", fields: [assignedToUserId], references: [id], onDelete: SetNull)
+
+  @@index([deliveryId])
+  @@index([deliveryRunId])
+  @@index([assignedToUserId])
+  @@map("delivery_assignments")
+}
+
+model Return {
+  id                  String       @id @default(uuid())
+  number              String       @unique
+  shipmentId          String       @map("shipment_id")
+  parcelId            String?      @map("parcel_id")
+  originAgencyId      String       @map("origin_agency_id")
+  destinationAgencyId String?      @map("destination_agency_id")
+  createdByUserId     String?      @map("created_by_user_id")
+  handledByUserId     String?      @map("handled_by_user_id")
+  status              ReturnStatus @default(INITIATED)
+  reason              String?
+  requestedAt         DateTime?    @map("requested_at")
+  pickedUpAt          DateTime?    @map("picked_up_at")
+  receivedAt          DateTime?    @map("received_at")
+  createdAt           DateTime     @default(now()) @map("created_at")
+  updatedAt           DateTime     @updatedAt @map("updated_at")
+
+  shipment         Shipment @relation(fields: [shipmentId], references: [id], onDelete: Restrict)
+  parcel           Parcel?  @relation("ParcelReturns", fields: [parcelId], references: [id], onDelete: SetNull)
+  originAgency     Agency   @relation("ReturnOriginAgency", fields: [originAgencyId], references: [id], onDelete: Restrict)
+  destinationAgency Agency? @relation("ReturnDestinationAgency", fields: [destinationAgencyId], references: [id], onDelete: SetNull)
+  createdByUser    User?    @relation("ReturnCreatedByUser", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  handledByUser    User?    @relation("ReturnHandledByUser", fields: [handledByUserId], references: [id], onDelete: SetNull)
+  items            ReturnItem[] @relation("ReturnDocRelation")
+
+  @@index([shipmentId])
+  @@index([status])
+  @@index([originAgencyId])
+  @@map("returns")
+}
+
+model ReturnItem {
+  id          String    @id @default(uuid())
+  returnId    String    @map("return_id")
+  parcelId    String    @map("parcel_id")
+  reason      String?
+  status      String    @default("PENDING")
+  scannedAt   DateTime? @map("scanned_at")
+  processedAt DateTime? @map("processed_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  returnDoc Return @relation("ReturnDocRelation", fields: [returnId], references: [id], onDelete: Cascade)
+  parcel Parcel @relation(fields: [parcelId], references: [id], onDelete: Restrict)
+
+  @@unique([returnId, parcelId])
+  @@index([returnId])
+  @@index([parcelId])
+  @@map("return_items")
+}
+
+model Incident {
+  awardedAmount   Decimal?          @map("awarded_amount")
+  claimedAmount   Decimal?          @map("claimed_amount")
+  resolutionNotes String?           @map("resolution_notes")
+  history         IncidentHistory[]
+  id             String          @id @default(uuid())
+  number         String          @unique
+  shipmentId     String          @map("shipment_id")
+  parcelId       String?         @map("parcel_id")
+  agencyId       String          @map("agency_id")
+  createdByUserId String?        @map("created_by_user_id")
+  type           IncidentType
+  severity       IncidentSeverity @default(MEDIUM)
+  status         IncidentStatus @default(REPORTED)
+  description    String
+  resolution     String?
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+
+  shipment      Shipment    @relation(fields: [shipmentId], references: [id], onDelete: Restrict)
+  parcel        Parcel?     @relation(fields: [parcelId], references: [id], onDelete: SetNull)
+  agency        Agency      @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  createdByUser User?       @relation("IncidentCreatedByUser", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  complaints    Complaint[]
+
+  @@index([shipmentId])
+  @@index([parcelId])
+  @@index([agencyId, status])
+  @@map("incidents")
+}
+
+model Complaint {
+  id          String         @id @default(uuid())
+  number      String         @unique
+  shipmentId  String?        @map("shipment_id")
+  parcelId    String?        @map("parcel_id")
+  customerId  String         @map("customer_id")
+  incidentId  String?        @map("incident_id")
+  title       String
+  description String
+  status      IncidentStatus @default(REPORTED)
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+
+  shipment Shipment? @relation(fields: [shipmentId], references: [id], onDelete: SetNull)
+  parcel   Parcel?   @relation(fields: [parcelId], references: [id], onDelete: SetNull)
+  customer Customer  @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  incident Incident? @relation(fields: [incidentId], references: [id], onDelete: SetNull)
+
+  @@index([customerId])
+  @@index([status])
+  @@map("complaints")
+}
+
+model Invoice {
+  invoiceNumber  String?     @unique @map("invoice_number")
+  invoiceDate    DateTime    @default(now()) @map("invoice_date")
+  createdById     String?    @map("created_by_id")
+  createdBy      User?       @relation("InvoiceCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  id          String        @id @default(uuid())
+  number      String        @unique
+  customerId  String        @map("customer_id")
+  agencyId    String        @map("agency_id")
+  status      InvoiceStatus @default(DRAFT)
+  issueDate   DateTime      @default(now()) @map("issue_date")
+  dueDate     DateTime?     @map("due_date")
+  subtotal    Decimal       @db.Decimal(12, 2)
+  taxAmount   Decimal       @default(0.00) @db.Decimal(12, 2) @map("tax_amount")
+  totalAmount Decimal       @db.Decimal(12, 2) @map("total_amount")
+  paidAmount  Decimal       @default(0.00) @db.Decimal(12, 2) @map("paid_amount")
+  currency    String        @default("MAD")
+  notes       String?
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  customer    Customer          @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  agency      Agency            @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  items       InvoiceItem[]
+  payments    Payment[]
+  refunds     Refund[]
+  creditNotes CreditNote[]
+  paymentAllocations PaymentAllocation[] @relation("InvoicePaymentAllocations")
+
+  @@index([customerId])
+  @@index([agencyId, status])
+  @@index([issueDate])
+  @@map("invoices")
+}
+
+model InvoiceItem {
+  id          String   @id @default(uuid())
+  invoiceId   String   @map("invoice_id")
+  shipmentId  String?  @map("shipment_id")
+  description String
+  quantity    Int      @default(1)
+  unitPrice   Decimal  @default(0) @db.Decimal(12, 2) @map("unit_price")
+  totalPrice  Decimal  @default(0) @db.Decimal(12, 2) @map("total_price")
+  amount      Decimal  @default(0) @db.Decimal(12, 2)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+  @@map("invoice_items")
+}
+
+model Payment {
+  id            String        @id @default(uuid())
+  invoiceId     String        @map("invoice_id")
+  shipmentId    String?       @map("shipment_id")
+  paymentMethod PaymentMethod @default(CASH) @map("payment_method")
+  status        PaymentStatus @default(PENDING)
+  amount        Decimal       @db.Decimal(12, 2)
+  reference     String?
+  paidAt        DateTime?     @map("paid_at")
+  createdAt     DateTime      @default(now()) @map("created_at")
+
+  invoice     Invoice           @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  shipment    Shipment?         @relation(fields: [shipmentId], references: [id], onDelete: SetNull)
+  allocations PaymentAllocation[]
+  cod         COD?
+
+  @@index([invoiceId])
+  @@index([shipmentId])
+  @@index([status])
+  @@map("payments")
+}
+
+model PaymentAllocation {
+  id        String   @id @default(uuid())
+  paymentId String   @map("payment_id")
+  invoiceId String   @map("invoice_id")
+  amount    Decimal  @db.Decimal(12, 2)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  payment Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  invoice Invoice @relation("InvoicePaymentAllocations", fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([paymentId])
+  @@index([invoiceId])
+  @@map("payment_allocations")
+}
+
+model COD {
+  id          String   @id @default(uuid())
+  paymentId   String   @unique @map("payment_id")
+  shipmentId  String   @map("shipment_id")
+  amount      Decimal  @db.Decimal(12, 2)
+  collectedAt DateTime? @map("collected_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  payment  Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  shipment Shipment @relation("ShipmentCOD", fields: [shipmentId], references: [id], onDelete: Restrict)
+
+  @@index([shipmentId])
+  @@map("cod")
+}
+
+model Refund {
+  id        String   @id @default(uuid())
+  invoiceId  String   @map("invoice_id")
+  amount     Decimal  @db.Decimal(12, 2)
+  reason     String?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+  @@map("refunds")
+}
+
+model CreditNote {
+  id        String   @id @default(uuid())
+  invoiceId  String   @map("invoice_id")
+  number    String   @unique
+  amount    Decimal  @db.Decimal(12, 2)
+  reason    String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+  @@map("credit_notes")
+}
+
+model Expense {
+  id          String   @id @default(uuid())
+  agencyId    String   @map("agency_id")
+  description String
+  amount      Decimal  @db.Decimal(12, 2)
+  expenseDate DateTime @map("expense_date") @db.Date
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  agency Agency @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+
+  @@index([agencyId, expenseDate])
+  @@map("expenses")
+}
+
+model DocumentTemplate {
+  id          String       @id @default(uuid())
+  code        String       @unique
+  name        String
+  documentType DocumentType @map("document_type")
+  bodyHtml    String?      @map("body_html")
+  isActive    Boolean      @default(true) @map("is_active")
+  createdAt   DateTime     @default(now()) @map("created_at")
+
+  documents Document[]
+
+  @@map("document_templates")
+}
+
+model Document {
+  id                String       @id @default(uuid())
+  number            String       @unique
+  documentType      DocumentType @map("document_type")
+  templateId        String?      @map("template_id")
+  shipmentId        String?      @map("shipment_id")
+  parcelId          String?      @map("parcel_id")
+  customerId        String?      @map("customer_id")
+  agencyId          String?      @map("agency_id")
+  generatedByUserId String?      @map("generated_by_user_id")
+  storageKey        String       @map("storage_key")
+  fileName          String       @map("file_name")
+  mimeType          String       @default("application/pdf") @map("mime_type")
+  checksum          String?
+  createdAt         DateTime     @default(now()) @map("created_at")
+
+  template       DocumentTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  shipment       Shipment?         @relation(fields: [shipmentId], references: [id], onDelete: SetNull)
+  parcel         Parcel?           @relation(fields: [parcelId], references: [id], onDelete: SetNull)
+  customer       Customer?         @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  agency         Agency?           @relation(fields: [agencyId], references: [id], onDelete: SetNull)
+  generatedByUser User?            @relation(fields: [generatedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([documentType])
+  @@index([shipmentId])
+  @@index([parcelId])
+  @@index([customerId])
+  @@index([agencyId])
+  @@map("documents")
+}
+
+model NotificationPreference {
+  id        String            @id @default(uuid())
+  userId    String            @map("user_id")
+  channel   NotificationChannel
+  enabled   Boolean           @default(true)
+  createdAt DateTime          @default(now()) @map("created_at")
+  updatedAt DateTime          @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, channel])
+  @@map("notification_preferences")
+}
+
+model Notification {
+  id        String            @id @default(uuid())
+  userId    String            @map("user_id")
+  channel   NotificationChannel @default(IN_APP)
+  status    NotificationStatus @default(PENDING)
+  title     String
+  body      String
+  metadata  Json?
+  sentAt    DateTime?         @map("sent_at")
+  readAt    DateTime?         @map("read_at")
+  createdAt DateTime          @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+  @@index([channel])
+  @@map("notifications")
+}
+
+model AuditLog {
+  id         String      @id @default(uuid())
+  userId     String?     @map("user_id")
+  action     AuditAction
+  entityType String      @map("entity_type")
+  entityId   String?     @map("entity_id")
+  agencyId   String?     @map("agency_id")
+  oldValues  Json?       @map("old_values")
+  newValues  Json?       @map("new_values")
+  ipAddress  String?     @map("ip_address")
+  userAgent  String?     @map("user_agent")
+  createdAt  DateTime    @default(now()) @map("created_at")
+
+  user   User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
+  agency Agency? @relation(fields: [agencyId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId])
+  @@index([agencyId, createdAt])
+  @@index([userId, createdAt])
+  @@index([action])
+  @@map("audit_logs")
+}
+
+
+enum AddressType {
+  HOME
+  DELIVERY
+  BUSINESS
+  OTHER
+}
+
+enum CollectionType {
+  ON_DEMAND
+  REGULAR
+}
+
+enum TrackingEventSource {
+  SCAN
+  MANUAL
+  SYSTEM
+  API
+  WEBHOOK
+}
+
+enum AttemptType {
+  DELIVERY
+  COLLECTION
+}
+
+enum AttemptResult {
+  SUCCESS
+  CUSTOMER_ABSENT
+  REFUSED
+  WRONG_ADDRESS
+  INCOMPLETE_ADDRESS
+  ACCESS_DENIED
+  UNREACHABLE_PHONE
+  WEATHER_DELAY
+  VEHICLE_BREAKDOWN
+  OTHER
+}
+
+enum RunItemStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum AuditEventType {
+  LOGIN_FAILED
+  LOGIN_SUCCESS
+  REFRESH_SUCCESS
+  REUSE_DETECTED
+  PASSWORD_RESET_REQUEST
+  PASSWORD_RESET_COMPLETE
+  LOGOUT
+  SECURITY_VIOLATION_AGENCY_BYPASS_ATTEMPT
+}
+
+enum UserPermissionEffect {
+  GRANT
+  DENY
+}
+
+enum TransferItemStatus {
+  PENDING
+  DISPATCHED
+  RECEIVED
+  MISSING
+  DAMAGED
+}
+
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  tokenHash String   @unique @map("token_hash")
+  familyId  String?  @map("family_id")
+  isRevoked Boolean  @default(false) @map("is_revoked")
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  expiresAt DateTime @map("expires_at")
+  revoked   Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model Route {
+  id                      String         @id @default(uuid())
+  code                    String         @unique
+  name                    String
+  originAgencyId          String         @map("origin_agency_id")
+  destinationAgencyId     String         @map("destination_agency_id")
+  distanceKm              Decimal?       @map("distance_km")
+  estimatedDurationMinutes Int?          @map("estimated_duration_minutes")
+  isActive                Boolean        @default(true) @map("is_active")
+  createdAt               DateTime       @default(now()) @map("created_at")
+  updatedAt               DateTime       @updatedAt @map("updated_at")
+
+  originAgency Agency       @relation("RouteOriginAgency", fields: [originAgencyId], references: [id])
+  destinationAgency Agency @relation("RouteDestinationAgency", fields: [destinationAgencyId], references: [id])
+  segments   RouteSegment[]
+
+  @@map("routes")
+}
+
+model RouteSegment {
+  id                      String   @id @default(uuid())
+  routeId                 String   @map("route_id")
+  fromAgencyId            String   @map("from_agency_id")
+  toAgencyId              String   @map("to_agency_id")
+  segmentOrder           Int      @default(1) @map("segment_order")
+  estimatedTransitHours   Decimal? @map("estimated_transit_hours")
+  distanceKm              Decimal? @map("distance_km")
+  estimatedDurationMinutes Int?    @map("estimated_duration_minutes")
+  createdAt               DateTime @default(now()) @map("created_at")
+
+  route      Route  @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  fromAgency Agency @relation("RouteSegmentFromAgency", fields: [fromAgencyId], references: [id])
+  toAgency   Agency @relation("RouteSegmentToAgency", fields: [toAgencyId], references: [id])
+
+  @@map("route_segments")
+}
+
+model DeliveryRunItem {
+  deliveredAt        DateTime? @map("delivered_at")
+  recipientSignature String?   @map("recipient_signature")
+  collectedCod       Decimal?  @map("collected_cod")
+  id            String        @id @default(uuid())
+  deliveryRunId String        @map("delivery_run_id")
+  parcelId      String        @map("parcel_id")
+  sequenceOrder Int           @default(1) @map("sequence_order")
+  status        RunItemStatus @default(PENDING)
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+
+  deliveryRun DeliveryRun @relation(fields: [deliveryRunId], references: [id], onDelete: Cascade)
+  parcel      Parcel      @relation(fields: [parcelId], references: [id], onDelete: Cascade)
+
+  @@unique([deliveryRunId, parcelId])
+  @@index([parcelId])
+  @@index([deliveryRunId, status])
+  @@map("delivery_run_items")
+}
+
+model DeliveryAttempt {
+  deliveryRunId      String?        @map("delivery_run_id")
+  attemptNumber      Int            @default(1) @map("attempt_number")
+  collectedCodAmount Decimal?       @map("collected_cod_amount")
+  courierNotes       String?        @map("courier_notes")
+  reason             String?
+  refusalReasonId    String?        @map("refusal_reason_id")
+  refusalReason      RefusalReason? @relation(fields: [refusalReasonId], references: [id], onDelete: SetNull)
+  proofs             DeliveryProof[]
+  id          String        @id @default(uuid())
+  parcelId    String        @map("parcel_id")
+  courierId   String?       @map("courier_id")
+  attemptType AttemptType   @default(DELIVERY) @map("attempt_type")
+  result      AttemptResult @default(SUCCESS)
+  notes       String?
+  attemptedAt DateTime      @default(now()) @map("attempted_at")
+
+  parcel  Parcel @relation(fields: [parcelId], references: [id], onDelete: Cascade)
+  courier User?  @relation(fields: [courierId], references: [id], onDelete: SetNull)
+
+  @@index([parcelId])
+  @@map("delivery_attempts")
+}
+
+model DeliveryProof {
+  deliveryAttemptId  String?          @map("delivery_attempt_id")
+  deliveryAttempt    DeliveryAttempt? @relation(fields: [deliveryAttemptId], references: [id], onDelete: SetNull)
+  proofType          ProofType        @default(DIGITAL_SIGNATURE) @map("proof_type")
+  podMethod          String?          @map("pod_method")
+  signatureDataUrl   String?          @map("signature_data_url")
+  signaturePath      String?          @map("signature_path")
+  photoPath          String?          @map("photo_path")
+  podPhotoStorageKey String?          @map("pod_photo_storage_key")
+  registeredByUserId String?          @map("registered_by_user_id")
+  id           String   @id @default(uuid())
+  parcelId     String   @map("parcel_id")
+  deliveryId   String?  @map("delivery_id")
+  signatureUrl String?  @map("signature_url")
+  photoUrl     String?  @map("photo_url")
+  otpCode      String?  @map("otp_code")
+  signerName   String?  @map("signer_name")
+  signerCin    String?  @map("signer_cin")
+  latitude     Float?
+  longitude    Float?
+  capturedAt   DateTime @default(now()) @map("captured_at")
+
+  parcel Parcel @relation(fields: [parcelId], references: [id], onDelete: Cascade)
+
+  @@index([parcelId])
+  @@map("delivery_proofs")
+}
+
+model CustomerType {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  customers Customer[]
+
+  @@map("customer_types")
+}
+
+model CustomerInternalManager {
+  assignedByUserId String?  @map("assigned_by_user_id")
+  assignedAt       DateTime @default(now()) @map("assigned_at")
+  unassignedAt     DateTime? @map("unassigned_at")
+  isCurrent        Boolean  @default(true) @map("is_current")
+  assignmentReason String?  @map("assignment_reason")
+  agencyId         String?  @map("agency_id")
+  id         String   @id @default(uuid())
+  customerId String   @map("customer_id")
+  userId     String   @map("user_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  user     User     @relation("ManagerAssignmentUser", fields: [userId], references: [id], onDelete: Cascade)
+  assignedBy User?  @relation("ManagerAssignmentAssignedBy", fields: [assignedByUserId], references: [id], onDelete: SetNull)
+
+  @@unique([customerId, userId])
+  @@map("customer_internal_managers")
+}
+
+model ParcelType {
+  parcels     Parcel[]
+  id          String   @id @default(uuid())
+  code        String   @unique
+  name        String
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("parcel_types")
+}
+
+model ShipmentSequence {
+  id           String   @id @default(uuid())
+  agencyId     String   @map("agency_id")
+  year         Int
+  currentValue Int      @default(0) @map("current_value")
+  prefix       String   @default("HES")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  agency Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+
+  @@unique([agencyId, year])
+  @@map("shipment_sequences")
+}
+
+
+enum IncidentDecisionAction {
+  OPEN_INVESTIGATION
+  REQUEST_ADDITIONAL_INFO
+  APPROVE_COMPENSATION
+  REJECT_CLAIM
+  CLOSE
+}
+
+enum CourierStatus {
+  AVAILABLE
+  ON_RUN
+  OFFLINE
+  SUSPENDED
+}
+
+enum RunShift {
+  MORNING
+  AFTERNOON
+  EVENING
+}
+
+enum DeliveryRunStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum ReturnItemStatus {
+  PENDING
+  RECEIVED
+  RECOVERED
+  RETURNED_TO_SENDER
+  DISPOSED
+}
+
+
+model CourierProfile {
+  id              String         @id @default(uuid())
+  userId          String         @unique @map("user_id")
+  agencyId        String         @map("agency_id")
+  vehicleType     String?        @map("vehicle_type")
+  vehiclePlate    String?        @map("vehicle_plate")
+  maxDailyParcels Int            @default(50) @map("max_daily_parcels")
+  maxWeightKg     Decimal?       @map("max_weight_kg")
+  status          CourierStatus  @default(AVAILABLE)
+  isActive        Boolean        @default(true) @map("is_active")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+
+  user    User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  agency  Agency        @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  runs    DeliveryRun[]
+
+  @@map("courier_profiles")
+}
+
+model RefusalReason {
+  id        String            @id @default(uuid())
+  code      String            @unique
+  labelFr   String            @map("label_fr")
+  labelAr   String?           @map("label_ar")
+  createdAt DateTime          @default(now()) @map("created_at")
+
+  attempts  DeliveryAttempt[]
+
+  @@map("refusal_reasons")
+}
+
+model IncidentHistory {
+  id         String          @id @default(uuid())
+  incidentId String          @map("incident_id")
+  fromStatus IncidentStatus? @map("from_status")
+  toStatus   IncidentStatus  @map("to_status")
+  action     String?
+  notes      String?
+  userId     String?         @map("user_id")
+  createdAt  DateTime        @default(now()) @map("created_at")
+
+  incident Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  user     User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("incident_history")
+}
+
+model GeneratedDocument {
+  id                String       @id @default(uuid())
+  documentType      DocumentType @map("document_type")
+  entityId          String       @map("entity_id")
+  version           Int          @default(1)
+  s3Key             String       @map("s3_key")
+  fileName          String       @map("file_name")
+  fileSize          Int          @map("file_size")
+  mimeType          String       @default("application/pdf") @map("mime_type")
+  checksum          String?
+  generatedByUserId String?      @map("generated_by_user_id")
+  createdAt         DateTime     @default(now()) @map("created_at")
+
+  generatedByUser User? @relation(fields: [generatedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([documentType, entityId])
+  @@map("generated_documents")
+}
