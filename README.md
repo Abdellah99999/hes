@@ -5,8 +5,7 @@
 Ce dépôt est désormais structuré selon une séparation claire entre backend et frontend :
 
 - `backend/` : application NestJS dédiée à l’API backend
-- `frontend/` : application React/Vite dédiée à l’interface utilisateur
-- `mobile/` : clients mobiles pour les utilisateurs et les livreurs
+- `frontend/` : application React/Vite (PWA) dédiée à l’interface utilisateur, intégrant une expérience responsive adaptée au mobile/tablette pour les livreurs et les clients
 - `infrastructure/` : scripts, Docker, NGINX et utilitaires infra
 - `docker-compose.yml` : orchestration locale des services applicatifs et infrastructure
 

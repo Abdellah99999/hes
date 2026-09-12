@@ -8,7 +8,7 @@ Contexte : Phase 1 - Infrastructure et Fondations Techniques Transversales
 
 ## Contexte et Problématique
 
-La plateforme de gestion de transport et logistique multi-agences HES nécessite une séparation stricte entre une API backend REST pure (NestJS) et des clients frontend (React Web SPA, Flutter Mobile). Dès la Phase 1, il est impératif de garantir :
+La plateforme de gestion de transport et logistique multi-agences HES nécessite une séparation stricte entre une API backend REST pure (NestJS) et un frontend unique (React Web SPA / PWA Responsive). Dès la Phase 1, il est impératif de garantir :
 
 1. L'indépendance de déploiement et de packaging de chaque composant tout en maintenant une source unique de vérité pour le versioning et l'outillage de développement.
 2. L'absence totale d'import direct ou de fuite de logique/secrets entre le backend et le frontend.

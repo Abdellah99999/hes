@@ -6,7 +6,7 @@ Ce projet est une plateforme de transport et logistique multi-agences, mono-entr
 
 - Backend NestJS : logique métier, autorisations, Prisma, Redis, MinIO, API REST
 - Frontend React/Vite : interface utilisateur et consommation de l’API
-- Mobile : client et livreur
+- Interface responsive intégrée au frontend web unique, avec expérience dédiée pour le rôle livreur et le rôle client sur mobile/tablette (PWA)
 - Infrastructure : Docker, NGINX, scripts, monitoring
 
 ## Règles de séparation
