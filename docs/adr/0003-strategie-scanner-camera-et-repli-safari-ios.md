@@ -24,8 +24,8 @@ Pour les utilisateurs opérant sous Safari/iOS, l'invocation de `window.BarcodeD
 
 ### 1. Utilisation Native de `window.BarcodeDetector` pour le Lancement (MVP)
 
-- Pour les terminaux Android (flotte métier principale des livreurs HES : PDA Zebra/Honeywell/Urovo et smartphones Android sous Chrome), nous exploitons le moteur natif `BarcodeDetector`.
-- **Avantages majeurs** :
+- Pour les terminaux équipés de navigateurs basés sur Chromium (Chrome sous Android, Edge, etc.), nous exploitons le moteur natif `BarcodeDetector`.
+- **Avantages techniques prouvés** :
   - **Empreinte bundle zéro** : 0 KB ajouté au bundle de production (contre ~450 KB pour `@zxing/library`).
   - **Efficience énergétique & CPU** : décodage accéléré GPU/DSP par l'OS sans surchauffe du smartphone ni saturation du thread UI.
   - **Fréquence throttlée** : analyse limitée à 250 ms par passe pour préserver la batterie en tournée.
@@ -51,13 +51,18 @@ Plutôt que d'initier un flux caméra passif qui ne décoderait rien sous iOS, l
 
 ## Comparatif Technique : Repli Manuel vs Polyfill JS (@zxing)
 
-| Critère                     | Option A : Natif + Repli Saisie Manuelle (Retenu)                   | Option B : Polyfill JS (@zxing/library)                  |
-| :-------------------------- | :------------------------------------------------------------------ | :------------------------------------------------------- |
-| **Poids Bundle Frontend**   | **0 KB supplémentaire** (bundle actuel : 691 kB)                    | +400 à 500 KB (+65% d'augmentation du bundle total)      |
-| **CPU / Batterie Mobile**   | Accélération matérielle native (froid)                              | Décodage matriciel CPU pur en JS (chauffe & décharge)    |
-| **Cible Métier HES**        | 95%+ des terminaux livreurs sur le terrain sont sous Android/Chrome | Couvre les utilisateurs occasionnels iPhone              |
-| **Résilience Réseau CI/CD** | Zéro dépendance externe supplémentaire                              | Vulnérable aux restrictions registry npm en réseau fermé |
-| **Expérience Utilisateur**  | Claire, honnête, repli fluide sans blocage                          | Scan actif sur iOS mais latence de décodage accrue       |
+| Critère                     | Option A : Natif + Repli Saisie Manuelle (Retenu pour le MVP)                                                           | Option B : Polyfill JS (@zxing/library)                               |
+| :-------------------------- | :---------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------- |
+| **Poids Bundle Frontend**   | **0 KB supplémentaire** (bundle actuel : 691 kB)                                                                        | +400 à 500 KB (+65% d'augmentation du bundle total)                   |
+| **CPU / Batterie Mobile**   | Accélération matérielle native (froid)                                                                                  | Décodage matriciel CPU pur en JS (chauffe & décharge)                 |
+| **Répartition Terminaux**   | _Hypothèse non vérifiée à confirmer auprès du client_ : prédominance de terminaux/smartphones Android chez les livreurs | Couvre immédiatement les utilisateurs Safari/iOS sans saisie manuelle |
+| **Résilience Réseau CI/CD** | Zéro dépendance externe supplémentaire                                                                                  | Vulnérable aux restrictions registry npm en réseau fermé              |
+| **Expérience Utilisateur**  | Claire, honnête, repli fluide sans blocage                                                                              | Scan actif sur iOS mais latence de décodage accrue                    |
+
+> [!IMPORTANT]
+> **Note méthodologique sur la répartition du parc de terminaux** :  
+> La proportion exacte d'utilisateurs sous Android vs iOS parmi les livreurs et clients n'a fait l'objet d'aucune statistique formelle transmise par le métier ; il s'agit d'une hypothèse de travail opérationnelle qui **devra impérativement être validée avec de vraies données de télémétrie terrain** une fois le système déployé.  
+> La validation de l'Option A repose donc **exclusivement sur ses mérites techniques réels et mesurés** (performance CPU, préservation de la batterie, zéro alourdissement du bundle, résilience du déploiement), et non sur une supposition de parc matériel.
 
 ---
 
@@ -72,8 +77,8 @@ Plutôt que d'initier un flux caméra passif qui ne décoderait rien sous iOS, l
 
 ### Négatives / Limitations
 
-- Les rares utilisateurs sur iPhone ne peuvent pas scanner automatiquement avec le capteur photo et doivent saisir le numéro de BL ou tracking au clavier ou par douchette Bluetooth HID.
+- Les utilisateurs sous Safari/iOS ne disposent pas du décodage optique automatique via la caméra pour le MVP et basculent automatiquement vers la saisie manuelle du BL/tracking ou l'usage d'une douchette HID.
 
 ### Évolution Roadmap Post-Lancement
 
-Si la part d'utilisateurs Safari/iOS sur le terrain le justifie ultérieurement, l'architecture prévoit l'ajout d'un import dynamique lazy-loadé (`await import('@zxing/library')`) activé **uniquement** sur détection de `!('BarcodeDetector' in window)`, préservant ainsi le bundle principal pour les terminaux Android.
+Dès la mise en production, l'analyse des user-agents réels permettra de mesurer la part effective des accès sous iOS. Si le besoin terrain d'un scan caméra sur Safari/iOS est confirmé par les retours utilisateurs, le composant `CameraBarcodeScanner` est déjà architecturé pour accueillir un polyfill JS (ex. via import dynamique lazy-loadé `await import('@zxing/library')` déclenché uniquement si `!('BarcodeDetector' in window)`), garantissant l'absence d'impact sur le bundle principal des terminaux supportant l'API native.
