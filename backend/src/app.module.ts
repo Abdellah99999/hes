@@ -8,6 +8,7 @@ import { CorrelationIdMiddleware } from "./common/middleware/correlation-id.midd
 import { IdempotencyInterceptor } from "./common/interceptors/idempotency.interceptor";
 import { PrismaModule } from "./prisma/prisma.module";
 import { RedisModule } from "./modules/redis/redis.module";
+import { ThrottlerStorageRedisService } from "./modules/redis/throttler-storage-redis.service";
 import { StorageModule } from "./modules/storage/storage.module";
 import { HealthModule } from "./modules/health/health.module";
 import { AuthModule } from "./modules/auth/auth.module";
@@ -39,18 +40,25 @@ import { EventBusModule } from "./common/events/event-bus.module";
       validate: validateEnv,
       envFilePath: [".env.local", ".env"],
     }),
-    ThrottlerModule.forRoot([
-      {
-        name: "short",
-        ttl: 1000, // 1 second
-        limit: 10, // 10 requests / sec
-      },
-      {
-        name: "medium",
-        ttl: 60000, // 1 minute
-        limit: 100, // 100 requests / min
-      },
-    ]),
+    ThrottlerModule.forRootAsync({
+      imports: [RedisModule],
+      inject: [ThrottlerStorageRedisService],
+      useFactory: (storage: ThrottlerStorageRedisService) => ({
+        storage,
+        throttlers: [
+          {
+            name: "short",
+            ttl: 1000, // 1 second
+            limit: 10, // 10 requests / sec
+          },
+          {
+            name: "medium",
+            ttl: 60000, // 1 minute
+            limit: 100, // 100 requests / min
+          },
+        ],
+      }),
+    }),
     PrismaModule,
     RedisModule,
     StorageModule,

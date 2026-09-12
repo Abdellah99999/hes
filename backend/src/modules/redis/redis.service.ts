@@ -5,7 +5,7 @@ import {
   Logger,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import Redis from "ioredis";
+import Redis, { RedisOptions } from "ioredis";
 
 @Injectable()
 export class RedisService implements OnModuleInit, OnModuleDestroy {
@@ -15,30 +15,39 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   constructor(private readonly configService: ConfigService) {}
 
   onModuleInit(): void {
+    const url = this.configService.get<string>("redis.url");
     const host = this.configService.get<string>("redis.host", "localhost");
     const port = this.configService.get<number>("redis.port", 6379);
     const password = this.configService.get<string>("redis.password", "");
 
+    const baseOptions: RedisOptions = {
+      lazyConnect: true,
+      maxRetriesPerRequest: 1,
+      retryStrategy: (times) => {
+        if (times > 3) {
+          return null; // Stop retrying after 3 attempts
+        }
+        return Math.min(times * 100, 1000);
+      },
+    };
+
     try {
-      this.client = new Redis({
-        host,
-        port,
-        password: password || undefined,
-        lazyConnect: true,
-        maxRetriesPerRequest: 1,
-        retryStrategy: (times) => {
-          if (times > 3) {
-            return null; // Stop retrying after 3 attempts
-          }
-          return Math.min(times * 100, 1000);
-        },
-      });
+      if (url) {
+        this.client = new Redis(url, baseOptions);
+        this.logger.log("Redis client configured via REDIS_URL");
+      } else {
+        this.client = new Redis({
+          ...baseOptions,
+          host,
+          port,
+          password: password || undefined,
+        });
+        this.logger.log(`Redis client configured for ${host}:${port}`);
+      }
 
       this.client.on("error", (err) => {
         this.logger.warn(`Redis client warning/error: ${err.message}`);
       });
-
-      this.logger.log(`Redis client configured for ${host}:${port}`);
     } catch (error) {
       this.logger.error("Failed to initialize Redis client", error);
     }
