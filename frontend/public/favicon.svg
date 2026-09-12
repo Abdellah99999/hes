@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <rect width="100" height="100" rx="22" fill="#0f172a" />
+  <rect x="4" y="4" width="92" height="92" rx="18" stroke="#2563eb" stroke-width="3" stroke-opacity="0.5" />
+  <!-- Stylized HES Logistics Box -->
+  <path d="M50 20 L80 35 L50 50 L20 35 Z" fill="#3b82f6" />
+  <path d="M20 35 L50 50 L50 80 L20 65 Z" fill="#1d4ed8" />
+  <path d="M80 35 L50 50 L50 80 L80 65 Z" fill="#2563eb" />
+  <!-- Fast delivery arrow -->
+  <path d="M42 45 L58 45 L54 39 M58 45 L54 51" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

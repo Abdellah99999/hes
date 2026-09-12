@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { queryClient } from "./lib/query-client";
 import { AuthProvider } from "./features/auth/context/AuthContext";
+import { registerServiceWorker } from "./lib/pwa-service";
+import { NetworkStatusIndicator } from "./features/pwa/components/NetworkStatusIndicator";
+import { PwaUpdateBanner } from "./features/pwa/components/PwaUpdateBanner";
 import { useAuth } from "./features/auth/hooks/useAuth";
 import { LoginPage } from "./features/auth/pages/LoginPage";
 import { ForgotPasswordPage } from "./features/auth/pages/ForgotPasswordPage";
@@ -376,9 +379,28 @@ const NavigationBar: React.FC<{
 
 const MainContent: React.FC = () => {
   const [currentView, setCurrentView] = useState<AppView>("status");
+  const [updateAvailable, setUpdateAvailable] = useState<boolean>(false);
+  const [applyUpdateFn, setApplyUpdateFn] = useState<(() => void) | null>(null);
+
+  useEffect(() => {
+    registerServiceWorker({
+      onUpdateAvailable: (applyFn) => {
+        setApplyUpdateFn(() => applyFn);
+        setUpdateAvailable(true);
+      },
+    });
+  }, []);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
+      <NetworkStatusIndicator />
+      <PwaUpdateBanner
+        isUpdateAvailable={updateAvailable}
+        onApplyUpdate={() => {
+          if (applyUpdateFn) applyUpdateFn();
+        }}
+        onDismiss={() => setUpdateAvailable(false)}
+      />
       <NavigationBar
         currentView={currentView}
         setCurrentView={setCurrentView}
@@ -402,7 +424,9 @@ const MainContent: React.FC = () => {
 
         {currentView === "dashboard" && (
           <ProtectedRoute fallbackUrl="#">
-            <DashboardPage onNavigateToReports={() => setCurrentView("reports")} />
+            <DashboardPage
+              onNavigateToReports={() => setCurrentView("reports")}
+            />
           </ProtectedRoute>
         )}
 
