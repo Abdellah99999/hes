@@ -59,6 +59,18 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
       setCollectedCod(parcel.codAmount ? Number(parcel.codAmount) : 0);
       setNotes("");
       setErrorMessage(null);
+      setIsDrawing(false);
+      if (canvasRef.current) {
+        const ctx = canvasRef.current.getContext("2d");
+        if (ctx) {
+          ctx.clearRect(
+            0,
+            0,
+            canvasRef.current.width,
+            canvasRef.current.height,
+          );
+        }
+      }
     }
   }, [isOpen, parcel]);
 
@@ -68,43 +80,99 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
       const ctx = canvas.getContext("2d");
       if (ctx) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        setSignatureSvg("");
       }
     }
+    setSignatureSvg("");
+    setIsDrawing(false);
   };
 
-  const handleStartDraw = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    setIsDrawing(true);
+  const getCoordinates = (
+    canvas: HTMLCanvasElement,
+    clientX: number,
+    clientY: number,
+  ) => {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = rect.width > 0 ? canvas.width / rect.width : 1;
+    const scaleY = rect.height > 0 ? canvas.height / rect.height : 1;
+    return {
+      x: (clientX - rect.left) * scaleX,
+      y: (clientY - rect.top) * scaleY,
+    };
+  };
+
+  const startDrawing = (clientX: number, clientY: number) => {
     const canvas = canvasRef.current;
-    if (canvas) {
-      const ctx = canvas.getContext("2d");
-      if (ctx) {
-        const rect = canvas.getBoundingClientRect();
-        ctx.beginPath();
-        ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
-      }
-    }
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    setIsDrawing(true);
+    const coords = getCoordinates(canvas, clientX, clientY);
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = "#38bdf8";
+    ctx.beginPath();
+    ctx.moveTo(coords.x, coords.y);
   };
 
-  const handleDraw = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const draw = (clientX: number, clientY: number) => {
     if (!isDrawing) return;
     const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const coords = getCoordinates(canvas, clientX, clientY);
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = "#38bdf8";
+    ctx.lineTo(coords.x, coords.y);
+    ctx.stroke();
+    setSignatureSvg(canvas.toDataURL());
+  };
+
+  const stopDrawing = () => {
+    if (!isDrawing) return;
+    setIsDrawing(false);
+    const canvas = canvasRef.current;
     if (canvas) {
-      const ctx = canvas.getContext("2d");
-      if (ctx) {
-        const rect = canvas.getBoundingClientRect();
-        ctx.lineWidth = 2;
-        ctx.lineCap = "round";
-        ctx.strokeStyle = "#38bdf8";
-        ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
-        ctx.stroke();
-        setSignatureSvg(canvas.toDataURL());
-      }
+      setSignatureSvg(canvas.toDataURL());
     }
   };
 
-  const handleStopDraw = () => {
-    setIsDrawing(false);
+  // Mouse event handlers
+  const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    e.preventDefault();
+    startDrawing(e.clientX, e.clientY);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    draw(e.clientX, e.clientY);
+  };
+
+  const handleMouseUp = () => {
+    stopDrawing();
+  };
+
+  // Touch event handlers for mobile / smartphones
+  const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    if (e.touches && e.touches.length > 0) {
+      if (e.cancelable) e.preventDefault();
+      const touch = e.touches[0];
+      startDrawing(touch.clientX, touch.clientY);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    if (e.touches && e.touches.length > 0) {
+      if (e.cancelable) e.preventDefault();
+      const touch = e.touches[0];
+      draw(touch.clientX, touch.clientY);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    stopDrawing();
   };
 
   const mutation = useMutation({
@@ -165,7 +233,10 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
                 Confirmer la Livraison
               </h2>
               <p className="text-[11px] text-slate-400">
-                Colis : <span className="text-blue-400 font-bold">{parcel.trackingNumber}</span>
+                Colis :{" "}
+                <span className="text-blue-400 font-bold">
+                  {parcel.trackingNumber}
+                </span>
               </p>
             </div>
           </div>
@@ -182,15 +253,21 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
           onSubmit={(e) => {
             e.preventDefault();
             if (!recipientName.trim()) {
-              setErrorMessage("Le nom complet du réceptionnaire est obligatoire.");
+              setErrorMessage(
+                "Le nom complet du réceptionnaire est obligatoire.",
+              );
               return;
             }
             if (proofType === "DIGITAL_SIGNATURE" && !signatureSvg) {
-              setErrorMessage("Veuillez apposer une signature tactile dans le cadre prévu.");
+              setErrorMessage(
+                "Veuillez apposer une signature tactile dans le cadre prévu.",
+              );
               return;
             }
             if (proofType === "PAPER_POD_PHOTO" && !photoKey.trim()) {
-              setErrorMessage("Veuillez renseigner le nom/clé de la photo du BL cacheté.");
+              setErrorMessage(
+                "Veuillez renseigner le nom/clé de la photo du BL cacheté.",
+              );
               return;
             }
             setErrorMessage(null);
@@ -218,14 +295,19 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
                 </span>
               )}
             </div>
-            <div className="text-slate-200 font-bold text-xs">{parcel.recipientName} ({parcel.recipientPhone})</div>
-            <div className="text-[11px] text-slate-400">{parcel.recipientAddress}, {parcel.recipientCity}</div>
+            <div className="text-slate-200 font-bold text-xs">
+              {parcel.recipientName} ({parcel.recipientPhone})
+            </div>
+            <div className="text-[11px] text-slate-400">
+              {parcel.recipientAddress}, {parcel.recipientCity}
+            </div>
           </div>
 
           {/* Proof Type selector */}
           <div>
             <label className="block text-xs font-medium text-slate-300 mb-1.5">
-              Type de Preuve de Livraison (POD) <span className="text-rose-400">*</span>
+              Type de Preuve de Livraison (POD){" "}
+              <span className="text-rose-400">*</span>
             </label>
             <div className="grid grid-cols-3 gap-2">
               <button
@@ -238,7 +320,9 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
                 }`}
               >
                 <PenTool className="w-4 h-4" />
-                <span className="text-[10px] font-semibold">Signature Tactile</span>
+                <span className="text-[10px] font-semibold">
+                  Signature Tactile
+                </span>
               </button>
 
               <button
@@ -251,7 +335,9 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
                 }`}
               >
                 <Camera className="w-4 h-4" />
-                <span className="text-[10px] font-semibold">Photo BL Cacheté</span>
+                <span className="text-[10px] font-semibold">
+                  Photo BL Cacheté
+                </span>
               </button>
 
               <button
@@ -264,7 +350,9 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
                 }`}
               >
                 <FileCheck className="w-4 h-4" />
-                <span className="text-[10px] font-semibold">Relevé CIN Direct</span>
+                <span className="text-[10px] font-semibold">
+                  Relevé CIN Direct
+                </span>
               </button>
             </div>
           </div>
@@ -273,7 +361,8 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-[11px] font-medium text-slate-300 mb-1">
-                Nom complet du réceptionnaire <span className="text-rose-400">*</span>
+                Nom complet du réceptionnaire{" "}
+                <span className="text-rose-400">*</span>
               </label>
               <input
                 type="text"
@@ -303,7 +392,8 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
             <div>
               <div className="flex items-center justify-between mb-1">
                 <label className="text-[11px] font-medium text-slate-300">
-                  Signature tactile sur écran <span className="text-rose-400">*</span>
+                  Signature tactile sur écran{" "}
+                  <span className="text-rose-400">*</span>
                 </label>
                 <button
                   type="button"
@@ -317,17 +407,24 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
               <div className="border border-slate-800 rounded-xl overflow-hidden bg-slate-950">
                 <canvas
                   ref={canvasRef}
+                  data-testid="signature-canvas"
                   width={440}
-                  height={110}
-                  onMouseDown={handleStartDraw}
-                  onMouseMove={handleDraw}
-                  onMouseUp={handleStopDraw}
-                  onMouseLeave={handleStopDraw}
-                  className="w-full cursor-crosshair touch-none"
+                  height={120}
+                  onMouseDown={handleMouseDown}
+                  onMouseMove={handleMouseMove}
+                  onMouseUp={handleMouseUp}
+                  onMouseLeave={handleMouseUp}
+                  onTouchStart={handleTouchStart}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
+                  onTouchCancel={handleTouchEnd}
+                  style={{ touchAction: "none" }}
+                  className="w-full cursor-crosshair bg-slate-950 block select-none touch-none"
                 />
               </div>
               <span className="text-[10px] text-slate-500 block mt-0.5">
-                Faites signer le client avec son doigt ou un stylet dans le cadre ci-dessus.
+                Faites signer le client avec son doigt ou un stylet dans le
+                cadre ci-dessus.
               </span>
             </div>
           )}
@@ -335,7 +432,8 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
           {proofType === "PAPER_POD_PHOTO" && (
             <div>
               <label className="block text-[11px] font-medium text-slate-300 mb-1">
-                Photo du BL tamponné / cacheté <span className="text-rose-400">*</span>
+                Photo du BL tamponné / cacheté{" "}
+                <span className="text-rose-400">*</span>
               </label>
               <input
                 type="text"
@@ -355,7 +453,8 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
                   Encaissement COD espèces
                 </span>
                 <span className="text-[10px] text-emerald-400/80">
-                  Montant contractuel : {Number(parcel.codAmount).toFixed(2)} MAD
+                  Montant contractuel : {Number(parcel.codAmount).toFixed(2)}{" "}
+                  MAD
                 </span>
               </div>
               <div className="flex items-center gap-1.5">
@@ -364,7 +463,9 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
                   step="0.1"
                   min="0"
                   value={collectedCod}
-                  onChange={(e) => setCollectedCod(parseFloat(e.target.value) || 0)}
+                  onChange={(e) =>
+                    setCollectedCod(parseFloat(e.target.value) || 0)
+                  }
                   className="w-24 px-2.5 py-1.5 bg-slate-900 border border-emerald-700/60 rounded-lg text-xs font-mono font-bold text-emerald-300 text-right focus:outline-none"
                 />
                 <span className="font-mono text-emerald-400 text-xs">MAD</span>
@@ -386,7 +487,11 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
               className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-semibold rounded-xl text-xs flex items-center gap-1.5 transition-colors shadow-md shadow-emerald-500/20"
             >
               <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>{mutation.isPending ? "Validation..." : "Confirmer la Livraison (POD)"}</span>
+              <span>
+                {mutation.isPending
+                  ? "Validation..."
+                  : "Confirmer la Livraison (POD)"}
+              </span>
             </button>
           </div>
         </form>
