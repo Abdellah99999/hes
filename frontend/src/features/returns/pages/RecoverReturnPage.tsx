@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import customFetch from "../../../lib/api-client";
+import { CameraBarcodeScanner } from "../../../components/common/CameraBarcodeScanner";
 import {
   RotateCcw,
   CheckCircle2,
@@ -100,7 +101,8 @@ export const RecoverReturnPage: React.FC = () => {
             <span>Récupérer un Colis Retour (Livreur)</span>
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Enregistrement physique des colis refusés ou à rapatrier (par scan physique ou saisie clavier du BL)
+            Enregistrement physique des colis refusés ou à rapatrier (par scan
+            physique ou saisie clavier du BL)
           </p>
         </div>
       </div>
@@ -152,6 +154,26 @@ export const RecoverReturnPage: React.FC = () => {
         </button>
       </div>
 
+      {/* Real Camera Barcode Scanner in SCAN mode */}
+      {inputMode === "SCAN" && (
+        <div className="space-y-2">
+          <CameraBarcodeScanner
+            onScan={(scannedCode) => {
+              setIdentifier(scannedCode);
+              setFeedback(null);
+            }}
+            onFallback={(msg) => {
+              setInputMode("MANUAL");
+              setFeedback({
+                type: "error",
+                text: msg,
+              });
+            }}
+            onClose={() => setInputMode("MANUAL")}
+          />
+        </div>
+      )}
+
       <form
         onSubmit={handleSubmit}
         className="p-6 bg-slate-900/70 border border-slate-800 rounded-2xl space-y-5 text-xs shadow-xl shadow-black/20"
@@ -179,7 +201,8 @@ export const RecoverReturnPage: React.FC = () => {
             />
           </div>
           <span className="text-[10px] text-slate-500 block mt-1">
-            Recherche immédiate par code-barres BL, référence tracking ou identifiant colis.
+            Recherche immédiate par code-barres BL, référence tracking ou
+            identifiant colis.
           </span>
         </div>
 
@@ -204,11 +227,14 @@ export const RecoverReturnPage: React.FC = () => {
           {isEmergency && (
             <div className="space-y-2 pt-1 border-t border-slate-800">
               <p className="text-[10px] text-amber-400/90">
-                Activez ce mode exceptionnel uniquement si l'étiquette et le BL sont détruits ou absents. Un motif circonstancié est consigné pour le superviseur quai.
+                Activez ce mode exceptionnel uniquement si l'étiquette et le BL
+                sont détruits ou absents. Un motif circonstancié est consigné
+                pour le superviseur quai.
               </p>
               <div>
                 <label className="block text-[11px] font-medium text-slate-300 mb-1">
-                  Motif circonstancié de la procédure d'urgence <span className="text-rose-400">*</span>
+                  Motif circonstancié de la procédure d'urgence{" "}
+                  <span className="text-rose-400">*</span>
                 </label>
                 <textarea
                   rows={2}
@@ -229,7 +255,11 @@ export const RecoverReturnPage: React.FC = () => {
             className="px-6 py-2.5 bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white font-semibold rounded-xl text-xs flex items-center gap-2 transition-colors shadow-md shadow-rose-500/20"
           >
             <RotateCcw className="w-4 h-4" />
-            <span>{mutation.isPending ? "Validation..." : "Confirmer la Récupération du Retour"}</span>
+            <span>
+              {mutation.isPending
+                ? "Validation..."
+                : "Confirmer la Récupération du Retour"}
+            </span>
           </button>
         </div>
       </form>
