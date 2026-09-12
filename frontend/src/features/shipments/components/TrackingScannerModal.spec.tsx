@@ -48,6 +48,10 @@ describe("TrackingScannerModal: Camera Barcode Scanner & Unified Integration Tes
       configurable: true,
       writable: true,
     });
+
+    window.BarcodeDetector = vi.fn().mockImplementation(() => ({
+      detect: vi.fn().mockResolvedValue([]),
+    })) as unknown as typeof window.BarcodeDetector;
   });
 
   afterEach(() => {

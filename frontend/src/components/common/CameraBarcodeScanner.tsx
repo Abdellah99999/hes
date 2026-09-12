@@ -142,6 +142,21 @@ export const CameraBarcodeScanner: React.FC<CameraBarcodeScannerProps> = ({
       return;
     }
 
+    // 3. Check native BarcodeDetector support (Safari/iOS unsupported)
+    const hasBarcodeDetector =
+      typeof window !== "undefined" &&
+      "BarcodeDetector" in window &&
+      typeof window.BarcodeDetector === "function";
+
+    if (!hasBarcodeDetector) {
+      const msg =
+        "Détection optique automatique non supportée sur ce navigateur (Safari/iOS). Saisie manuelle activée.";
+      setStatus("ERROR");
+      setErrorMessage(msg);
+      if (onFallbackRef.current) onFallbackRef.current(msg);
+      return;
+    }
+
     setStatus("INITIALIZING");
     setErrorMessage(null);
 

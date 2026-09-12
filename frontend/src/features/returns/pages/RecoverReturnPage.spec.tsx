@@ -46,6 +46,10 @@ describe("Phase 10 Frontend Tests: Recover Return (Manual Entry without Scan & E
       configurable: true,
       writable: true,
     });
+
+    window.BarcodeDetector = vi.fn().mockImplementation(() => ({
+      detect: vi.fn().mockResolvedValue([]),
+    })) as unknown as typeof window.BarcodeDetector;
   });
 
   it("Manual Mode: Allows typing BL number on keyboard and submits with isScan = false", async () => {

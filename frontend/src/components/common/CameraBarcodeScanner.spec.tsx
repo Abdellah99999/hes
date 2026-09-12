@@ -43,6 +43,11 @@ describe("CameraBarcodeScanner: Core Security, Permission, Stream Cleanup & Dete
       configurable: true,
       writable: true,
     });
+
+    // Mock native BarcodeDetector by default (standard Chromium/Android/PWA support)
+    window.BarcodeDetector = vi.fn().mockImplementation(() => ({
+      detect: vi.fn().mockResolvedValue([]),
+    })) as unknown as typeof window.BarcodeDetector;
   });
 
   afterEach(() => {
@@ -194,5 +199,32 @@ describe("CameraBarcodeScanner: Core Security, Permission, Stream Cleanup & Dete
     expect(onScan).toHaveBeenCalledWith("HES-RAB-2026-000099-01");
     expect(navigator.vibrate).toHaveBeenCalledWith(100);
     expect(mockTrack1.stop).toHaveBeenCalled();
+  });
+
+  it("6. Safari/iOS Browser Compatibility: gracefully handles absence of window.BarcodeDetector with immediate fallback", async () => {
+    const onFallback = vi.fn();
+    const onScan = vi.fn();
+
+    // Simulate Safari / iOS environment where window.BarcodeDetector does NOT exist
+    delete (window as unknown as { BarcodeDetector?: unknown }).BarcodeDetector;
+
+    render(<CameraBarcodeScanner onScan={onScan} onFallback={onFallback} />);
+
+    // Expect immediate explicit message, no screen freeze or silent failure
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          "Détection optique automatique non supportée sur ce navigateur (Safari/iOS). Saisie manuelle activée.",
+        ),
+      ).toBeInTheDocument();
+    });
+
+    expect(onFallback).toHaveBeenCalledWith(
+      "Détection optique automatique non supportée sur ce navigateur (Safari/iOS). Saisie manuelle activée.",
+    );
+
+    // Camera stream should NOT even be requested on unsupported Safari to save battery and permissions
+    expect(navigator.mediaDevices.getUserMedia).not.toHaveBeenCalled();
+    expect(onScan).not.toHaveBeenCalled();
   });
 });
