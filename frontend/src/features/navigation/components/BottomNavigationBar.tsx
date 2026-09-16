@@ -35,7 +35,9 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
       aria-label="Navigation mobile principale"
       data-testid="bottom-navigation-bar"
       className="fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-xl border-t border-slate-800 px-3 py-1.5 flex items-center justify-around md:hidden shadow-2xl shadow-black/80"
-      style={{ paddingBottom: "max(0.375rem, env(safe-area-inset-bottom))" }}
+      style={{
+        paddingBottom: "calc(0.5rem + env(safe-area-inset-bottom, 0px))",
+      }}
     >
       {isCourier && (
         <>

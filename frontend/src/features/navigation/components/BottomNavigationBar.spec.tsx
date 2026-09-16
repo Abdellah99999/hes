@@ -109,4 +109,17 @@ describe("BottomNavigationBar (Priorité 4)", () => {
 
     expect(container.firstChild).toBeNull();
   });
+
+  it("applies calc with env(safe-area-inset-bottom) to prevent gesture bar occlusion on modern iPhones", () => {
+    render(
+      <BottomNavigationBar
+        role="COURIER"
+        currentView="my-delivery-runs"
+        setCurrentView={vi.fn()}
+      />,
+    );
+
+    const nav = screen.getByTestId("bottom-navigation-bar");
+    expect(nav.getAttribute("style")).toContain("safe-area-inset-bottom");
+  });
 });

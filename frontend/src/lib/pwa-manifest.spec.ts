@@ -93,6 +93,7 @@ describe("Lighthouse PWA Criteria & Manifest Validation", () => {
     expect(indexHtml).toContain(
       '<link rel="apple-touch-icon" href="/icons/icon-192x192.png" />',
     );
+    expect(indexHtml).toContain("viewport-fit=cover");
   });
 
   it("4. Service Worker file is present and includes strict API isolation rules", () => {
