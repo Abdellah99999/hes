@@ -67,3 +67,10 @@ backups/
 # Test caches & Python
 .pytest_cache/
 __pycache__/
+
+# Lighthouse temporary reports
+*.report.json
+*.report.html
+lighthouse-report*
+!docs/qa/lighthouse/*
+
