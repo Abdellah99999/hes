@@ -220,10 +220,15 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/85 backdrop-blur-sm overflow-y-auto"
     >
-      <div className="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden my-6">
-        <div className="px-6 py-4 border-b border-slate-800 bg-slate-900/90 flex items-center justify-between">
+      <div className="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden max-h-[92vh] sm:max-h-[90vh] flex flex-col my-0 sm:my-6 animate-in slide-in-from-bottom duration-200">
+        {/* Mobile Pull / Drag Indicator */}
+        <div className="sm:hidden flex justify-center pt-3 pb-1 shrink-0 bg-slate-900">
+          <div className="w-12 h-1.5 bg-slate-700 rounded-full" />
+        </div>
+
+        <div className="px-5 sm:px-6 py-3.5 sm:py-4 border-b border-slate-800 bg-slate-900/95 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center">
               <FileCheck className="w-4 h-4" />
@@ -243,9 +248,10 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
 
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors"
+            aria-label="Fermer"
+            className="w-11 h-11 min-h-[44px] min-w-[44px] flex items-center justify-center text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-xl transition-colors"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
@@ -273,7 +279,7 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
             setErrorMessage(null);
             mutation.mutate();
           }}
-          className="p-6 space-y-4 text-xs"
+          className="p-4 sm:p-6 space-y-4 text-xs overflow-y-auto flex-1"
         >
           {errorMessage && (
             <div
@@ -313,14 +319,14 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
               <button
                 type="button"
                 onClick={() => setProofType("DIGITAL_SIGNATURE")}
-                className={`p-2.5 rounded-xl border text-center transition-colors flex flex-col items-center gap-1 ${
+                className={`min-h-[48px] p-2.5 rounded-xl border text-center transition-colors flex flex-col items-center justify-center gap-1 ${
                   proofType === "DIGITAL_SIGNATURE"
-                    ? "bg-blue-600/20 border-blue-500 text-blue-300"
+                    ? "bg-blue-600/20 border-blue-500 text-blue-300 ring-1 ring-blue-500/40"
                     : "bg-slate-950/40 border-slate-800 text-slate-400 hover:text-slate-200"
                 }`}
               >
-                <PenTool className="w-4 h-4" />
-                <span className="text-[10px] font-semibold">
+                <PenTool className="w-4 h-4 shrink-0" />
+                <span className="text-[10px] font-semibold leading-tight">
                   Signature Tactile
                 </span>
               </button>
@@ -328,14 +334,14 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
               <button
                 type="button"
                 onClick={() => setProofType("PAPER_POD_PHOTO")}
-                className={`p-2.5 rounded-xl border text-center transition-colors flex flex-col items-center gap-1 ${
+                className={`min-h-[48px] p-2.5 rounded-xl border text-center transition-colors flex flex-col items-center justify-center gap-1 ${
                   proofType === "PAPER_POD_PHOTO"
-                    ? "bg-blue-600/20 border-blue-500 text-blue-300"
+                    ? "bg-blue-600/20 border-blue-500 text-blue-300 ring-1 ring-blue-500/40"
                     : "bg-slate-950/40 border-slate-800 text-slate-400 hover:text-slate-200"
                 }`}
               >
-                <Camera className="w-4 h-4" />
-                <span className="text-[10px] font-semibold">
+                <Camera className="w-4 h-4 shrink-0" />
+                <span className="text-[10px] font-semibold leading-tight">
                   Photo BL Cacheté
                 </span>
               </button>
@@ -343,14 +349,14 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
               <button
                 type="button"
                 onClick={() => setProofType("RECIPIENT_IDENTITY")}
-                className={`p-2.5 rounded-xl border text-center transition-colors flex flex-col items-center gap-1 ${
+                className={`min-h-[48px] p-2.5 rounded-xl border text-center transition-colors flex flex-col items-center justify-center gap-1 ${
                   proofType === "RECIPIENT_IDENTITY"
-                    ? "bg-blue-600/20 border-blue-500 text-blue-300"
+                    ? "bg-blue-600/20 border-blue-500 text-blue-300 ring-1 ring-blue-500/40"
                     : "bg-slate-950/40 border-slate-800 text-slate-400 hover:text-slate-200"
                 }`}
               >
-                <FileCheck className="w-4 h-4" />
-                <span className="text-[10px] font-semibold">
+                <FileCheck className="w-4 h-4 shrink-0" />
+                <span className="text-[10px] font-semibold leading-tight">
                   Relevé CIN Direct
                 </span>
               </button>
@@ -369,7 +375,7 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
                 value={recipientName}
                 onChange={(e) => setRecipientName(e.target.value)}
                 placeholder="Ex: Yassine Mansouri (ou mandataire)"
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100 focus:outline-none focus:border-blue-500"
+                className="w-full min-h-[44px] px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100 focus:outline-none focus:border-blue-500"
               />
             </div>
 
@@ -382,7 +388,7 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
                 value={recipientCin}
                 onChange={(e) => setRecipientCin(e.target.value)}
                 placeholder="Ex: BE890123"
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-slate-100 focus:outline-none focus:border-blue-500"
+                className="w-full min-h-[44px] px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-slate-100 focus:outline-none focus:border-blue-500"
               />
             </div>
           </div>
@@ -390,7 +396,7 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
           {/* POD specific input */}
           {proofType === "DIGITAL_SIGNATURE" && (
             <div>
-              <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center justify-between mb-1.5">
                 <label className="text-[11px] font-medium text-slate-300">
                   Signature tactile sur écran{" "}
                   <span className="text-rose-400">*</span>
@@ -398,9 +404,9 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
                 <button
                   type="button"
                   onClick={clearCanvas}
-                  className="text-[10px] text-slate-400 hover:text-rose-400 flex items-center gap-1"
+                  className="min-h-[36px] px-2.5 py-1 text-[11px] text-slate-400 hover:text-rose-400 flex items-center gap-1 rounded-lg hover:bg-slate-800 transition-colors"
                 >
-                  <RotateCcw className="w-3 h-3" />
+                  <RotateCcw className="w-3.5 h-3.5" />
                   <span>Effacer</span>
                 </button>
               </div>
@@ -409,7 +415,7 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
                   ref={canvasRef}
                   data-testid="signature-canvas"
                   width={440}
-                  height={120}
+                  height={130}
                   onMouseDown={handleMouseDown}
                   onMouseMove={handleMouseMove}
                   onMouseUp={handleMouseUp}
@@ -422,7 +428,7 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
                   className="w-full cursor-crosshair bg-slate-950 block select-none touch-none"
                 />
               </div>
-              <span className="text-[10px] text-slate-500 block mt-0.5">
+              <span className="text-[10px] text-slate-500 block mt-1">
                 Faites signer le client avec son doigt ou un stylet dans le
                 cadre ci-dessus.
               </span>
@@ -440,14 +446,14 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
                 value={photoKey}
                 onChange={(e) => setPhotoKey(e.target.value)}
                 placeholder="Ex: pod/bl-cachete-20260903.jpg"
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-slate-100 focus:outline-none focus:border-blue-500"
+                className="w-full min-h-[44px] px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-slate-100 focus:outline-none focus:border-blue-500"
               />
             </div>
           )}
 
           {/* COD collected */}
           {parcel.codAmount && Number(parcel.codAmount) > 0 && (
-            <div className="p-3 bg-emerald-950/20 border border-emerald-900/50 rounded-xl flex items-center justify-between">
+            <div className="p-3 bg-emerald-950/20 border border-emerald-900/50 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
               <div>
                 <span className="text-xs font-bold text-emerald-300 block">
                   Encaissement COD espèces
@@ -457,7 +463,7 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
                   MAD
                 </span>
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5 self-end sm:self-auto">
                 <input
                   type="number"
                   step="0.1"
@@ -466,27 +472,27 @@ export const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
                   onChange={(e) =>
                     setCollectedCod(parseFloat(e.target.value) || 0)
                   }
-                  className="w-24 px-2.5 py-1.5 bg-slate-900 border border-emerald-700/60 rounded-lg text-xs font-mono font-bold text-emerald-300 text-right focus:outline-none"
+                  className="w-28 min-h-[44px] px-3 py-2 bg-slate-900 border border-emerald-700/60 rounded-xl text-xs font-mono font-bold text-emerald-300 text-right focus:outline-none"
                 />
                 <span className="font-mono text-emerald-400 text-xs">MAD</span>
               </div>
             </div>
           )}
 
-          <div className="flex justify-end gap-3 pt-3 border-t border-slate-800">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2.5 sm:gap-3 pt-3 border-t border-slate-800 shrink-0">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border border-slate-800 rounded-xl text-slate-400 hover:text-slate-200 text-xs"
+              className="w-full sm:w-auto min-h-[44px] px-4 py-2.5 border border-slate-800 rounded-xl text-slate-400 hover:text-slate-200 text-xs font-semibold flex items-center justify-center transition-colors"
             >
               Annuler
             </button>
             <button
               type="submit"
               disabled={mutation.isPending}
-              className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-semibold rounded-xl text-xs flex items-center gap-1.5 transition-colors shadow-md shadow-emerald-500/20"
+              className="w-full sm:w-auto min-h-[44px] px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 active:scale-95 disabled:opacity-50 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-emerald-500/20"
             >
-              <CheckCircle2 className="w-3.5 h-3.5" />
+              <CheckCircle2 className="w-4 h-4 shrink-0" />
               <span>
                 {mutation.isPending
                   ? "Validation..."

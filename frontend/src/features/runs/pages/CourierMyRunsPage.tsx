@@ -81,40 +81,44 @@ export const CourierMyRunsPage: React.FC = () => {
     queryFn: async () => {
       const params = new URLSearchParams();
       if (selectedShift) params.append("shift", selectedShift);
-      return customFetch<{ data: CourierDeliveryRun[]; meta: { total: number } }>(
-        `/runs/my-runs?${params.toString()}`,
-      );
+      return customFetch<{
+        data: CourierDeliveryRun[];
+        meta: { total: number };
+      }>(`/runs/my-runs?${params.toString()}`);
     },
   });
 
   const runs = data?.data || [];
 
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-6">
+    <div className="w-full max-w-none md:max-w-5xl mx-auto p-3 sm:p-6 space-y-4 sm:space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-3">
-            <div className="p-2.5 bg-blue-600/10 text-blue-400 border border-blue-500/20 rounded-xl">
-              <Bike className="w-6 h-6" />
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-100 flex items-center gap-2.5 sm:gap-3">
+            <div className="p-2 sm:p-2.5 bg-blue-600/10 text-blue-400 border border-blue-500/20 rounded-xl">
+              <Bike className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <span>Mes Missions & Tournées de Livraison</span>
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Feuille de route personnelle du livreur : séquence ordonnée des colis à livrer et encaissements COD
+            Feuille de route personnelle du livreur : séquence ordonnée des
+            colis à livrer et encaissements COD
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-blue-950/40 border border-blue-800 text-blue-300 rounded-xl text-xs">
             <ShieldCheck className="w-4 h-4 text-blue-400" />
-            <span>Livreur : {user?.firstName} {user?.lastName}</span>
+            <span>
+              Livreur : {user?.firstName} {user?.lastName}
+            </span>
           </div>
 
           <select
             value={selectedShift}
             onChange={(e) => setSelectedShift(e.target.value)}
-            className="px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-300 focus:outline-none focus:border-blue-500"
+            className="w-full sm:w-auto min-h-[44px] px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-300 focus:outline-none focus:border-blue-500"
           >
             <option value="">Tous les créneaux</option>
             <option value="MORNING">Matin</option>
@@ -141,25 +145,29 @@ export const CourierMyRunsPage: React.FC = () => {
       )}
 
       {!isLoading && runs.length === 0 && (
-        <div className="p-12 bg-slate-900/40 border border-slate-800 rounded-2xl text-center space-y-3">
+        <div className="p-8 sm:p-12 bg-slate-900/40 border border-slate-800 rounded-2xl text-center space-y-3">
           <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto" />
-          <h2 className="text-base font-bold text-slate-200">Aucune tournée assignée</h2>
+          <h2 className="text-base font-bold text-slate-200">
+            Aucune tournée assignée
+          </h2>
           <p className="text-xs text-slate-500 max-w-sm mx-auto">
-            Vous n'avez aucune tournée en cours pour le moment. Votre superviseur d'agence publiera vos tournées dès que le chargement sera prêt.
+            Vous n'avez aucune tournée en cours pour le moment. Votre
+            superviseur d'agence publiera vos tournées dès que le chargement
+            sera prêt.
           </p>
         </div>
       )}
 
       {!isLoading && (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {runs.map((run) => (
             <div
               key={run.id}
-              className="p-6 bg-slate-900/70 border border-slate-800 rounded-2xl space-y-5 shadow-xl shadow-black/20"
+              className="p-4 sm:p-6 bg-slate-900/70 border border-slate-800 rounded-2xl space-y-4 sm:space-y-5 shadow-xl shadow-black/20"
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
                 <div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className="font-mono font-bold text-blue-400 text-base">
                       {run.runNumber}
                     </span>
@@ -171,19 +179,26 @@ export const CourierMyRunsPage: React.FC = () => {
                     </span>
                   </div>
                   <span className="text-xs text-slate-400 block mt-1">
-                    Zone principale : <strong className="text-slate-200">{run.zone?.name || "Non sectorisée"}</strong>
+                    Zone principale :{" "}
+                    <strong className="text-slate-200">
+                      {run.zone?.name || "Non sectorisée"}
+                    </strong>
                   </span>
                 </div>
 
-                <div className="flex items-center gap-4 text-xs">
-                  <div className="text-right">
-                    <span className="text-slate-500 text-[10px] block">Colis à livrer</span>
+                <div className="flex items-center justify-between sm:justify-end gap-4 text-xs bg-slate-950/40 sm:bg-transparent p-2.5 sm:p-0 rounded-xl sm:rounded-none">
+                  <div className="text-left sm:text-right">
+                    <span className="text-slate-500 text-[10px] block">
+                      Colis à livrer
+                    </span>
                     <span className="font-mono font-bold text-slate-200 text-sm">
                       {run.totalParcels} colis
                     </span>
                   </div>
                   <div className="text-right border-l border-slate-800 pl-4">
-                    <span className="text-slate-500 text-[10px] block">COD total</span>
+                    <span className="text-slate-500 text-[10px] block">
+                      COD total
+                    </span>
                     <span className="font-mono font-bold text-emerald-400 text-sm">
                       {Number(run.totalCodToCollect || 0).toFixed(2)} MAD
                     </span>
@@ -195,52 +210,75 @@ export const CourierMyRunsPage: React.FC = () => {
               <div className="space-y-3">
                 <h3 className="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-2">
                   <Package className="w-3.5 h-3.5 text-blue-400" />
-                  <span>Ordre de livraison recommandé ({run.items.length} adresses)</span>
+                  <span>
+                    Ordre de livraison recommandé ({run.items.length} adresses)
+                  </span>
                 </h3>
 
-                <div className="space-y-2">
+                <div className="space-y-3 sm:space-y-2">
                   {run.items.map((it) => (
                     <div
                       key={it.id}
-                      className="p-3.5 bg-slate-950/50 border border-slate-850 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
+                      className="p-3.5 sm:p-4 bg-slate-950/50 border border-slate-850 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
                     >
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="w-6 h-6 rounded-lg bg-blue-600/20 text-blue-400 flex items-center justify-center font-mono font-bold text-xs">
+                      {/* Recipient & Address Info */}
+                      <div className="space-y-1.5 flex-1 min-w-0">
+                        <div className="flex items-start gap-2.5">
+                          <span className="w-7 h-7 shrink-0 rounded-lg bg-blue-600/20 text-blue-400 flex items-center justify-center font-mono font-bold text-xs">
                             {it.sequenceOrder}
                           </span>
-                          <span className="font-mono font-bold text-slate-200">
-                            {it.parcel.trackingNumber}
-                          </span>
-                          <span className="text-slate-300 font-semibold">
-                            — {it.parcel.shipment.recipientName}
-                          </span>
-                        </div>
-
-                        <div className="flex items-center gap-1.5 text-slate-400 text-[11px] pl-8">
-                          <MapPin className="w-3 h-3 text-rose-400 shrink-0" />
-                          <span>{it.parcel.shipment.recipientAddress}, {it.parcel.shipment.recipientCity}</span>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              <span className="font-mono font-bold text-slate-200">
+                                {it.parcel.trackingNumber}
+                              </span>
+                              <span className="text-slate-300 font-semibold truncate">
+                                — {it.parcel.shipment.recipientName}
+                              </span>
+                            </div>
+                            <div className="flex items-start gap-1.5 text-slate-400 text-[11px] mt-1">
+                              <MapPin className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5" />
+                              <span className="break-words">
+                                {it.parcel.shipment.recipientAddress},{" "}
+                                {it.parcel.shipment.recipientCity}
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between sm:justify-end gap-4 pl-8 sm:pl-0 shrink-0">
-                        <div className="flex items-center gap-1 text-emerald-400 font-mono font-bold">
-                          <Phone className="w-3.5 h-3.5 text-emerald-500" />
-                          <a href={`tel:${it.parcel.shipment.recipientPhone}`} className="hover:underline">
-                            {it.parcel.shipment.recipientPhone}
+                      {/* Phone & COD info on mobile */}
+                      <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2.5 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-850/60">
+                        <div className="flex items-center gap-2">
+                          <a
+                            href={`tel:${it.parcel.shipment.recipientPhone}`}
+                            className="min-h-[44px] px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 text-emerald-400 font-mono font-bold text-xs flex items-center gap-1.5 transition-colors"
+                            title="Appeler le destinataire"
+                          >
+                            <Phone className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                            <span>{it.parcel.shipment.recipientPhone}</span>
                           </a>
+
+                          {it.parcel.shipment.codAmount &&
+                          Number(it.parcel.shipment.codAmount) > 0 ? (
+                            <div className="min-h-[44px] px-3 py-2 rounded-xl bg-amber-950/60 border border-amber-800 text-amber-300 font-mono font-bold text-xs flex items-center gap-1.5 shrink-0">
+                              <Banknote className="w-3.5 h-3.5 shrink-0" />
+                              <span>
+                                {Number(it.parcel.shipment.codAmount).toFixed(
+                                  2,
+                                )}{" "}
+                                MAD
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="text-slate-500 text-[11px] px-2 py-1">
+                              Payé en ligne
+                            </span>
+                          )}
                         </div>
 
-                        {it.parcel.shipment.codAmount && Number(it.parcel.shipment.codAmount) > 0 ? (
-                          <div className="px-2.5 py-1 rounded-lg bg-amber-950/60 border border-amber-800 text-amber-300 font-mono font-bold text-xs flex items-center gap-1">
-                            <Banknote className="w-3.5 h-3.5" />
-                            <span>{Number(it.parcel.shipment.codAmount).toFixed(2)} MAD</span>
-                          </div>
-                        ) : (
-                          <span className="text-slate-500 text-[11px]">Payé en ligne</span>
-                        )}
-
-                        <div className="flex items-center gap-1.5">
+                        {/* Action buttons with minimum 44px touch target and clear spacing */}
+                        <div className="grid grid-cols-3 gap-2.5 w-full sm:w-auto sm:flex sm:items-center sm:gap-2">
                           <button
                             type="button"
                             title="Lancer la navigation Google Maps"
@@ -251,9 +289,9 @@ export const CourierMyRunsPage: React.FC = () => {
                                 city: it.parcel.shipment.recipientCity,
                               })
                             }
-                            className="px-2.5 py-1 bg-blue-600/90 hover:bg-blue-500 text-white font-semibold rounded-lg text-[11px] flex items-center gap-1 transition-colors shadow-sm"
+                            className="min-h-[44px] min-w-[44px] px-3 py-2.5 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm"
                           >
-                            <Navigation className="w-3 h-3" />
+                            <Navigation className="w-3.5 h-3.5 shrink-0" />
                             <span>Itinéraire</span>
                           </button>
 
@@ -264,15 +302,17 @@ export const CourierMyRunsPage: React.FC = () => {
                                 id: it.parcel.id,
                                 trackingNumber: it.parcel.trackingNumber,
                                 recipientName: it.parcel.shipment.recipientName,
-                                recipientPhone: it.parcel.shipment.recipientPhone,
-                                recipientAddress: it.parcel.shipment.recipientAddress,
+                                recipientPhone:
+                                  it.parcel.shipment.recipientPhone,
+                                recipientAddress:
+                                  it.parcel.shipment.recipientAddress,
                                 recipientCity: it.parcel.shipment.recipientCity,
                                 codAmount: it.parcel.shipment.codAmount,
                               })
                             }
-                            className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg text-[11px] flex items-center gap-1 transition-colors shadow-sm"
+                            className="min-h-[44px] min-w-[44px] px-3 py-2.5 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm"
                           >
-                            <FileCheck className="w-3 h-3" />
+                            <FileCheck className="w-3.5 h-3.5 shrink-0" />
                             <span>Livré</span>
                           </button>
 
@@ -283,14 +323,15 @@ export const CourierMyRunsPage: React.FC = () => {
                                 id: it.parcel.id,
                                 trackingNumber: it.parcel.trackingNumber,
                                 recipientName: it.parcel.shipment.recipientName,
-                                recipientAddress: it.parcel.shipment.recipientAddress,
+                                recipientAddress:
+                                  it.parcel.shipment.recipientAddress,
                                 recipientCity: it.parcel.shipment.recipientCity,
                                 codAmount: it.parcel.shipment.codAmount,
                               })
                             }
-                            className="px-2.5 py-1 bg-rose-950 hover:bg-rose-900 border border-rose-800 text-rose-300 font-semibold rounded-lg text-[11px] flex items-center gap-1 transition-colors"
+                            className="min-h-[44px] min-w-[44px] px-3 py-2.5 bg-rose-950/80 hover:bg-rose-900 border border-rose-800 active:scale-95 text-rose-300 font-semibold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all"
                           >
-                            <Ban className="w-3 h-3 text-rose-400" />
+                            <Ban className="w-3.5 h-3.5 text-rose-400 shrink-0" />
                             <span>Refus</span>
                           </button>
                         </div>
