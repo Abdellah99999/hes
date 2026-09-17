@@ -1,4 +1,5 @@
 import { Injectable, LoggerService, LogLevel } from "@nestjs/common";
+import { getRequestId } from "../context/request-context.storage";
 
 const SENSITIVE_KEYS = new Set([
   "password",
@@ -85,11 +86,13 @@ export class StructuredLoggerService implements LoggerService {
     context?: string,
     extra?: Record<string, unknown>,
   ): void {
+    const autoRequestId = getRequestId();
     const entry: Record<string, unknown> = {
       level,
       time: new Date().toISOString(),
       pid: this.pid,
       app: this.appName,
+      ...(autoRequestId ? { requestId: autoRequestId } : {}),
       context: context || this.context || "Application",
       msg: typeof message === "string" ? message : redactSensitiveData(message),
     };

@@ -115,5 +115,49 @@ describe("Observability & Correlation ID", () => {
       expect(parsed.msg).toBe("Connection failure");
       expect(parsed.trace).toBe("Error: Redis timeout");
     });
+
+    it("should not contain requestId when logged outside HTTP request context (e.g. Bootstrap)", () => {
+      logger.log("Application started standalone", "Bootstrap");
+
+      expect(stdoutSpy).toHaveBeenCalledTimes(1);
+      const logLine = stdoutSpy.mock.calls[0][0];
+      const parsed = JSON.parse(logLine.trim());
+
+      expect(parsed.msg).toBe("Application started standalone");
+      expect(parsed.requestId).toBeUndefined();
+    });
+
+    it("should automatically inject requestId from AsyncLocalStorage into logs emitted from a deep use case", (done) => {
+      const middleware = new CorrelationIdMiddleware();
+      const customRequestId = "req-uuid-trace-88888";
+      const req: Partial<Request> = {
+        headers: { "x-request-id": customRequestId },
+      };
+      const res: Partial<Response> = {
+        setHeader: jest.fn(),
+      };
+
+      // Middleware handles the request and wraps execution in requestContextStorage
+      middleware.use(req as Request, res as Response, () => {
+        // Deep service / use case simulation (e.g., inside EventBusService or a domain service)
+        const deepServiceLogger = new StructuredLoggerService(
+          "DeepEventBusService",
+        );
+
+        // Async tick to verify propagation across asynchronous event loop boundaries
+        Promise.resolve().then(() => {
+          deepServiceLogger.log("Domain event published to queue", "EventBus");
+
+          expect(stdoutSpy).toHaveBeenCalledTimes(1);
+          const logLine = stdoutSpy.mock.calls[0][0];
+          const parsed = JSON.parse(logLine.trim());
+
+          expect(parsed.context).toBe("EventBus");
+          expect(parsed.msg).toBe("Domain event published to queue");
+          expect(parsed.requestId).toBe(customRequestId);
+          done();
+        });
+      });
+    });
   });
 });
