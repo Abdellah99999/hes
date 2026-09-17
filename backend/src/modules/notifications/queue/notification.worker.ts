@@ -1,4 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
 import { PrismaService } from "../../../prisma/prisma.service";
 import { NotificationQueueService } from "./notification-queue.service";
 import {
@@ -9,6 +10,7 @@ import {
 import { PushNotificationProvider } from "../providers/push-notification.provider";
 import { EmailNotificationProvider } from "../providers/email-notification.provider";
 import { WhatsappSmsProviderStub } from "../providers/whatsapp-sms.provider.stub";
+import { requestContextStorage } from "../../../common/context/request-context.storage";
 
 @Injectable()
 export class NotificationWorker {
@@ -35,6 +37,20 @@ export class NotificationWorker {
   }
 
   async handleNotification(job: NotificationPayload): Promise<void> {
+    const correlationId =
+      job.correlationId ||
+      (job.metadata?.correlationId as string) ||
+      (job.metadata?.requestId as string);
+
+    if (correlationId) {
+      return requestContextStorage.run({ requestId: correlationId }, () =>
+        this.executeNotification(job),
+      );
+    }
+    return this.executeNotification(job);
+  }
+
+  private async executeNotification(job: NotificationPayload): Promise<void> {
     const provider = this.providers.find((p) => p.supports(job.channel));
 
     if (!provider) {
@@ -45,7 +61,11 @@ export class NotificationWorker {
           data: {
             status: NotificationStatus.FAILED,
             lastError: "Unsupported channel",
-          } as any,
+            metadata: {
+              ...(job.metadata || {}),
+              lastError: "Unsupported channel",
+            },
+          } as unknown as Prisma.NotificationUpdateInput,
         });
       }
       return;
@@ -93,7 +113,12 @@ export class NotificationWorker {
             status: NotificationStatus.FAILED,
             retryCount: currentRetries,
             lastError: error,
-          } as any,
+            metadata: {
+              ...(job.metadata || {}),
+              retryCount: currentRetries,
+              lastError: error,
+            },
+          } as unknown as Prisma.NotificationUpdateInput,
         });
       }
       return;
@@ -108,7 +133,15 @@ export class NotificationWorker {
     if (job.notificationId) {
       await this.prisma.notification.update({
         where: { id: job.notificationId },
-        data: { retryCount: currentRetries, lastError: error } as any,
+        data: {
+          retryCount: currentRetries,
+          lastError: error,
+          metadata: {
+            ...(job.metadata || {}),
+            retryCount: currentRetries,
+            lastError: error,
+          },
+        } as unknown as Prisma.NotificationUpdateInput,
       });
     }
 

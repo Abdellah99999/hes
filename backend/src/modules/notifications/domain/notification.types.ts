@@ -10,6 +10,7 @@ export interface NotificationPayload {
   body: string;
   channel: NotificationChannel;
   metadata?: Record<string, unknown>;
+  correlationId?: string;
   retryCount?: number;
 }
 

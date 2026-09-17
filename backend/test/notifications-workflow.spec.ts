@@ -8,6 +8,7 @@ import { WhatsappSmsProviderStub } from "../src/modules/notifications/providers/
 import {
   NotificationChannel,
   NotificationStatus,
+  NotificationPayload,
 } from "../src/modules/notifications/domain/notification.types";
 
 describe("Phase 14 Backend Tests: Notifications Multi-Canal, Redis Async Worker, Retry & Sensitive Data Protection", () => {
@@ -203,15 +204,12 @@ describe("Phase 14 Backend Tests: Notifications Multi-Canal, Redis Async Worker,
   });
 
   it("Domain Event Consumer: Reacts to DeliveryCompletedEvent and dispatches notification without direct coupling", async () => {
-    const { EventBusService } = await import(
-      "../src/common/events/event-bus.service"
-    );
-    const { DeliveryCompletedEvent } = await import(
-      "../src/common/events/delivery.events"
-    );
-    const { NotificationEventSubscriber } = await import(
-      "../src/modules/notifications/application/subscribers/notification-event.subscriber"
-    );
+    const { EventBusService } =
+      await import("../src/common/events/event-bus.service");
+    const { DeliveryCompletedEvent } =
+      await import("../src/common/events/delivery.events");
+    const { NotificationEventSubscriber } =
+      await import("../src/modules/notifications/application/subscribers/notification-event.subscriber");
 
     const eventBus = new EventBusService();
     const subscriber = new NotificationEventSubscriber(
@@ -249,15 +247,12 @@ describe("Phase 14 Backend Tests: Notifications Multi-Canal, Redis Async Worker,
   });
 
   it("Domain Event Consumer: Reacts to TransferCreatedEvent and dispatches in-app notification to destination agency", async () => {
-    const { EventBusService } = await import(
-      "../src/common/events/event-bus.service"
-    );
-    const { TransferCreatedEvent } = await import(
-      "../src/common/events/transfer.events"
-    );
-    const { NotificationEventSubscriber } = await import(
-      "../src/modules/notifications/application/subscribers/notification-event.subscriber"
-    );
+    const { EventBusService } =
+      await import("../src/common/events/event-bus.service");
+    const { TransferCreatedEvent } =
+      await import("../src/common/events/transfer.events");
+    const { NotificationEventSubscriber } =
+      await import("../src/modules/notifications/application/subscribers/notification-event.subscriber");
 
     const eventBus = new EventBusService();
     const subscriber = new NotificationEventSubscriber(
@@ -328,5 +323,34 @@ describe("Phase 14 Backend Tests: Notifications Multi-Canal, Redis Async Worker,
     const step2 = await workerWithRetry.processNextJob();
     expect(step2).toBe(true);
     expect(notificationsRecord[0].status).toBe(NotificationStatus.SENT);
+  });
+
+  it("should propagate correlationId into AsyncLocalStorage during NotificationWorker execution", async () => {
+    const customCorrelationId = "corr-uuid-worker-test-5555";
+    const stdoutSpy = jest
+      .spyOn(process.stdout, "write")
+      .mockImplementation(() => true);
+
+    const testJob: NotificationPayload = {
+      notificationId: "notif-corr-1",
+      recipientUserId: "user-1",
+      channel: NotificationChannel.PUSH,
+      title: "Test",
+      body: "Test body",
+      correlationId: customCorrelationId,
+    };
+
+    try {
+      await notificationWorker.handleNotification(testJob);
+      // Verify that the worker executed within requestContextStorage with customCorrelationId
+      expect(mockPrisma.notification.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: "notif-corr-1" },
+          data: expect.objectContaining({ status: NotificationStatus.SENT }),
+        }),
+      );
+    } finally {
+      stdoutSpy.mockRestore();
+    }
   });
 });

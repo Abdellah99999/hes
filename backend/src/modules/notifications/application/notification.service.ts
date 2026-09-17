@@ -6,6 +6,7 @@ import {
   NotificationStatus,
   NotificationPayload,
 } from "../domain/notification.types";
+import { getRequestId } from "../../../common/context/request-context.storage";
 
 @Injectable()
 export class NotificationService {
@@ -52,6 +53,10 @@ export class NotificationService {
         body: params.body,
         channel,
         metadata: params.metadata,
+        correlationId:
+          getRequestId() ||
+          (params.metadata?.correlationId as string) ||
+          undefined,
         retryCount: 0,
       };
 
