@@ -29,3 +29,28 @@ export class InvoiceCreatedEvent implements DomainEvent<InvoiceCreatedPayload> {
     this.correlationId = correlationId;
   }
 }
+
+export interface PaymentRecordedPayload {
+  paymentId: string;
+  invoiceId: string;
+  amount: number;
+  paymentMethod: string;
+  recordedAt: Date;
+}
+
+export class PaymentRecordedEvent implements DomainEvent<PaymentRecordedPayload> {
+  static readonly EVENT_NAME = "PaymentRecorded";
+  readonly eventId: string;
+  readonly eventName = PaymentRecordedEvent.EVENT_NAME;
+  readonly occurredAt: Date;
+  readonly correlationId?: string;
+
+  constructor(
+    public readonly payload: PaymentRecordedPayload,
+    correlationId?: string,
+  ) {
+    this.eventId = randomUUID();
+    this.occurredAt = new Date();
+    this.correlationId = correlationId;
+  }
+}

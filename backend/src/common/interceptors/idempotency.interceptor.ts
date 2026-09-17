@@ -4,13 +4,16 @@ import {
   ExecutionContext,
   CallHandler,
   ConflictException,
+  BadRequestException,
   Optional,
   Logger,
 } from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
 import { Observable, of } from "rxjs";
 import { tap, catchError } from "rxjs/operators";
 import { Request, Response } from "express";
 import { RedisService } from "../../modules/redis/redis.service";
+import { REQUIRE_IDEMPOTENCY_KEY } from "../decorators/require-idempotency.decorator";
 
 export const IDEMPOTENCY_KEY_HEADER = "idempotency-key";
 export const IDEMPOTENCY_TTL_SECONDS = 300; // 5 minutes cache
@@ -29,7 +32,10 @@ export class IdempotencyInterceptor implements NestInterceptor {
     { data: string; expiresAt: number }
   >();
 
-  constructor(@Optional() private readonly redisService?: RedisService) {}
+  constructor(
+    @Optional() private readonly redisService?: RedisService,
+    @Optional() private readonly reflector?: Reflector,
+  ) {}
 
   async intercept(
     context: ExecutionContext,
@@ -43,6 +49,26 @@ export class IdempotencyInterceptor implements NestInterceptor {
       req.headers[IDEMPOTENCY_KEY_HEADER] ||
       req.headers["Idempotency-Key"] ||
       req.headers["idempotency-key"];
+
+    const isRequired = this.reflector
+      ? this.reflector.getAllAndOverride<boolean>(REQUIRE_IDEMPOTENCY_KEY, [
+          context.getHandler(),
+          context.getClass(),
+        ])
+      : false;
+
+    const reqUrl = req.originalUrl || req.url || "";
+    const isPaymentEndpoint =
+      req.method === "POST" && /\/invoices\/[^/]+\/payments/.test(reqUrl);
+
+    if (
+      (isRequired || isPaymentEndpoint) &&
+      (!rawKey || typeof rawKey !== "string" || !rawKey.trim())
+    ) {
+      throw new BadRequestException(
+        "L'en-tête 'Idempotency-Key' est obligatoire pour enregistrer un paiement.",
+      );
+    }
 
     if (!rawKey || typeof rawKey !== "string" || !rawKey.trim()) {
       return next.handle();

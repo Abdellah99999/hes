@@ -21,8 +21,11 @@ import { RequirePermissions } from "../auth/decorators/require-permissions.decor
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { AuthenticatedUser } from "../auth/domain/auth.types";
 import { CreateInvoiceDto } from "./dto/create-invoice.dto";
+import { RecordPaymentDto } from "./dto/record-payment.dto";
 import { CreateInvoiceUseCase } from "./application/use-cases/create-invoice.use-case";
 import { ListInvoicesUseCase } from "./application/use-cases/list-invoices.use-case";
+import { RecordPaymentUseCase } from "./application/use-cases/record-payment.use-case";
+import { RequireIdempotencyKey } from "../../common/decorators/require-idempotency.decorator";
 import { InvoiceStatus } from "@prisma/client";
 
 @ApiTags("Facturation & Prestations (Phase 12a)")
@@ -33,6 +36,7 @@ export class InvoicesController {
   constructor(
     private readonly createInvoiceUseCase: CreateInvoiceUseCase,
     private readonly listInvoicesUseCase: ListInvoicesUseCase,
+    private readonly recordPaymentUseCase: RecordPaymentUseCase,
   ) {}
 
   @Post()
@@ -79,5 +83,29 @@ export class InvoicesController {
     @CurrentUser() user: AuthenticatedUser,
   ) {
     return this.listInvoicesUseCase.getById(id, user);
+  }
+
+  @Post(":id/payments")
+  @HttpCode(HttpStatus.CREATED)
+  @RequirePermissions("billing:manage")
+  @RequireIdempotencyKey()
+  @ApiOperation({
+    summary:
+      "Enregistrer un règlement sur une facture (En-tête Idempotency-Key obligatoire)",
+  })
+  @ApiResponse({
+    status: 201,
+    description: "Règlement enregistré avec mise à jour du solde",
+  })
+  @ApiResponse({
+    status: 400,
+    description: "En-tête Idempotency-Key manquant ou charge utile invalide",
+  })
+  async recordPayment(
+    @Param("id") id: string,
+    @Body() dto: RecordPaymentDto,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.recordPaymentUseCase.execute(id, dto, user);
   }
 }
