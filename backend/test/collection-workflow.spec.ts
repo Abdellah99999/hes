@@ -262,12 +262,33 @@ describe("Phase 7 Backend Tests: Collection Workflow & Automated Shipment Creati
           }
           return null;
         }),
+        updateMany: jest.fn().mockImplementation(async ({ where, data }) => {
+          const targetIds = where.id?.in || [];
+          let count = 0;
+          for (const p of parcelsRecord) {
+            if (targetIds.includes(p.id)) {
+              Object.assign(p, data);
+              count++;
+            }
+          }
+          return { count };
+        }),
       },
       trackingEvent: {
         create: jest.fn().mockImplementation(async ({ data }) => {
-          const evt = { id: `evt-${Date.now()}`, ...data };
+          const evt = { id: `evt-${Date.now()}-${Math.random()}`, ...data };
           trackingEventsRecord.push(evt);
           return evt;
+        }),
+        createMany: jest.fn().mockImplementation(async ({ data }) => {
+          const items = Array.isArray(data) ? data : [data];
+          for (const item of items) {
+            trackingEventsRecord.push({
+              id: `evt-${Date.now()}-${Math.random()}`,
+              ...item,
+            });
+          }
+          return { count: items.length };
         }),
       },
       $transaction: jest.fn().mockImplementation(async (callback) => {
@@ -562,5 +583,70 @@ describe("Phase 7 Backend Tests: Collection Workflow & Automated Shipment Creati
         otherCourierUser,
       ),
     ).rejects.toThrow(ForbiddenException);
+  });
+
+  it("N+1 Query Elimination: CompleteCollectionUseCase executes exactly 1 updateMany on parcels and 1 createMany on trackingEvents for multi-parcel collections", async () => {
+    // Setup a 5-parcel collection
+    const fiveItemsDto = [
+      { itemIndex: 1, actualWeightKg: 1.5, recipientName: "Dest 1", recipientCity: "Casablanca" },
+      { itemIndex: 2, actualWeightKg: 2.0, recipientName: "Dest 2", recipientCity: "Casablanca" },
+      { itemIndex: 3, actualWeightKg: 3.2, recipientName: "Dest 3", recipientCity: "Casablanca" },
+      { itemIndex: 4, actualWeightKg: 0.8, recipientName: "Dest 4", recipientCity: "Casablanca" },
+      { itemIndex: 5, actualWeightKg: 4.1, recipientName: "Dest 5", recipientCity: "Casablanca" },
+    ];
+
+    const col = await mockPrisma.collection.create({
+      data: {
+        number: "COL-CAS-2026-NPLUS1",
+        collectionNumber: "COL-CAS-2026-NPLUS1",
+        customerId: CUSTOMER_A_ID,
+        agencyId: CASA_AGENCY_ID,
+        status: CollectionStatus.ASSIGNED,
+        assignedCourierId: courierUser.id,
+      },
+    });
+
+    for (const item of fiveItemsDto) {
+      await mockPrisma.collectionItem.create({
+        data: {
+          collectionId: col.id,
+          itemIndex: item.itemIndex,
+          declaredWeightKg: item.actualWeightKg,
+        },
+      });
+    }
+
+    // Reset spy counters
+    mockPrisma.parcel.update.mockClear();
+    mockPrisma.parcel.updateMany.mockClear();
+    mockPrisma.trackingEvent.create.mockClear();
+    mockPrisma.trackingEvent.createMany.mockClear();
+
+    const result = await completeUseCase.execute(
+      col.id,
+      { driverNotes: "Batch pickup", items: fiveItemsDto },
+      courierUser,
+    );
+
+    expect(result.collection.status).toBe(CollectionStatus.COMPLETED);
+    expect(result.parcelsCount).toBe(5);
+
+    // Assert batch queries were executed instead of N individual queries
+    expect(mockPrisma.parcel.updateMany).toHaveBeenCalledTimes(1);
+    expect(mockPrisma.parcel.update).toHaveBeenCalledTimes(0);
+
+    expect(mockPrisma.trackingEvent.createMany).toHaveBeenCalledTimes(1);
+    expect(mockPrisma.trackingEvent.create).toHaveBeenCalledTimes(0);
+
+    // Assert updateMany was called with all 5 parcel IDs
+    const updateManyArgs = mockPrisma.parcel.updateMany.mock.calls[0][0];
+    expect(updateManyArgs.where.id.in).toHaveLength(5);
+    expect(updateManyArgs.data.status).toBe(ParcelStatus.PICKED_UP);
+    expect(updateManyArgs.data.currentAgencyId).toBe(CASA_AGENCY_ID);
+
+    // Assert createMany inserted 5 tracking records
+    const createManyArgs = mockPrisma.trackingEvent.createMany.mock.calls[0][0];
+    expect(createManyArgs.data).toHaveLength(5);
+    expect(createManyArgs.data.every((evt: any) => evt.status === ParcelStatus.PICKED_UP)).toBe(true);
   });
 });

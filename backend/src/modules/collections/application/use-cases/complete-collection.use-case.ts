@@ -135,7 +135,9 @@ export class CompleteCollectionUseCase {
         "Casablanca",
       serviceType: ServiceType.STANDARD,
       paymentMethod:
-        totalCodAmount > 0 ? PaymentMethod.CASH_ON_DELIVERY : PaymentMethod.CASH,
+        totalCodAmount > 0
+          ? PaymentMethod.CASH_ON_DELIVERY
+          : PaymentMethod.CASH,
       shippingFee: 50.0,
       declaredValue: totalDeclaredValue > 0 ? totalDeclaredValue : undefined,
       codAmount: totalCodAmount > 0 ? totalCodAmount : undefined,
@@ -170,15 +172,15 @@ export class CompleteCollectionUseCase {
       });
 
       const createdParcels = shipment.parcels || [];
-      for (let i = 0; i < dto.items.length; i++) {
-        const itemDto = dto.items[i];
+
+      // 1. Update collection items concurrently
+      const itemUpdatePromises = dto.items.map((itemDto, i) => {
         const matchingCollectionItem = collection.items.find(
           (ci) => ci.itemIndex === itemDto.itemIndex,
         );
         const correspondingParcel = createdParcels[i];
-
         if (matchingCollectionItem) {
-          await tx.collectionItem.update({
+          return tx.collectionItem.update({
             where: { id: matchingCollectionItem.id },
             data: {
               actualWeightKg: itemDto.actualWeightKg,
@@ -190,29 +192,52 @@ export class CompleteCollectionUseCase {
             },
           });
         }
+        return Promise.resolve(null);
+      });
+      await Promise.all(itemUpdatePromises);
 
-        if (correspondingParcel) {
-          await tx.parcel.update({
-            where: { id: correspondingParcel.id },
+      // 2. Batch update parcels status to PICKED_UP in 1 single DB round-trip (Eliminates N+1)
+      const parcelIds = createdParcels.map((p) => p.id).filter(Boolean);
+      if (parcelIds.length > 0) {
+        if (tx.parcel.updateMany) {
+          await tx.parcel.updateMany({
+            where: { id: { in: parcelIds } },
             data: {
               status: ParcelStatus.PICKED_UP,
               currentAgencyId: collection.agencyId,
             },
           });
+        } else {
+          for (const pid of parcelIds) {
+            await tx.parcel.update({
+              where: { id: pid },
+              data: {
+                status: ParcelStatus.PICKED_UP,
+                currentAgencyId: collection.agencyId,
+              },
+            });
+          }
+        }
 
-          await tx.trackingEvent.create({
-            data: {
-              shipmentId: shipment.id,
-              parcelId: correspondingParcel.id,
-              agencyId: collection.agencyId,
-              userId: user.id,
-              eventType: "PARCEL_PICKED_UP_ON_COLLECTION",
-              source: TrackingEventSource.SCAN,
-              status: ParcelStatus.PICKED_UP,
-              previousStatus: ParcelStatus.REGISTERED,
-              notes: `Colis enlevé chez le client (${collection.pickupContactName || "Expéditeur"}) par l'agent de collecte`,
-            },
-          });
+        // 3. Batch insert tracking events in 1 single DB round-trip (Eliminates N+1)
+        const trackingData = parcelIds.map((parcelId) => ({
+          shipmentId: shipment.id,
+          parcelId,
+          agencyId: collection.agencyId,
+          userId: user.id,
+          eventType: "PARCEL_PICKED_UP_ON_COLLECTION",
+          source: TrackingEventSource.SCAN,
+          status: ParcelStatus.PICKED_UP,
+          previousStatus: ParcelStatus.REGISTERED,
+          notes: `Colis enlevé chez le client (${collection.pickupContactName || "Expéditeur"}) par l'agent de collecte`,
+        }));
+
+        if (tx.trackingEvent.createMany) {
+          await tx.trackingEvent.createMany({ data: trackingData });
+        } else {
+          for (const data of trackingData) {
+            await tx.trackingEvent.create({ data });
+          }
         }
       }
 
