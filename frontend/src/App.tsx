@@ -1,41 +1,154 @@
 import React, { useState, useEffect } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { queryClient } from "./lib/query-client";
 import { AuthProvider } from "./features/auth/context/AuthContext";
 import { registerServiceWorker } from "./lib/pwa-service";
 import { NetworkStatusIndicator } from "./features/pwa/components/NetworkStatusIndicator";
 import { PwaUpdateBanner } from "./features/pwa/components/PwaUpdateBanner";
 import { useAuth } from "./features/auth/hooks/useAuth";
-import { LoginPage } from "./features/auth/pages/LoginPage";
-import { ForgotPasswordPage } from "./features/auth/pages/ForgotPasswordPage";
-import { SystemStatusPage } from "./features/system-status/SystemStatusPage";
 import { ProtectedRoute } from "./features/auth/components/ProtectedRoute";
-import { AgenciesPage } from "./features/agencies/pages/AgenciesPage";
-import { ZonesPage } from "./features/zones/pages/ZonesPage";
-import { CustomersPage } from "./features/customers/pages/CustomersPage";
-import { AddressesPage } from "./features/addresses/pages/AddressesPage";
-import { ShipmentsPage } from "./features/shipments/pages/ShipmentsPage";
-import { TransfersPage } from "./features/transfers/pages/TransfersPage";
-import { AgencyStockPage } from "./features/transfers/pages/AgencyStockPage";
-import { CustomerRequestCollectionPage } from "./features/collections/pages/CustomerRequestCollectionPage";
-import { CourierMissionsPage } from "./features/collections/pages/CourierMissionsPage";
-import { DeliveryAssignmentPage } from "./features/runs/pages/DeliveryAssignmentPage";
-import { CourierMyRunsPage } from "./features/runs/pages/CourierMyRunsPage";
-import { DeferredPodPage } from "./features/deliveries/pages/DeferredPodPage";
-import { RecoverReturnPage } from "./features/returns/pages/RecoverReturnPage";
-import { ReturnsMonitoringPage } from "./features/returns/pages/ReturnsMonitoringPage";
-import { ReportIncidentPage } from "./features/incidents/pages/ReportIncidentPage";
-import { IncidentsManagementPage } from "./features/incidents/pages/IncidentsManagementPage";
-import { InvoicesPage } from "./features/billing/pages/InvoicesPage";
-import { DashboardPage } from "./features/reports/pages/DashboardPage";
-import { ReportsPage } from "./features/reports/pages/ReportsPage";
 import { AppNavbar } from "./features/navigation/components/AppNavbar";
 import { BottomNavigationBar } from "./features/navigation/components/BottomNavigationBar";
 import { TrackingScannerModal } from "./features/shipments/components/TrackingScannerModal";
 import { AppView } from "./features/navigation/components/navigation.types";
 
+// Immediate load for initial landing view
+import { SystemStatusPage } from "./features/system-status/SystemStatusPage";
+
+// Code-split / Lazy-loaded routes to minimize initial bundle size and optimize Core Web Vitals
+const LoginPage = React.lazy(() =>
+  import("./features/auth/pages/LoginPage").then((m) => ({
+    default: m.LoginPage,
+  })),
+);
+const ForgotPasswordPage = React.lazy(() =>
+  import("./features/auth/pages/ForgotPasswordPage").then((m) => ({
+    default: m.ForgotPasswordPage,
+  })),
+);
+const DashboardPage = React.lazy(() =>
+  import("./features/reports/pages/DashboardPage").then((m) => ({
+    default: m.DashboardPage,
+  })),
+);
+const ReportsPage = React.lazy(() =>
+  import("./features/reports/pages/ReportsPage").then((m) => ({
+    default: m.ReportsPage,
+  })),
+);
+const ShipmentsPage = React.lazy(() =>
+  import("./features/shipments/pages/ShipmentsPage").then((m) => ({
+    default: m.ShipmentsPage,
+  })),
+);
+const TransfersPage = React.lazy(() =>
+  import("./features/transfers/pages/TransfersPage").then((m) => ({
+    default: m.TransfersPage,
+  })),
+);
+const AgencyStockPage = React.lazy(() =>
+  import("./features/transfers/pages/AgencyStockPage").then((m) => ({
+    default: m.AgencyStockPage,
+  })),
+);
+const CustomerRequestCollectionPage = React.lazy(() =>
+  import("./features/collections/pages/CustomerRequestCollectionPage").then(
+    (m) => ({
+      default: m.CustomerRequestCollectionPage,
+    }),
+  ),
+);
+const CourierMissionsPage = React.lazy(() =>
+  import("./features/collections/pages/CourierMissionsPage").then((m) => ({
+    default: m.CourierMissionsPage,
+  })),
+);
+const DeliveryAssignmentPage = React.lazy(() =>
+  import("./features/runs/pages/DeliveryAssignmentPage").then((m) => ({
+    default: m.DeliveryAssignmentPage,
+  })),
+);
+const CourierMyRunsPage = React.lazy(() =>
+  import("./features/runs/pages/CourierMyRunsPage").then((m) => ({
+    default: m.CourierMyRunsPage,
+  })),
+);
+const DeferredPodPage = React.lazy(() =>
+  import("./features/deliveries/pages/DeferredPodPage").then((m) => ({
+    default: m.DeferredPodPage,
+  })),
+);
+const RecoverReturnPage = React.lazy(() =>
+  import("./features/returns/pages/RecoverReturnPage").then((m) => ({
+    default: m.RecoverReturnPage,
+  })),
+);
+const ReturnsMonitoringPage = React.lazy(() =>
+  import("./features/returns/pages/ReturnsMonitoringPage").then((m) => ({
+    default: m.ReturnsMonitoringPage,
+  })),
+);
+const ReportIncidentPage = React.lazy(() =>
+  import("./features/incidents/pages/ReportIncidentPage").then((m) => ({
+    default: m.ReportIncidentPage,
+  })),
+);
+const IncidentsManagementPage = React.lazy(() =>
+  import("./features/incidents/pages/IncidentsManagementPage").then((m) => ({
+    default: m.IncidentsManagementPage,
+  })),
+);
+const InvoicesPage = React.lazy(() =>
+  import("./features/billing/pages/InvoicesPage").then((m) => ({
+    default: m.InvoicesPage,
+  })),
+);
+const CustomersPage = React.lazy(() =>
+  import("./features/customers/pages/CustomersPage").then((m) => ({
+    default: m.CustomersPage,
+  })),
+);
+const ZonesPage = React.lazy(() =>
+  import("./features/zones/pages/ZonesPage").then((m) => ({
+    default: m.ZonesPage,
+  })),
+);
+const AddressesPage = React.lazy(() =>
+  import("./features/addresses/pages/AddressesPage").then((m) => ({
+    default: m.AddressesPage,
+  })),
+);
+const AgenciesPage = React.lazy(() =>
+  import("./features/agencies/pages/AgenciesPage").then((m) => ({
+    default: m.AgenciesPage,
+  })),
+);
+
+// Conditionally load ReactQueryDevtools only in development
+const Devtools = import.meta.env.DEV
+  ? React.lazy(() =>
+      import("@tanstack/react-query-devtools").then((d) => ({
+        default: d.ReactQueryDevtools,
+      })),
+    )
+  : null;
+
 export type { AppView };
+
+const RouteLoadingFallback: React.FC = () => (
+  <div
+    className="flex items-center justify-center min-h-[40vh] p-8 text-slate-400"
+    role="status"
+    aria-label="Chargement"
+  >
+    <div className="flex flex-col items-center gap-3">
+      <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+      <span className="text-xs font-medium tracking-wide">
+        Chargement du module...
+      </span>
+    </div>
+  </div>
+);
 
 const MainContent: React.FC = () => {
   const { user } = useAuth();
@@ -70,136 +183,140 @@ const MainContent: React.FC = () => {
       />
 
       <main className="flex-1 pb-20 md:pb-6">
-        {currentView === "status" && <SystemStatusPage />}
+        <React.Suspense fallback={<RouteLoadingFallback />}>
+          {currentView === "status" && <SystemStatusPage />}
 
-        {currentView === "login" && (
-          <LoginPage
-            onSuccess={() => setCurrentView("customers")}
-            onNavigateToForgotPassword={() => setCurrentView("forgot-password")}
-          />
-        )}
-
-        {currentView === "forgot-password" && (
-          <ForgotPasswordPage
-            onNavigateToLogin={() => setCurrentView("login")}
-          />
-        )}
-
-        {currentView === "dashboard" && (
-          <ProtectedRoute fallbackUrl="#">
-            <DashboardPage
-              onNavigateToReports={() => setCurrentView("reports")}
+          {currentView === "login" && (
+            <LoginPage
+              onSuccess={() => setCurrentView("customers")}
+              onNavigateToForgotPassword={() =>
+                setCurrentView("forgot-password")
+              }
             />
-          </ProtectedRoute>
-        )}
+          )}
 
-        {currentView === "reports" && (
-          <ProtectedRoute fallbackUrl="#">
-            <ReportsPage />
-          </ProtectedRoute>
-        )}
+          {currentView === "forgot-password" && (
+            <ForgotPasswordPage
+              onNavigateToLogin={() => setCurrentView("login")}
+            />
+          )}
 
-        {currentView === "shipments" && (
-          <ProtectedRoute fallbackUrl="#">
-            <ShipmentsPage />
-          </ProtectedRoute>
-        )}
+          {currentView === "dashboard" && (
+            <ProtectedRoute fallbackUrl="#">
+              <DashboardPage
+                onNavigateToReports={() => setCurrentView("reports")}
+              />
+            </ProtectedRoute>
+          )}
 
-        {currentView === "transfers" && (
-          <ProtectedRoute fallbackUrl="#">
-            <TransfersPage />
-          </ProtectedRoute>
-        )}
+          {currentView === "reports" && (
+            <ProtectedRoute fallbackUrl="#">
+              <ReportsPage />
+            </ProtectedRoute>
+          )}
 
-        {currentView === "stock" && (
-          <ProtectedRoute fallbackUrl="#">
-            <AgencyStockPage />
-          </ProtectedRoute>
-        )}
+          {currentView === "shipments" && (
+            <ProtectedRoute fallbackUrl="#">
+              <ShipmentsPage />
+            </ProtectedRoute>
+          )}
 
-        {currentView === "request-collection" && (
-          <ProtectedRoute fallbackUrl="#">
-            <CustomerRequestCollectionPage />
-          </ProtectedRoute>
-        )}
+          {currentView === "transfers" && (
+            <ProtectedRoute fallbackUrl="#">
+              <TransfersPage />
+            </ProtectedRoute>
+          )}
 
-        {currentView === "courier-missions" && (
-          <ProtectedRoute fallbackUrl="#">
-            <CourierMissionsPage />
-          </ProtectedRoute>
-        )}
+          {currentView === "stock" && (
+            <ProtectedRoute fallbackUrl="#">
+              <AgencyStockPage />
+            </ProtectedRoute>
+          )}
 
-        {currentView === "delivery-assignment" && (
-          <ProtectedRoute fallbackUrl="#">
-            <DeliveryAssignmentPage />
-          </ProtectedRoute>
-        )}
+          {currentView === "request-collection" && (
+            <ProtectedRoute fallbackUrl="#">
+              <CustomerRequestCollectionPage />
+            </ProtectedRoute>
+          )}
 
-        {currentView === "my-delivery-runs" && (
-          <ProtectedRoute fallbackUrl="#">
-            <CourierMyRunsPage />
-          </ProtectedRoute>
-        )}
+          {currentView === "courier-missions" && (
+            <ProtectedRoute fallbackUrl="#">
+              <CourierMissionsPage />
+            </ProtectedRoute>
+          )}
 
-        {currentView === "deferred-pod" && (
-          <ProtectedRoute fallbackUrl="#">
-            <DeferredPodPage />
-          </ProtectedRoute>
-        )}
+          {currentView === "delivery-assignment" && (
+            <ProtectedRoute fallbackUrl="#">
+              <DeliveryAssignmentPage />
+            </ProtectedRoute>
+          )}
 
-        {currentView === "recover-return" && (
-          <ProtectedRoute fallbackUrl="#">
-            <RecoverReturnPage />
-          </ProtectedRoute>
-        )}
+          {currentView === "my-delivery-runs" && (
+            <ProtectedRoute fallbackUrl="#">
+              <CourierMyRunsPage />
+            </ProtectedRoute>
+          )}
 
-        {currentView === "returns-monitoring" && (
-          <ProtectedRoute fallbackUrl="#">
-            <ReturnsMonitoringPage />
-          </ProtectedRoute>
-        )}
+          {currentView === "deferred-pod" && (
+            <ProtectedRoute fallbackUrl="#">
+              <DeferredPodPage />
+            </ProtectedRoute>
+          )}
 
-        {currentView === "report-incident" && (
-          <ProtectedRoute fallbackUrl="#">
-            <ReportIncidentPage />
-          </ProtectedRoute>
-        )}
+          {currentView === "recover-return" && (
+            <ProtectedRoute fallbackUrl="#">
+              <RecoverReturnPage />
+            </ProtectedRoute>
+          )}
 
-        {currentView === "incidents-management" && (
-          <ProtectedRoute fallbackUrl="#">
-            <IncidentsManagementPage />
-          </ProtectedRoute>
-        )}
+          {currentView === "returns-monitoring" && (
+            <ProtectedRoute fallbackUrl="#">
+              <ReturnsMonitoringPage />
+            </ProtectedRoute>
+          )}
 
-        {currentView === "invoices" && (
-          <ProtectedRoute fallbackUrl="#">
-            <InvoicesPage />
-          </ProtectedRoute>
-        )}
+          {currentView === "report-incident" && (
+            <ProtectedRoute fallbackUrl="#">
+              <ReportIncidentPage />
+            </ProtectedRoute>
+          )}
 
-        {currentView === "customers" && (
-          <ProtectedRoute fallbackUrl="#">
-            <CustomersPage />
-          </ProtectedRoute>
-        )}
+          {currentView === "incidents-management" && (
+            <ProtectedRoute fallbackUrl="#">
+              <IncidentsManagementPage />
+            </ProtectedRoute>
+          )}
 
-        {currentView === "zones" && (
-          <ProtectedRoute fallbackUrl="#">
-            <ZonesPage />
-          </ProtectedRoute>
-        )}
+          {currentView === "invoices" && (
+            <ProtectedRoute fallbackUrl="#">
+              <InvoicesPage />
+            </ProtectedRoute>
+          )}
 
-        {currentView === "addresses" && (
-          <ProtectedRoute fallbackUrl="#">
-            <AddressesPage />
-          </ProtectedRoute>
-        )}
+          {currentView === "customers" && (
+            <ProtectedRoute fallbackUrl="#">
+              <CustomersPage />
+            </ProtectedRoute>
+          )}
 
-        {currentView === "agencies" && (
-          <ProtectedRoute fallbackUrl="#">
-            <AgenciesPage />
-          </ProtectedRoute>
-        )}
+          {currentView === "zones" && (
+            <ProtectedRoute fallbackUrl="#">
+              <ZonesPage />
+            </ProtectedRoute>
+          )}
+
+          {currentView === "addresses" && (
+            <ProtectedRoute fallbackUrl="#">
+              <AddressesPage />
+            </ProtectedRoute>
+          )}
+
+          {currentView === "agencies" && (
+            <ProtectedRoute fallbackUrl="#">
+              <AgenciesPage />
+            </ProtectedRoute>
+          )}
+        </React.Suspense>
       </main>
 
       <BottomNavigationBar
@@ -218,7 +335,11 @@ export const App: React.FC = () => {
       <AuthProvider>
         <MainContent />
       </AuthProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
+      {Devtools && (
+        <React.Suspense fallback={null}>
+          <Devtools initialIsOpen={false} />
+        </React.Suspense>
+      )}
     </QueryClientProvider>
   );
 };
