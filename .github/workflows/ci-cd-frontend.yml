@@ -2,14 +2,14 @@ name: CI/CD - Frontend Web Client
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, master, develop]
     paths:
       - "frontend/**"
       - "infrastructure/**"
       - "docker-compose.prod.yml"
       - ".github/workflows/ci-cd-frontend.yml"
   pull_request:
-    branches: [main, develop]
+    branches: [main, master, develop]
     paths:
       - "frontend/**"
       - "infrastructure/**"
@@ -32,10 +32,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 20
+      - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
@@ -66,10 +66,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 20
+      - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
@@ -95,7 +95,7 @@ jobs:
     name: 🐳 Docker Container Build & Tagging
     needs: security-gate
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
 
     steps:
       - name: Checkout Code
@@ -121,7 +121,7 @@ jobs:
     name: 🚀 Production Release (Atomic Deployment & Cache Purge)
     needs: docker-build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
 
     steps:
       - name: Deploy Frontend Container
