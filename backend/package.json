@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "build": "nest build",
+    "bundle": "npx @vercel/ncc build dist/main.js -o bundled -e argon2 -e @prisma/client",
+    "build:bundle": "nest build && npx @vercel/ncc build dist/main.js -o bundled -e argon2 -e @prisma/client",
     "dev": "nest start --watch",
     "start": "node dist/main.js",
     "start:prod": "node dist/main.js",
