@@ -34,7 +34,7 @@ export const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
     <nav
       aria-label="Navigation mobile principale"
       data-testid="bottom-navigation-bar"
-      className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm border-t border-slate-200 dark:border-slate-800 px-3 py-1.5 flex items-center justify-around md:hidden shadow-sm"
+      className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm border-t border-slate-200 dark:border-slate-800 px-3 py-1.5 flex items-center justify-around lg:hidden shadow-sm"
       style={{
         paddingBottom: "calc(0.5rem + env(safe-area-inset-bottom, 0px))",
       }}

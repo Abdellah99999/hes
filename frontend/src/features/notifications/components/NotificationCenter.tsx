@@ -28,8 +28,10 @@ export const NotificationCenter: React.FC = () => {
   const [pushPermissionStatus, setPushPermissionStatus] = useState<
     "default" | "granted" | "denied"
   >(
-    typeof window !== "undefined" && "Notification" in window
-      ? (Notification.permission as "default" | "granted" | "denied")
+    typeof window !== "undefined" &&
+      typeof window.Notification !== "undefined" &&
+      window.Notification?.permission
+      ? (window.Notification.permission as "default" | "granted" | "denied")
       : "default",
   );
   const queryClient = useQueryClient();
@@ -65,9 +67,13 @@ export const NotificationCenter: React.FC = () => {
 
   // 4. Push notification permission prompt for Web & Mobile
   const requestPushPermission = async () => {
-    if (typeof window !== "undefined" && "Notification" in window) {
+    if (
+      typeof window !== "undefined" &&
+      typeof window.Notification !== "undefined" &&
+      window.Notification?.requestPermission
+    ) {
       try {
-        const permission = await Notification.requestPermission();
+        const permission = await window.Notification.requestPermission();
         setPushPermissionStatus(permission);
       } catch {
         setPushPermissionStatus("denied");
@@ -75,7 +81,17 @@ export const NotificationCenter: React.FC = () => {
     }
   };
 
-  const unreadCount = notifications.filter((n) => n.status !== "READ").length;
+  const notificationList = Array.isArray(notifications)
+    ? notifications
+    : Array.isArray(
+          (notifications as unknown as { data?: UserNotification[] })?.data,
+        )
+      ? (notifications as unknown as { data: UserNotification[] }).data
+      : [];
+
+  const unreadCount = notificationList.filter(
+    (n) => n.status !== "READ",
+  ).length;
 
   const getChannelIcon = (channel: string) => {
     switch (channel) {
@@ -169,14 +185,16 @@ export const NotificationCenter: React.FC = () => {
           {/* Notification List */}
           <div className="max-h-80 overflow-y-auto divide-y divide-slate-850">
             {isLoading ? (
-              <div className="p-6 text-center text-slate-500">Chargement...</div>
-            ) : notifications.length === 0 ? (
+              <div className="p-6 text-center text-slate-500">
+                Chargement...
+              </div>
+            ) : notificationList.length === 0 ? (
               <div className="p-8 text-center text-slate-500 space-y-1">
                 <ShieldCheck className="w-6 h-6 mx-auto text-slate-600" />
                 <p>Aucune notification</p>
               </div>
             ) : (
-              notifications.map((n) => (
+              notificationList.map((n) => (
                 <div
                   key={n.id}
                   onClick={() => {
@@ -198,7 +216,9 @@ export const NotificationCenter: React.FC = () => {
                     <div className="flex items-center justify-between gap-2">
                       <span
                         className={`font-semibold truncate ${
-                          n.status !== "READ" ? "text-slate-100" : "text-slate-300"
+                          n.status !== "READ"
+                            ? "text-slate-100"
+                            : "text-slate-300"
                         }`}
                       >
                         {n.title}
