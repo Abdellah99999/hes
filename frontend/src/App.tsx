@@ -167,7 +167,7 @@ const MainContent: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans">
       <NetworkStatusIndicator />
       <PwaUpdateBanner
         isUpdateAvailable={updateAvailable}
@@ -318,6 +318,20 @@ const MainContent: React.FC = () => {
           )}
         </React.Suspense>
       </main>
+
+      <footer className="mt-auto py-3 px-4 text-center text-xs text-slate-500 border-t border-slate-200 dark:border-slate-800 pb-16 md:pb-3">
+        <div className="flex items-center justify-center gap-3">
+          <span>HES Transport & Logistique &copy; 2026</span>
+          <span>•</span>
+          <button
+            type="button"
+            onClick={() => setCurrentView("status")}
+            className="text-slate-500 hover:text-blue-700 dark:hover:text-blue-400 underline"
+          >
+            Statut système
+          </button>
+        </div>
+      </footer>
 
       <BottomNavigationBar
         role={user?.role}

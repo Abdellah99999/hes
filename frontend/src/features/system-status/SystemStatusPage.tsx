@@ -41,75 +41,66 @@ export const SystemStatusPage: React.FC = () => {
   };
 
   return (
-    <div className="container">
-      {/* Header */}
-      <header className="header">
-        <div className="brand">
-          <div className="brand-badge">{APP_NAME}</div>
-          <div className="brand-info">
-            <h1>{APP_NAME}</h1>
-            <p>
-              Système de transport et logistique multi-agences • Phase 1
-              Infrastructure
+    <div className="container max-w-6xl mx-auto px-4 py-8">
+      {/* En-tête sobre : Logo + Nom Unique (Pas de doublon, pas de "Phase 1") */}
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-slate-200 dark:border-slate-800">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-blue-700 flex items-center justify-center text-white shrink-0">
+            <Truck className="w-6 h-6" aria-hidden="true" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
+              {APP_NAME}
+            </h1>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Supervision de l'infrastructure et connectivité en temps réel
             </p>
           </div>
         </div>
 
-        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-          <label
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              fontSize: "0.85rem",
-              color: "var(--text-secondary)",
-              cursor: "pointer",
-            }}
-          >
+        <div className="flex items-center gap-4">
+          <label className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400 cursor-pointer select-none">
             <input
               type="checkbox"
               checked={autoRefresh}
               onChange={(e) => setAutoRefresh(e.target.checked)}
-              style={{
-                cursor: "pointer",
-                accentColor: "var(--accent-primary)",
-              }}
+              className="w-4 h-4 rounded border-slate-300 text-blue-700 focus:ring-blue-700 cursor-pointer"
             />
-            Auto-refresh (10s)
+            <span>Actualisation auto (10s)</span>
           </label>
           <button
-            className="btn-action"
+            type="button"
+            className="btn-action min-h-[44px] text-xs font-semibold"
             onClick={() => refetch()}
             disabled={isFetching}
             aria-label="Rafraîchir l'état des services"
           >
-            <RefreshCw size={16} className={isFetching ? "animate-spin" : ""} />
-            {isFetching ? "Actualisation..." : "Actualiser"}
+            <RefreshCw
+              size={14}
+              className={isFetching ? "animate-spin shrink-0" : "shrink-0"}
+            />
+            <span>{isFetching ? "Actualisation..." : "Actualiser"}</span>
           </button>
         </div>
       </header>
 
-      {/* Global Status Banner */}
-      <section className="hero-banner" data-testid="status-banner">
+      {/* Bannière de Statut Global */}
+      <section
+        className="card p-6 mb-6 flex flex-col md:flex-row md:items-center justify-between gap-6"
+        data-testid="status-banner"
+      >
         <div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.75rem",
-              marginBottom: "0.5rem",
-            }}
-          >
+          <div className="flex items-center gap-3 mb-2">
             <div
-              className={`status-indicator-pulse ${
+              className={`w-3 h-3 rounded-full shrink-0 ${
                 isAllUp
-                  ? "pulse-up"
+                  ? "bg-green-600 ring-4 ring-green-100 dark:ring-green-950"
                   : isDegraded
-                    ? "pulse-degraded"
-                    : "pulse-error"
+                    ? "bg-orange-600 ring-4 ring-orange-100 dark:ring-orange-950"
+                    : "bg-red-600 ring-4 ring-red-100 dark:ring-red-950"
               }`}
             />
-            <h2 style={{ fontSize: "1.4rem", fontWeight: 700 }}>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">
               {isLoading
                 ? "Analyse des systèmes en cours..."
                 : isAllUp
@@ -119,138 +110,114 @@ export const SystemStatusPage: React.FC = () => {
                     : "Incident détecté sur un composant critique"}
             </h2>
           </div>
-          <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem" }}>
-            Vérification en temps réel de la connectivité API, base de données,
-            cache et stockage objet.
+          <p className="text-xs text-slate-600 dark:text-slate-400">
+            Contrôle d'intégrité de l'API REST, base relationnelle, cache
+            distribué et stockage d'objets.
           </p>
         </div>
 
-        <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
+        <div className="flex items-center gap-6 border-t md:border-t-0 pt-4 md:pt-0 border-slate-200 dark:border-slate-800">
           <div>
-            <div
-              style={{
-                fontSize: "0.75rem",
-                color: "var(--text-muted)",
-                textTransform: "uppercase",
-                marginBottom: "0.2rem",
-              }}
-            >
+            <div className="text-[10px] font-semibold uppercase text-slate-400 tracking-wider mb-1">
               Uptime API
             </div>
-            <div
-              style={{
-                fontFamily: "var(--font-mono)",
-                fontWeight: 600,
-                fontSize: "1rem",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.35rem",
-              }}
-            >
-              <Clock size={15} color="var(--accent-primary)" />
-              {formatUptime(healthData?.uptimeSeconds)}
+            <div className="font-mono text-sm font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+              <Clock size={14} className="text-blue-700 dark:text-blue-400" />
+              <span>{formatUptime(healthData?.uptimeSeconds)}</span>
             </div>
           </div>
 
           <div>
-            <div
-              style={{
-                fontSize: "0.75rem",
-                color: "var(--text-muted)",
-                textTransform: "uppercase",
-                marginBottom: "0.2rem",
-              }}
-            >
+            <div className="text-[10px] font-semibold uppercase text-slate-400 tracking-wider mb-1">
               Version Contrat
             </div>
-            <div
-              style={{
-                fontFamily: "var(--font-mono)",
-                fontWeight: 600,
-                fontSize: "1rem",
-              }}
-            >
+            <div className="font-mono text-sm font-semibold text-slate-900 dark:text-slate-100">
               v{healthData?.version ?? "1.0.0"}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Services Grid */}
-      <section className="grid">
+      {/* Grille des Services d'Infrastructure */}
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {/* Backend API Service */}
-        <div className="card" data-testid="service-api">
-          <div className="card-header">
-            <div>
-              <h3 className="card-title">NestJS REST API</h3>
-              <p className="card-subtitle">
-                Gateway & Clean Architecture Engine
-              </p>
+        <div
+          className="card flex flex-col justify-between"
+          data-testid="service-api"
+        >
+          <div>
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <div>
+                <h3 className="font-semibold text-sm text-slate-900 dark:text-slate-100">
+                  NestJS REST API
+                </h3>
+                <p className="text-xs text-slate-500">
+                  Moteur Clean Architecture
+                </p>
+              </div>
+              <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-slate-800 text-blue-700 dark:text-blue-400 flex items-center justify-center shrink-0">
+                <Server size={18} />
+              </div>
             </div>
-            <div className="card-icon">
-              <Server size={22} color="var(--accent-primary)" />
-            </div>
+            <p className="text-xs text-slate-600 dark:text-slate-400 min-h-[36px]">
+              Endpoints `/api/v1/` avec validation stricte DTO et Swagger
+              OpenAPI.
+            </p>
           </div>
-          <p
-            style={{
-              fontSize: "0.85rem",
-              color: "var(--text-secondary)",
-              minHeight: "40px",
-            }}
-          >
-            Exposition des endpoints REST `/api/v1/` avec validation stricte DTO
-            et Swagger OpenAPI.
-          </p>
-          <div className="card-metric">
-            <span className="metric-label">État du service</span>
-            <span className={`badge ${!error ? "badge-up" : "badge-down"}`}>
-              {!error ? <CheckCircle2 size={13} /> : <XCircle size={13} />}
-              {!error ? "ONLINE" : "OFFLINE"}
+          <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+            <span className="text-slate-500">État :</span>
+            <span
+              className={`status-badge status-badge--sm ${
+                !error ? "status-badge--success" : "status-badge--danger"
+              }`}
+            >
+              {!error ? <CheckCircle2 size={12} /> : <XCircle size={12} />}
+              <span>{!error ? "ONLINE" : "OFFLINE"}</span>
             </span>
           </div>
         </div>
 
         {/* PostgreSQL Database */}
-        <div className="card" data-testid="service-database">
-          <div className="card-header">
-            <div>
-              <h3 className="card-title">PostgreSQL (Prisma)</h3>
-              <p className="card-subtitle">
-                Base relationnelle & intégrité des données
-              </p>
+        <div
+          className="card flex flex-col justify-between"
+          data-testid="service-database"
+        >
+          <div>
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <div>
+                <h3 className="font-semibold text-sm text-slate-900 dark:text-slate-100">
+                  PostgreSQL (Prisma)
+                </h3>
+                <p className="text-xs text-slate-500">Base relationnelle</p>
+              </div>
+              <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-slate-800 text-blue-700 dark:text-blue-400 flex items-center justify-center shrink-0">
+                <Database size={18} />
+              </div>
             </div>
-            <div className="card-icon">
-              <Database size={22} color="#3b82f6" />
-            </div>
+            <p className="text-xs text-slate-600 dark:text-slate-400 min-h-[36px]">
+              Persistance multi-agences avec contraintes FK et audit trails.
+            </p>
           </div>
-          <p
-            style={{
-              fontSize: "0.85rem",
-              color: "var(--text-secondary)",
-              minHeight: "40px",
-            }}
-          >
-            Persistance multi-agences avec contraintes FK, migrations
-            versionnées et audit trails.
-          </p>
-          <div className="card-metric">
-            <span className="metric-label">
+          <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+            <span className="text-slate-500">
               Latence : {healthData?.services?.database?.latencyMs ?? "--"} ms
             </span>
             <span
-              className={`badge ${
+              className={`status-badge status-badge--sm ${
                 healthData?.services?.database?.status === "up"
-                  ? "badge-up"
-                  : "badge-down"
+                  ? "status-badge--success"
+                  : "status-badge--danger"
               }`}
             >
               {healthData?.services?.database?.status === "up" ? (
                 <>
-                  <CheckCircle2 size={13} /> CONNECTÉ
+                  <CheckCircle2 size={12} />
+                  <span>CONNECTÉ</span>
                 </>
               ) : (
                 <>
-                  <XCircle size={13} /> ERREUR
+                  <XCircle size={12} />
+                  <span>ERREUR</span>
                 </>
               )}
             </span>
@@ -258,44 +225,46 @@ export const SystemStatusPage: React.FC = () => {
         </div>
 
         {/* Redis Cache */}
-        <div className="card" data-testid="service-redis">
-          <div className="card-header">
-            <div>
-              <h3 className="card-title">Redis In-Memory</h3>
-              <p className="card-subtitle">Cache, sessions & rate limiting</p>
+        <div
+          className="card flex flex-col justify-between"
+          data-testid="service-redis"
+        >
+          <div>
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <div>
+                <h3 className="font-semibold text-sm text-slate-900 dark:text-slate-100">
+                  Redis In-Memory
+                </h3>
+                <p className="text-xs text-slate-500">Sessions & Rate Limit</p>
+              </div>
+              <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-slate-800 text-blue-700 dark:text-blue-400 flex items-center justify-center shrink-0">
+                <HardDrive size={18} />
+              </div>
             </div>
-            <div className="card-icon">
-              <HardDrive size={22} color="#ef4444" />
-            </div>
+            <p className="text-xs text-slate-600 dark:text-slate-400 min-h-[36px]">
+              Tokens révocables, limitation de débit et sessions distribuées.
+            </p>
           </div>
-          <p
-            style={{
-              fontSize: "0.85rem",
-              color: "var(--text-secondary)",
-              minHeight: "40px",
-            }}
-          >
-            Gestion des tokens révocables, limitation de débit et sessions
-            distribuées.
-          </p>
-          <div className="card-metric">
-            <span className="metric-label">
+          <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+            <span className="text-slate-500">
               Latence : {healthData?.services?.redis?.latencyMs ?? "--"} ms
             </span>
             <span
-              className={`badge ${
+              className={`status-badge status-badge--sm ${
                 healthData?.services?.redis?.status === "up"
-                  ? "badge-up"
-                  : "badge-down"
+                  ? "status-badge--success"
+                  : "status-badge--danger"
               }`}
             >
               {healthData?.services?.redis?.status === "up" ? (
                 <>
-                  <CheckCircle2 size={13} /> OPÉRATIONNEL
+                  <CheckCircle2 size={12} />
+                  <span>OPÉRATIONNEL</span>
                 </>
               ) : (
                 <>
-                  <AlertTriangle size={13} /> INDISPONIBLE
+                  <AlertTriangle size={12} />
+                  <span>INDISPONIBLE</span>
                 </>
               )}
             </span>
@@ -303,44 +272,49 @@ export const SystemStatusPage: React.FC = () => {
         </div>
 
         {/* MinIO Object Storage */}
-        <div className="card" data-testid="service-minio">
-          <div className="card-header">
-            <div>
-              <h3 className="card-title">MinIO Object Storage</h3>
-              <p className="card-subtitle">Stockage S3 des documents & POD</p>
+        <div
+          className="card flex flex-col justify-between"
+          data-testid="service-minio"
+        >
+          <div>
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <div>
+                <h3 className="font-semibold text-sm text-slate-900 dark:text-slate-100">
+                  MinIO S3
+                </h3>
+                <p className="text-xs text-slate-500">
+                  Stockage documents & POD
+                </p>
+              </div>
+              <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-slate-800 text-blue-700 dark:text-blue-400 flex items-center justify-center shrink-0">
+                <Boxes size={18} />
+              </div>
             </div>
-            <div className="card-icon">
-              <Boxes size={22} color="#10b981" />
-            </div>
+            <p className="text-xs text-slate-600 dark:text-slate-400 min-h-[36px]">
+              Bordereaux, étiquettes, signatures tactiles et preuves de
+              livraison.
+            </p>
           </div>
-          <p
-            style={{
-              fontSize: "0.85rem",
-              color: "var(--text-secondary)",
-              minHeight: "40px",
-            }}
-          >
-            Stockage sécurisé des bordereaux, étiquettes, signatures tactiles et
-            photos de livraison.
-          </p>
-          <div className="card-metric">
-            <span className="metric-label">
+          <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+            <span className="text-slate-500">
               Latence : {healthData?.services?.storage?.latencyMs ?? "--"} ms
             </span>
             <span
-              className={`badge ${
+              className={`status-badge status-badge--sm ${
                 healthData?.services?.storage?.status === "up"
-                  ? "badge-up"
-                  : "badge-down"
+                  ? "status-badge--success"
+                  : "status-badge--danger"
               }`}
             >
               {healthData?.services?.storage?.status === "up" ? (
                 <>
-                  <CheckCircle2 size={13} /> DISPONIBLE
+                  <CheckCircle2 size={12} />
+                  <span>DISPONIBLE</span>
                 </>
               ) : (
                 <>
-                  <AlertTriangle size={13} /> ERREUR
+                  <AlertTriangle size={12} />
+                  <span>ERREUR</span>
                 </>
               )}
             </span>
@@ -348,54 +322,76 @@ export const SystemStatusPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Feature Modules Architecture Overview */}
-      <section className="features-section">
-        <h3 className="features-title">
-          Architecture Modulaire & Découpage Métier
+      {/* Modules Opérationnels */}
+      <section className="card p-6">
+        <h3 className="font-semibold text-sm text-slate-900 dark:text-slate-100 mb-2">
+          Périmètre des Modules Métier
         </h3>
-        <p className="features-desc">
-          Structure des dossiers `src/features/` initialisée pour les
-          développements ultérieurs :
+        <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
+          Services applicatifs intégrés à la plateforme opérationnelle :
         </p>
 
-        <div className="features-tags">
-          <div className="feature-pill">
-            <Truck size={16} color="var(--accent-primary)" />
-            <strong>shipments/</strong>
-            <span>• Gestion colis & étiquettes</span>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+          <div className="p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex flex-col gap-1">
+            <Truck size={16} className="text-blue-700 dark:text-blue-400" />
+            <strong className="text-xs text-slate-800 dark:text-slate-200">
+              Expéditions
+            </strong>
+            <span className="text-[10px] text-slate-500">Colis & scans</span>
           </div>
 
-          <div className="feature-pill">
-            <MapPin size={16} color="#3b82f6" />
-            <strong>agencies/</strong>
-            <span>• Réseau 7 agences</span>
+          <div className="p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex flex-col gap-1">
+            <MapPin size={16} className="text-blue-700 dark:text-blue-400" />
+            <strong className="text-xs text-slate-800 dark:text-slate-200">
+              Agences
+            </strong>
+            <span className="text-[10px] text-slate-500">7 agences</span>
           </div>
 
-          <div className="feature-pill">
-            <ShieldCheck size={16} color="#10b981" />
-            <strong>auth/</strong>
-            <span>• JWT & RBAC</span>
+          <div className="p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex flex-col gap-1">
+            <ShieldCheck
+              size={16}
+              className="text-blue-700 dark:text-blue-400"
+            />
+            <strong className="text-xs text-slate-800 dark:text-slate-200">
+              Sécurité
+            </strong>
+            <span className="text-[10px] text-slate-500">JWT & RBAC</span>
           </div>
 
-          <div className="feature-pill">
-            <FileText size={16} color="#f59e0b" />
-            <strong>transfers/</strong>
-            <span>• Manifestes inter-agences</span>
+          <div className="p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex flex-col gap-1">
+            <FileText size={16} className="text-blue-700 dark:text-blue-400" />
+            <strong className="text-xs text-slate-800 dark:text-slate-200">
+              Transferts
+            </strong>
+            <span className="text-[10px] text-slate-500">Manifestes hub</span>
           </div>
 
-          <div className="feature-pill">
-            <CheckCircle2 size={16} color="#8b5cf6" />
-            <strong>deliveries/</strong>
-            <span>• Dernier km & POD</span>
+          <div className="p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex flex-col gap-1">
+            <CheckCircle2
+              size={16}
+              className="text-blue-700 dark:text-blue-400"
+            />
+            <strong className="text-xs text-slate-800 dark:text-slate-200">
+              Livraisons
+            </strong>
+            <span className="text-[10px] text-slate-500">Dernier km & POD</span>
           </div>
 
-          <div className="feature-pill">
-            <DollarSign size={16} color="#ec4899" />
-            <strong>billing/</strong>
-            <span>• Tarification & COD</span>
+          <div className="p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex flex-col gap-1">
+            <DollarSign
+              size={16}
+              className="text-blue-700 dark:text-blue-400"
+            />
+            <strong className="text-xs text-slate-800 dark:text-slate-200">
+              Facturation
+            </strong>
+            <span className="text-[10px] text-slate-500">Tarifs & COD</span>
           </div>
         </div>
       </section>
     </div>
   );
 };
+
+export default SystemStatusPage;
