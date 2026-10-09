@@ -54,7 +54,7 @@ jobs:
         run: pnpm --dir backend test
 
       - name: Build API Bundle
-        run: pnpm --dir backend build
+        run: pnpm --dir backend build:bundle
 
       - name: Verify Dockerfile Build
         run: docker build -f backend/Dockerfile -t hes-api:test backend
