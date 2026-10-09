@@ -46,6 +46,7 @@ jobs:
           pnpm --dir backend prisma:generate
           pnpm --dir backend openapi:export
           pnpm --dir frontend gen:api
+          pnpm exec prettier --write frontend/src/api/
           git diff --exit-code frontend/src/api/
 
       - name: Lint Web
