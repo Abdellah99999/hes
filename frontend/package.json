@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "node scripts/e2e-real-browser-test.mjs",
     "gen:api": "orval --config ./orval.config.ts"
   },
   "dependencies": {

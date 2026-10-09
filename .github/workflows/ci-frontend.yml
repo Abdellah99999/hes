@@ -60,6 +60,30 @@ jobs:
       - name: Build Web Production SPA
         run: pnpm --dir frontend build
 
+      - name: Install Playwright Chromium
+        run: pnpm --dir frontend exec playwright install --with-deps chromium
+
+      - name: E2E Real Browser & Visual Non-Regression Tests (Playwright)
+        run: |
+          pnpm --dir frontend preview --port 5173 --host &
+          SERVER_PID=$!
+          for i in {1..30}; do
+            curl -s -I http://127.0.0.1:5173 && break || sleep 1
+          done
+          node frontend/scripts/e2e-real-browser-test.mjs
+          kill $SERVER_PID || true
+        env:
+          CI: "true"
+          BASE_URL: "http://127.0.0.1:5173"
+
+      - name: Upload Visual Regression Screenshots on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-regression-screenshots
+          path: docs/qa/screenshots/
+          if-no-files-found: ignore
+
       - name: Security Check - Verify No Leaked Secrets in Bundle
         run: node infrastructure/scripts/check-frontend-secrets.mjs
 
