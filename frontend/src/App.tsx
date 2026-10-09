@@ -182,7 +182,7 @@ const MainContent: React.FC = () => {
         onClose={() => setIsScannerOpen(false)}
       />
 
-      <main className="flex-1 pb-20 lg:pb-6">
+      <main className="flex-1 pb-24 lg:pb-6">
         <React.Suspense fallback={<RouteLoadingFallback />}>
           {currentView === "status" && <SystemStatusPage />}
 
@@ -319,7 +319,7 @@ const MainContent: React.FC = () => {
         </React.Suspense>
       </main>
 
-      <footer className="mt-auto py-3 px-4 text-center text-xs text-slate-600 dark:text-slate-400 border-t border-slate-200 dark:border-slate-800 pb-16 lg:pb-3">
+      <footer className="mt-auto py-3 px-4 text-center text-xs text-slate-600 dark:text-slate-400 border-t border-slate-200 dark:border-slate-800 pb-24 lg:pb-3">
         <div className="flex items-center justify-center gap-3">
           <span>HES Transport & Logistique &copy; 2026</span>
           <span>•</span>

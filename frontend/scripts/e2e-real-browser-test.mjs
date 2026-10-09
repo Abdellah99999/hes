@@ -16,7 +16,7 @@ if (!fs.existsSync(screenshotsDir)) {
   fs.mkdirSync(screenshotsDir, { recursive: true });
 }
 
-const BASE_URL = 'http://localhost:5173';
+const BASE_URL = process.env.BASE_URL || 'http://localhost:5173';
 
 const courierUser = {
   id: 'courier-01',
@@ -297,7 +297,15 @@ async function setupContextRoutes(context, currentUser = null) {
 
 async function runVerification() {
   console.log('🚀 Lancement de la suite Playwright Chromium (Moteur réel)...\n');
-  const browser = await chromium.launch({ channel: 'chrome', headless: true });
+  let browser;
+  try {
+    browser = await chromium.launch({
+      headless: true,
+      ...(process.env.CI ? {} : { channel: 'chrome' }),
+    });
+  } catch {
+    browser = await chromium.launch({ headless: true });
+  }
 
   const results = {
     checks: [],
@@ -440,19 +448,19 @@ async function runVerification() {
           await page.waitForTimeout(600);
         }
 
-        // Test BottomNavigationBar display
+        // Test BottomNavigationBar display (Breakpoint lg: 1024px)
         const bottomBar = page.locator('[data-testid="bottom-navigation-bar"]');
         if ((await bottomBar.count()) > 0) {
           const displayVal = await bottomBar.evaluate((el) => window.getComputedStyle(el).display);
-          if (vp.width <= 768) {
+          if (vp.width < 1024) {
             results.checks.push({
-              test: `BottomNavigationBar visible sur mobile/tablette (<= 768px - ${vp.name})`,
+              test: `BottomNavigationBar visible sur mobile/tablette (< 1024px - ${vp.name})`,
               passed: displayVal === 'flex' || displayVal === 'block',
               details: `display mesuré : "${displayVal}"`,
             });
           } else {
             results.checks.push({
-              test: `BottomNavigationBar masquée sur desktop (> 768px - ${vp.name})`,
+              test: `BottomNavigationBar masquée sur desktop (>= 1024px - ${vp.name})`,
               passed: displayVal === 'none',
               details: `display mesuré : "${displayVal}"`,
             });
@@ -474,6 +482,47 @@ async function runVerification() {
         await page.screenshot({ path: screenPath, fullPage: true });
         results.screenshots.push(screenPath);
         console.log(`  📸 courier-runs-${vp.name}.png`);
+      }
+
+      // Test spécifique du point de rupture et non-recouvrement à 1000px (inférieur au breakpoint lg: 1024px)
+      console.log('  Testing breakpoint à 1000px (inférieur à lg: 1024px)...');
+      {
+        await page.setViewportSize({ width: 1000, height: 800 });
+        await page.goto(`${BASE_URL}/`, { waitUntil: 'networkidle' });
+        await page.waitForTimeout(600);
+
+        const runsTab = page.locator('[data-testid="btn-bottom-my-runs"]:visible, header button:has-text("Mes Tournées"):visible').first();
+        if (await runsTab.isVisible()) {
+          await runsTab.click();
+          await page.waitForTimeout(600);
+        }
+
+        const bottomBar = page.locator('[data-testid="bottom-navigation-bar"]');
+        const isBarVisible = await bottomBar.isVisible();
+        const displayVal = await bottomBar.evaluate((el) => window.getComputedStyle(el).display);
+
+        results.checks.push({
+          test: 'Point de rupture 1000px: BottomNavigationBar visible car < lg (1024px)',
+          passed: isBarVisible && (displayVal === 'flex' || displayVal === 'block'),
+          details: `display mesuré: "${displayVal}", visible: ${isBarVisible} (classe lg:hidden inactive car viewport 1000px < 1024px)`,
+        });
+
+        // Défilement jusqu'en bas pour vérifier que le dernier élément de contenu n'est pas recouvert
+        await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+        await page.waitForTimeout(300);
+
+        const bottomBarBox = await bottomBar.boundingBox();
+        const lastFooterElem = page.locator('footer button, footer span').last();
+        const lastElemBox = await lastFooterElem.boundingBox();
+
+        const clearance = bottomBarBox && lastElemBox ? (bottomBarBox.y - (lastElemBox.y + lastElemBox.height)) : -1;
+        const isNotCovered = clearance >= 0;
+
+        results.checks.push({
+          test: 'Point de rupture 1000px: Le dernier élément de contenu n\'est PAS recouvert par la BottomNavigationBar',
+          passed: isNotCovered,
+          details: `Clearance mesurée: ${clearance.toFixed(1)}px (bottomBar.y = ${bottomBarBox?.y}px, dernier élément bas = ${(lastElemBox.y + lastElemBox.height).toFixed(1)}px, padding pb-16/pb-20 effectif)`,
+        });
       }
       await context.close();
     }

@@ -17,7 +17,7 @@ export default defineConfig({
     },
     {
       name: 'Tablet Chrome',
-      use: { ...devices['iPad Mini'], channel: 'chrome' },
+      use: { viewport: { width: 768, height: 1024 }, ...(process.env.CI ? {} : { channel: 'chrome' }) },
     },
     {
       name: 'Desktop Chrome',
