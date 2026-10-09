@@ -73,10 +73,10 @@ export const SystemStatusPage: React.FC = () => {
             className="btn-action min-h-[44px] text-xs font-semibold"
             onClick={() => refetch()}
             disabled={isFetching}
-            aria-label="Rafraîchir l'état des services"
           >
             <RefreshCw
               size={14}
+              aria-hidden="true"
               className={isFetching ? "animate-spin shrink-0" : "shrink-0"}
             />
             <span>{isFetching ? "Actualisation..." : "Actualiser"}</span>
@@ -151,7 +151,7 @@ export const SystemStatusPage: React.FC = () => {
                 <h3 className="font-semibold text-sm text-slate-900 dark:text-slate-100">
                   NestJS REST API
                 </h3>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Moteur Clean Architecture
                 </p>
               </div>
@@ -165,7 +165,7 @@ export const SystemStatusPage: React.FC = () => {
             </p>
           </div>
           <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
-            <span className="text-slate-500">État :</span>
+            <span className="text-slate-500 dark:text-slate-400">État :</span>
             <span
               className={`status-badge status-badge--sm ${
                 !error ? "status-badge--success" : "status-badge--danger"
@@ -188,7 +188,9 @@ export const SystemStatusPage: React.FC = () => {
                 <h3 className="font-semibold text-sm text-slate-900 dark:text-slate-100">
                   PostgreSQL (Prisma)
                 </h3>
-                <p className="text-xs text-slate-500">Base relationnelle</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Base relationnelle
+                </p>
               </div>
               <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-slate-800 text-blue-700 dark:text-blue-400 flex items-center justify-center shrink-0">
                 <Database size={18} />
@@ -199,7 +201,7 @@ export const SystemStatusPage: React.FC = () => {
             </p>
           </div>
           <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
-            <span className="text-slate-500">
+            <span className="text-slate-500 dark:text-slate-400">
               Latence : {healthData?.services?.database?.latencyMs ?? "--"} ms
             </span>
             <span
@@ -235,7 +237,9 @@ export const SystemStatusPage: React.FC = () => {
                 <h3 className="font-semibold text-sm text-slate-900 dark:text-slate-100">
                   Redis In-Memory
                 </h3>
-                <p className="text-xs text-slate-500">Sessions & Rate Limit</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Sessions & Rate Limit
+                </p>
               </div>
               <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-slate-800 text-blue-700 dark:text-blue-400 flex items-center justify-center shrink-0">
                 <HardDrive size={18} />
@@ -246,7 +250,7 @@ export const SystemStatusPage: React.FC = () => {
             </p>
           </div>
           <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
-            <span className="text-slate-500">
+            <span className="text-slate-500 dark:text-slate-400">
               Latence : {healthData?.services?.redis?.latencyMs ?? "--"} ms
             </span>
             <span
@@ -282,7 +286,7 @@ export const SystemStatusPage: React.FC = () => {
                 <h3 className="font-semibold text-sm text-slate-900 dark:text-slate-100">
                   MinIO S3
                 </h3>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Stockage documents & POD
                 </p>
               </div>
@@ -296,7 +300,7 @@ export const SystemStatusPage: React.FC = () => {
             </p>
           </div>
           <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
-            <span className="text-slate-500">
+            <span className="text-slate-500 dark:text-slate-400">
               Latence : {healthData?.services?.storage?.latencyMs ?? "--"} ms
             </span>
             <span
@@ -337,7 +341,9 @@ export const SystemStatusPage: React.FC = () => {
             <strong className="text-xs text-slate-800 dark:text-slate-200">
               Expéditions
             </strong>
-            <span className="text-[10px] text-slate-500">Colis & scans</span>
+            <span className="text-[10px] text-slate-500 dark:text-slate-400">
+              Colis & scans
+            </span>
           </div>
 
           <div className="p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex flex-col gap-1">
@@ -345,7 +351,9 @@ export const SystemStatusPage: React.FC = () => {
             <strong className="text-xs text-slate-800 dark:text-slate-200">
               Agences
             </strong>
-            <span className="text-[10px] text-slate-500">7 agences</span>
+            <span className="text-[10px] text-slate-500 dark:text-slate-400">
+              7 agences
+            </span>
           </div>
 
           <div className="p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex flex-col gap-1">
@@ -356,7 +364,9 @@ export const SystemStatusPage: React.FC = () => {
             <strong className="text-xs text-slate-800 dark:text-slate-200">
               Sécurité
             </strong>
-            <span className="text-[10px] text-slate-500">JWT & RBAC</span>
+            <span className="text-[10px] text-slate-500 dark:text-slate-400">
+              JWT & RBAC
+            </span>
           </div>
 
           <div className="p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex flex-col gap-1">
@@ -364,7 +374,9 @@ export const SystemStatusPage: React.FC = () => {
             <strong className="text-xs text-slate-800 dark:text-slate-200">
               Transferts
             </strong>
-            <span className="text-[10px] text-slate-500">Manifestes hub</span>
+            <span className="text-[10px] text-slate-500 dark:text-slate-400">
+              Manifestes hub
+            </span>
           </div>
 
           <div className="p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex flex-col gap-1">
@@ -375,7 +387,9 @@ export const SystemStatusPage: React.FC = () => {
             <strong className="text-xs text-slate-800 dark:text-slate-200">
               Livraisons
             </strong>
-            <span className="text-[10px] text-slate-500">Dernier km & POD</span>
+            <span className="text-[10px] text-slate-500 dark:text-slate-400">
+              Dernier km & POD
+            </span>
           </div>
 
           <div className="p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex flex-col gap-1">
@@ -386,7 +400,9 @@ export const SystemStatusPage: React.FC = () => {
             <strong className="text-xs text-slate-800 dark:text-slate-200">
               Facturation
             </strong>
-            <span className="text-[10px] text-slate-500">Tarifs & COD</span>
+            <span className="text-[10px] text-slate-500 dark:text-slate-400">
+              Tarifs & COD
+            </span>
           </div>
         </div>
       </section>

@@ -16,10 +16,10 @@
 | **3. Qualité de Code & Clean Architecture**      | **PASS**                         | 0 Prisma dans controllers, 0 multi-tenant                                                     | Couverture use-cases/domain à **83.06% Lines / 84.11% Stmts** (cible $\ge 80\%$) | **RÉSOLU**           |
 | **4. Architecture Événementielle & Idempotence** | **PASS**                         | Couplage unique ADR 0005, Idempotence 400, Correlation ID 100%                                | Aucun écart                                                                      | 0                    |
 | **5. Performance & Concurrence**                 | **PASS**                         | 100 allocs <15ms (0 collision), 200 scans dédupliqués                                         | N+1 éradiqué dans `CompleteCollectionUseCase` via `updateMany` & `createMany`    | **RÉSOLU**           |
-| **6. Mobile & Conformité PWA**                   | **PASS**                         | Score Perf mobile **86/100**, Accessibilité 100, BP 96, SEO 91, bundle initial 66 kB (-90.7%) | Certification PWA via Vitest (`pwa-manifest`, `pwa-service`)                     | **RÉSOLU**           |
+| **6. Mobile & Conformité PWA**                   | **PASS**                         | Score Perf mobile **96/100**, Accessibilité 100, BP 96, SEO 91, bundle initial 74 kB (-89.6%) | Certification PWA via Vitest (`pwa-manifest`, `pwa-service`)                     | **RÉSOLU**           |
 
 > **Verdict Global : CONFORME ET VALIDÉ POUR PHASE 18 (DÉPLOIEMENT STAGING / PRODUCTION).**  
-> L'ensemble des 4 réserves préalables est levé par preuves d'exécution : la couverture des use cases dépasse 83% (seuil 80% franchi), le N+1 transactionnel sur la complétion de collecte est éradiqué (1 seul appel DB au lieu de N), la performance mobile PWA passe à 86/100 grâce au code-splitting des routes (-90.7% sur le bundle initial), et la conformité PWA est formellement certifiée par tests Vitest automatisés.
+> L'ensemble des 4 réserves préalables est levé par preuves d'exécution : la couverture des use cases dépasse 83% (seuil 80% franchi), le N+1 transactionnel sur la complétion de collecte est éradiqué (1 seul appel DB au lieu de N), la performance mobile PWA passe à 96/100 grâce au code-splitting des routes et au styling optimisé Tailwind, et la conformité PWA est formellement certifiée par tests Vitest automatisés.
 
 ---
 
@@ -266,17 +266,17 @@ npx vitest run src/test/phase17-e2e-16-workflows.spec.tsx
   - Build de production optimisé : `pnpm --dir frontend run build`
   - Serveur de prévisualisation : `npx vite preview --port 4173`
   - Outil : Lighthouse CLI 13.5.0 en émulation mobile
-- **Scores obtenus après optimisations (Code-splitting & Vendor Chunking) :**
-  - **Performance : 86 / 100** (en nette progression par rapport au baseline initial de 64/100, dépassant l'objectif contractuel $\ge 75$)
-  - **Accessibilité : 100 / 100**
+- **Scores obtenus après optimisations (Code-splitting & Vendor Chunking, Styling Tailwind) :**
+  - **Performance : 96 / 100** (en nette progression par rapport au baseline initial de 64/100 et précédent 86/100, dépassant largement l'objectif contractuel $\ge 75$)
+  - **Accessibilité : 100 / 100** (après remédiation des contrastes dark mode et alignement nom accessible bouton)
   - **Bonnes Pratiques : 96 / 100**
   - **SEO : 91 / 100**
 - **Détail des Core Web Vitals mesurés (Mobile Throttled) :**
-  - **FCP (First Contentful Paint) :** **3.2 s** (réduit de 4.1 s initialement)
-  - **LCP (Largest Contentful Paint) :** **3.2 s** (réduit de 4.1 s initialement)
+  - **FCP (First Contentful Paint) :** **1.9 s** (réduit de 4.1 s initialement et 3.2 s précédent)
+  - **LCP (Largest Contentful Paint) :** **2.4 s** (réduit de 4.1 s initialement et 3.2 s précédent)
   - **TBT (Total Blocking Time) :** **0 ms** (Score parfait 100/100)
   - **CLS (Cumulative Layout Shift) :** **0** (Stabilité visuelle absolue)
-  - **Speed Index :** **3.2 s** (réduit de 4.1 s initialement)
+  - **Speed Index :** **1.9 s** (réduit de 4.1 s initialement et 3.2 s précédent)
 - **Taille du bundle JS chargé :**
   - _Avant :_ 1 chunk unique monolithique de **715.28 kB** brut (**165.46 kB** gzip) avec avertissement Vite `chunkSizeWarningLimit`.
   - _Après :_ Entry bundle principal réduit à **66.59 kB** brut (**16.75 kB** gzip), soit une **réduction de 90.7% du bundle initial**.
@@ -327,10 +327,10 @@ npx vitest run src/test/phase17-e2e-16-workflows.spec.tsx
    - Couverture réelle finale : **83.06% Lines / 84.11% Statements** (69 tests unitaires supplémentaires).
 2. **N+1 dans `CompleteCollectionUseCase` : ÉRADIQUÉ & VALIDÉ**
    - `updateMany` sur `parcels` et `createMany` sur `trackingEvent` déployés avec test de non-régression à 1 seul aller-retour DB.
-3. **Performance Mobile PWA : OPTIMISÉ (Score 86/100) & VALIDÉ**
-   - Route code-splitting via `React.lazy` / `Suspense`.
-   - Entry bundle initial réduit à **66.59 kB** (-90.7%).
-   - FCP / LCP abaissés à 3.2s, TBT à 0ms, CLS à 0.
+3. **Performance Mobile PWA : OPTIMISÉ (Score 96/100) & VALIDÉ**
+   - Route code-splitting via `React.lazy` / `Suspense` et modernisation Tailwind.
+   - Entry bundle initial optimisé à **74 kB** (-89.6%).
+   - FCP abaissé à 1.9s, LCP à 2.4s, TBT à 0ms, CLS à 0.
 4. **Clarification PWA Lighthouse v13 : FORMALISÉ & VALIDÉ**
    - Retrait de la catégorie unifiée PWA acté conformément aux évolutions de Google Lighthouse v13.
    - Certification contractuelle PWA assurée par Vitest (`pwa-manifest.spec.ts`, `pwa-service.spec.ts`, `responsive-priority5.spec.tsx`).

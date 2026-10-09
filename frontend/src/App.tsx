@@ -319,14 +319,14 @@ const MainContent: React.FC = () => {
         </React.Suspense>
       </main>
 
-      <footer className="mt-auto py-3 px-4 text-center text-xs text-slate-500 border-t border-slate-200 dark:border-slate-800 pb-16 lg:pb-3">
+      <footer className="mt-auto py-3 px-4 text-center text-xs text-slate-600 dark:text-slate-400 border-t border-slate-200 dark:border-slate-800 pb-16 lg:pb-3">
         <div className="flex items-center justify-center gap-3">
           <span>HES Transport & Logistique &copy; 2026</span>
           <span>•</span>
           <button
             type="button"
             onClick={() => setCurrentView("status")}
-            className="text-slate-500 hover:text-blue-700 dark:hover:text-blue-400 underline"
+            className="text-slate-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-blue-400 underline"
           >
             Statut système
           </button>

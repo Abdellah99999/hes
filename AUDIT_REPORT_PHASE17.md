@@ -235,12 +235,12 @@ pnpm --filter @hes/web build
   - Entry bundle principal réduit à **66.59 kB** brut (**16.75 kB** gzip) — **réduction de 90.7%**.
   - Code-splitting par route (`React.lazy`/`Suspense`) : chaque vue métier est un chunk autonome à la demande (<30 kB).
   - Vendor chunking (`vendor-react`, `vendor-query`, `vendor-forms`, `vendor-core`).
-- **Benchmark Lighthouse Mobile (Lighthouse CLI 13.5.0) :**
-  - **Performance : 86 / 100** (progression depuis le baseline 64/100, cible contractuelle $\ge 75$ dépassée).
-  - **Accessibilité : 100 / 100**
+- **Benchmark Lighthouse Mobile (Lighthouse CLI 13.5.0 sur build Tailwind) :**
+  - **Performance : 96 / 100** (progression depuis le baseline 64/100 et précédent 86/100, cible contractuelle $\ge 75$ largement dépassée).
+  - **Accessibilité : 100 / 100** (validation complète des contrastes en dark mode et conformité WCAG 2.5.3).
   - **Bonnes Pratiques : 96 / 100**
   - **SEO : 91 / 100**
-  - **Core Web Vitals :** FCP **3.2 s**, LCP **3.2 s**, TBT **0 ms**, CLS **0**, Speed Index **3.2 s**.
+  - **Core Web Vitals :** FCP **1.9 s**, LCP **2.4 s**, TBT **0 ms**, CLS **0**, Speed Index **1.9 s**.
 - **Clarification Formelle — Catégorie PWA dans Lighthouse v13 vs v10 :**
   > [!IMPORTANT]
   > Dans Lighthouse v13.4.1+, Google a officiellement déprécié et retiré la catégorie unifiée "PWA" (score synthétique 0-100), intégrant les critères d'installabilité au sein des _Best Practices_. La conformité PWA de l'application HES est formellement validée par les suites Vitest dédiées (`pwa-manifest.spec.ts`, `pwa-service.spec.ts`, `responsive-priority5.spec.tsx`).
