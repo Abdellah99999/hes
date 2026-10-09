@@ -189,7 +189,9 @@ export class PrismaShipmentRepository implements IShipmentRepository {
             : null,
           codAmount: dto.codAmount ? new Prisma.Decimal(dto.codAmount) : null,
           totalParcels,
-          totalWeightKg: totalWeightKg ? new Prisma.Decimal(totalWeightKg) : null,
+          totalWeightKg: totalWeightKg
+            ? new Prisma.Decimal(totalWeightKg)
+            : null,
           notes: dto.notes?.trim() ?? null,
           createdByUserId: user.id,
         },
@@ -227,7 +229,15 @@ export class PrismaShipmentRepository implements IShipmentRepository {
         });
 
         if (parcelDto.items && parcelDto.items.length > 0) {
-          const itemDelegate = tx.shipmentItem || (tx as any).parcelItem;
+          const itemDelegate =
+            tx.shipmentItem ||
+            (
+              tx as unknown as {
+                parcelItem?: {
+                  createMany: (args: unknown) => Promise<unknown>;
+                };
+              }
+            ).parcelItem;
           if (itemDelegate?.createMany) {
             await itemDelegate.createMany({
               data: parcelDto.items.map((item) => ({

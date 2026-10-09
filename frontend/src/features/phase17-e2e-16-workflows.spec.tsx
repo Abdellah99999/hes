@@ -18,7 +18,10 @@ describe("Phase 17 Frontend: Comprehensive E2E Test Suite (16 Workflows)", () =>
 
   // Workflow 1: Auth & Token Management
   it("Workflow 1 (Auth): stores and verifies access token in localStorage", () => {
-    localStorage.setItem("hes_access_token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e2e");
+    localStorage.setItem(
+      "hes_access_token",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e2e",
+    );
     expect(localStorage.getItem("hes_access_token")).toContain("eyJhbGci");
   });
 
@@ -158,10 +161,7 @@ describe("Phase 17 Frontend: Comprehensive E2E Test Suite (16 Workflows)", () =>
 
   // Workflow 14: Multi-Channel Notifications UI
   it("Workflow 14 (Notifications): renders notification bell and unread badge", () => {
-    render(
-      <NotificationCenter />,
-      { wrapper: createWrapper() },
-    );
+    render(<NotificationCenter />, { wrapper: createWrapper() });
 
     const button = screen.getByRole("button", { name: /notifications/i });
     expect(button).toBeDefined();
@@ -197,8 +197,9 @@ describe("Phase 17 Frontend: Comprehensive E2E Test Suite (16 Workflows)", () =>
       timestamp: "2026-09-06T15:30:00Z",
     };
 
-    expect((clientTimelineEvent as any).latitude).toBeUndefined();
-    expect((clientTimelineEvent as any).longitude).toBeUndefined();
-    expect((clientTimelineEvent as any).liveCourierGps).toBeUndefined();
+    const untypedEvent = clientTimelineEvent as Record<string, unknown>;
+    expect(untypedEvent.latitude).toBeUndefined();
+    expect(untypedEvent.longitude).toBeUndefined();
+    expect(untypedEvent.liveCourierGps).toBeUndefined();
   });
 });

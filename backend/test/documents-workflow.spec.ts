@@ -324,15 +324,12 @@ describe("Phase 13 Backend Tests: DocumentService, PDF Validation, QR Code Encod
   });
 
   it("Event-Driven Generation: Auto-generates invoice PDF upon InvoiceCreatedEvent publication", async () => {
-    const { EventBusService } = await import(
-      "../src/common/events/event-bus.service"
-    );
-    const { InvoiceCreatedEvent } = await import(
-      "../src/common/events/billing.events"
-    );
-    const { OnInvoiceCreatedHandler } = await import(
-      "../src/modules/documents/application/handlers/on-invoice-created.handler"
-    );
+    const { EventBusService } =
+      await import("../src/common/events/event-bus.service");
+    const { InvoiceCreatedEvent } =
+      await import("../src/common/events/billing.events");
+    const { OnInvoiceCreatedHandler } =
+      await import("../src/modules/documents/application/handlers/on-invoice-created.handler");
 
     const eventBus = new EventBusService();
     const handler = new OnInvoiceCreatedHandler(eventBus, documentService);

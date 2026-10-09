@@ -37,7 +37,9 @@ export class InvoiceDocGenerator implements IDocumentGenerator {
     }
 
     const invoiceNum =
-      (invoice as any).number || (invoice as any).invoiceNumber || context.entityId;
+      (invoice as any).number ||
+      (invoice as any).invoiceNumber ||
+      context.entityId;
     const clientName = invoice.customer?.legalName || "Client HES";
     const clientCode = invoice.customer?.code || "CLI";
     const clientIce = invoice.customer?.ice || "Non renseigné";
@@ -76,4 +78,3 @@ export class InvoiceDocGenerator implements IDocumentGenerator {
     };
   }
 }
-

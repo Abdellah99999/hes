@@ -173,7 +173,8 @@ export class CreateTransferUseCase {
     await this.eventBus.publish(
       new TransferCreatedEvent({
         transferId: createdTransfer.id,
-        transferNumber: createdTransfer.transferNumber || createdTransfer.number,
+        transferNumber:
+          createdTransfer.transferNumber || createdTransfer.number,
         originAgencyId: createdTransfer.originAgencyId,
         destinationAgencyId: createdTransfer.destinationAgencyId,
         totalExpectedParcels: parcels.length,

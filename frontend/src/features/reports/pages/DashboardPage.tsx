@@ -57,21 +57,61 @@ const periodOptions = [
   { value: "year", label: "Année en cours" },
 ] as const;
 
-const statusLabels: Record<string, { label: string; color: string; border: string; bg: string }> = {
-  DELIVERED: { label: "Livrées", color: "text-emerald-400", border: "border-emerald-500/30", bg: "bg-emerald-500/10" },
-  IN_TRANSIT: { label: "En transit", color: "text-amber-400", border: "border-amber-500/30", bg: "bg-amber-500/10" },
-  OUT_FOR_DELIVERY: { label: "En livraison", color: "text-sky-400", border: "border-sky-500/30", bg: "bg-sky-500/10" },
-  REGISTERED: { label: "Enregistrées", color: "text-blue-400", border: "border-blue-500/30", bg: "bg-blue-500/10" },
-  DRAFT: { label: "Brouillon", color: "text-slate-400", border: "border-slate-500/30", bg: "bg-slate-500/10" },
-  RETURNED: { label: "Retournées", color: "text-orange-400", border: "border-orange-500/30", bg: "bg-orange-500/10" },
-  CANCELLED: { label: "Annulées", color: "text-rose-400", border: "border-rose-500/30", bg: "bg-rose-500/10" },
+const statusLabels: Record<
+  string,
+  { label: string; color: string; border: string; bg: string }
+> = {
+  DELIVERED: {
+    label: "Livrées",
+    color: "text-emerald-400",
+    border: "border-emerald-500/30",
+    bg: "bg-emerald-500/10",
+  },
+  IN_TRANSIT: {
+    label: "En transit",
+    color: "text-amber-400",
+    border: "border-amber-500/30",
+    bg: "bg-amber-500/10",
+  },
+  OUT_FOR_DELIVERY: {
+    label: "En livraison",
+    color: "text-sky-400",
+    border: "border-sky-500/30",
+    bg: "bg-sky-500/10",
+  },
+  REGISTERED: {
+    label: "Enregistrées",
+    color: "text-blue-400",
+    border: "border-blue-500/30",
+    bg: "bg-blue-500/10",
+  },
+  DRAFT: {
+    label: "Brouillon",
+    color: "text-slate-400",
+    border: "border-slate-500/30",
+    bg: "bg-slate-500/10",
+  },
+  RETURNED: {
+    label: "Retournées",
+    color: "text-orange-400",
+    border: "border-orange-500/30",
+    bg: "bg-orange-500/10",
+  },
+  CANCELLED: {
+    label: "Annulées",
+    color: "text-rose-400",
+    border: "border-rose-500/30",
+    bg: "bg-rose-500/10",
+  },
 };
 
 interface DashboardPageProps {
   onNavigateToReports?: (reportType?: string) => void;
 }
 
-export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigateToReports }) => {
+export const DashboardPage: React.FC<DashboardPageProps> = ({
+  onNavigateToReports,
+}) => {
   const [period, setPeriod] = useState("month");
   const [status, setStatus] = useState("");
   const [agencyId, setAgencyId] = useState("");
@@ -87,19 +127,20 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigateToReport
     customerId: undefined as string | undefined,
   });
 
-  const { data, isLoading, isFetching, refetch } = useQuery<DashboardSummaryResponse>({
-    queryKey: ["reports-dashboard-summary", appliedFilters],
-    queryFn: () =>
-      customFetch<DashboardSummaryResponse>("/reports/dashboard", {
-        params: {
-          period: appliedFilters.period,
-          status: appliedFilters.status,
-          agencyId: appliedFilters.agencyId,
-          courierId: appliedFilters.courierId,
-          customerId: appliedFilters.customerId,
-        },
-      }),
-  });
+  const { data, isLoading, isFetching, refetch } =
+    useQuery<DashboardSummaryResponse>({
+      queryKey: ["reports-dashboard-summary", appliedFilters],
+      queryFn: () =>
+        customFetch<DashboardSummaryResponse>("/reports/dashboard", {
+          params: {
+            period: appliedFilters.period,
+            status: appliedFilters.status,
+            agencyId: appliedFilters.agencyId,
+            courierId: appliedFilters.courierId,
+            customerId: appliedFilters.customerId,
+          },
+        }),
+    });
 
   const kpis: DashboardKpis = useMemo(
     () =>
@@ -120,7 +161,10 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigateToReport
     [data],
   );
 
-  const statusBreakdown = data?.statusBreakdown ?? [];
+  const statusBreakdown = useMemo(
+    () => data?.statusBreakdown ?? [],
+    [data?.statusBreakdown],
+  );
   const totalInBreakdown = useMemo(
     () => statusBreakdown.reduce((acc, curr) => acc + curr.count, 0) || 1,
     [statusBreakdown],
@@ -202,7 +246,8 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigateToReport
                 </span>
               </div>
               <p className="text-xs text-slate-400 mt-1">
-                Indicateurs clés, performance de distribution, surveillance des incidents et flux financier.
+                Indicateurs clés, performance de distribution, surveillance des
+                incidents et flux financier.
               </p>
             </div>
           </div>
@@ -216,7 +261,9 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigateToReport
             title="Actualiser les données"
             className="p-2.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 text-slate-300 rounded-xl border border-slate-700 transition-all"
           >
-            <RefreshCw className={`w-4 h-4 ${isFetching ? "animate-spin text-blue-400" : ""}`} />
+            <RefreshCw
+              className={`w-4 h-4 ${isFetching ? "animate-spin text-blue-400" : ""}`}
+            />
           </button>
 
           <button
@@ -312,7 +359,9 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigateToReport
               <option value="">Tous les statuts</option>
               <option value="DELIVERED">Livrées (DELIVERED)</option>
               <option value="IN_TRANSIT">En transit (IN_TRANSIT)</option>
-              <option value="OUT_FOR_DELIVERY">En cours de livraison (OUT_FOR_DELIVERY)</option>
+              <option value="OUT_FOR_DELIVERY">
+                En cours de livraison (OUT_FOR_DELIVERY)
+              </option>
               <option value="REGISTERED">Enregistrées (REGISTERED)</option>
               <option value="RETURNED">Retournées (RETURNED)</option>
               <option value="CANCELLED">Annulées (CANCELLED)</option>
@@ -398,7 +447,9 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigateToReport
               {isLoading ? "…" : kpis.delivered.toLocaleString("fr-FR")}
             </div>
             <div className="mt-1 text-xs text-slate-400 flex items-center gap-1.5">
-              <span className="text-emerald-400 font-semibold">{kpis.deliverySuccessRate}%</span>
+              <span className="text-emerald-400 font-semibold">
+                {kpis.deliverySuccessRate}%
+              </span>
               <span>de réussite terminale</span>
             </div>
           </div>
@@ -422,7 +473,9 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigateToReport
             <div className="mt-2 w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
               <div
                 className="bg-indigo-500 h-full rounded-full transition-all duration-500"
-                style={{ width: `${Math.min(100, Math.max(0, kpis.deliverySuccessRate))}%` }}
+                style={{
+                  width: `${Math.min(100, Math.max(0, kpis.deliverySuccessRate))}%`,
+                }}
               />
             </div>
           </div>
@@ -441,7 +494,9 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigateToReport
           </div>
           <div className="mt-3">
             <div className="text-3xl font-extrabold text-slate-100">
-              {isLoading ? "…" : `${Number(kpis.totalRevenue).toLocaleString("fr-FR")} MAD`}
+              {isLoading
+                ? "…"
+                : `${Number(kpis.totalRevenue).toLocaleString("fr-FR")} MAD`}
             </div>
             <div className="mt-1 text-xs text-slate-400">
               Frais d&apos;expédition consolidés
@@ -466,8 +521,18 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigateToReport
             </div>
           </div>
           <div className="text-right text-[11px] text-slate-400">
-            <div>Transit: <span className="font-semibold text-slate-200">{kpis.inTransit}</span></div>
-            <div>Livraison: <span className="font-semibold text-slate-200">{kpis.outForDelivery}</span></div>
+            <div>
+              Transit:{" "}
+              <span className="font-semibold text-slate-200">
+                {kpis.inTransit}
+              </span>
+            </div>
+            <div>
+              Livraison:{" "}
+              <span className="font-semibold text-slate-200">
+                {kpis.outForDelivery}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -478,9 +543,14 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigateToReport
               <PackageCheck className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-xs text-slate-400">Collectes / Enlèvements</div>
+              <div className="text-xs text-slate-400">
+                Collectes / Enlèvements
+              </div>
               <div className="text-xl font-bold text-slate-100">
-                {kpis.collectionsCompleted} <span className="text-xs text-slate-400 font-normal">/ {kpis.collectionsTotal}</span>
+                {kpis.collectionsCompleted}{" "}
+                <span className="text-xs text-slate-400 font-normal">
+                  / {kpis.collectionsTotal}
+                </span>
               </div>
             </div>
           </div>
@@ -501,15 +571,27 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigateToReport
               <RotateCcw className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-xs text-slate-400">Retours & Annulations</div>
+              <div className="text-xs text-slate-400">
+                Retours & Annulations
+              </div>
               <div className="text-xl font-bold text-slate-100">
                 {kpis.returned + kpis.cancelled}
               </div>
             </div>
           </div>
           <div className="text-right text-[11px] text-slate-400">
-            <div>Retours: <span className="font-semibold text-orange-300">{kpis.returned}</span></div>
-            <div>Annulés: <span className="font-semibold text-rose-300">{kpis.cancelled}</span></div>
+            <div>
+              Retours:{" "}
+              <span className="font-semibold text-orange-300">
+                {kpis.returned}
+              </span>
+            </div>
+            <div>
+              Annulés:{" "}
+              <span className="font-semibold text-rose-300">
+                {kpis.cancelled}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -546,8 +628,13 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigateToReport
         <div className="lg:col-span-2 bg-slate-900/70 border border-slate-800/80 rounded-2xl p-5 shadow-xl">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-base font-bold text-slate-100">Répartition des Statuts de Colis</h2>
-              <p className="text-xs text-slate-400">Ventilation en volume de toutes les expéditions de la période sélectionnée.</p>
+              <h2 className="text-base font-bold text-slate-100">
+                Répartition des Statuts de Colis
+              </h2>
+              <p className="text-xs text-slate-400">
+                Ventilation en volume de toutes les expéditions de la période
+                sélectionnée.
+              </p>
             </div>
             <span className="text-xs font-mono text-cyan-400 bg-cyan-950/40 px-2.5 py-1 rounded-lg border border-cyan-800/30">
               {kpis.totalShipments} flux totaux
@@ -556,7 +643,8 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigateToReport
 
           {statusBreakdown.length === 0 ? (
             <div className="py-12 text-center text-xs text-slate-400">
-              Aucune donnée d&apos;expédition trouvée pour les critères appliqués.
+              Aucune donnée d&apos;expédition trouvée pour les critères
+              appliqués.
             </div>
           ) : (
             <div className="space-y-3.5">
@@ -567,20 +655,30 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigateToReport
                   border: "border-slate-700",
                   bg: "bg-slate-800",
                 };
-                const percentage = Math.round((item.count / totalInBreakdown) * 100);
+                const percentage = Math.round(
+                  (item.count / totalInBreakdown) * 100,
+                );
 
                 return (
                   <div key={item.status} className="space-y-1.5">
                     <div className="flex items-center justify-between text-xs">
                       <div className="flex items-center gap-2">
-                        <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold border ${config.border} ${config.bg} ${config.color}`}>
+                        <span
+                          className={`px-2 py-0.5 rounded-md text-[10px] font-bold border ${config.border} ${config.bg} ${config.color}`}
+                        >
                           {item.status}
                         </span>
-                        <span className="text-slate-300 font-medium">{config.label}</span>
+                        <span className="text-slate-300 font-medium">
+                          {config.label}
+                        </span>
                       </div>
                       <div className="flex items-center gap-2 text-slate-400 font-mono">
-                        <span className="font-semibold text-slate-100">{item.count.toLocaleString("fr-FR")}</span>
-                        <span className="text-[11px] text-slate-500">({percentage}%)</span>
+                        <span className="font-semibold text-slate-100">
+                          {item.count.toLocaleString("fr-FR")}
+                        </span>
+                        <span className="text-[11px] text-slate-500">
+                          ({percentage}%)
+                        </span>
                       </div>
                     </div>
                     <div className="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
@@ -589,14 +687,14 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigateToReport
                           item.status === "DELIVERED"
                             ? "bg-emerald-500"
                             : item.status === "IN_TRANSIT"
-                            ? "bg-amber-500"
-                            : item.status === "OUT_FOR_DELIVERY"
-                            ? "bg-sky-500"
-                            : item.status === "CANCELLED"
-                            ? "bg-rose-500"
-                            : item.status === "RETURNED"
-                            ? "bg-orange-500"
-                            : "bg-blue-500"
+                              ? "bg-amber-500"
+                              : item.status === "OUT_FOR_DELIVERY"
+                                ? "bg-sky-500"
+                                : item.status === "CANCELLED"
+                                  ? "bg-rose-500"
+                                  : item.status === "RETURNED"
+                                    ? "bg-orange-500"
+                                    : "bg-blue-500"
                         }`}
                         style={{ width: `${percentage}%` }}
                       />
@@ -611,9 +709,12 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigateToReport
         {/* Quick Report Shortcuts */}
         <div className="bg-slate-900/70 border border-slate-800/80 rounded-2xl p-5 shadow-xl flex flex-col justify-between">
           <div>
-            <h2 className="text-base font-bold text-slate-100 mb-1">Rapports &amp; Analyses Détaillés</h2>
+            <h2 className="text-base font-bold text-slate-100 mb-1">
+              Rapports &amp; Analyses Détaillés
+            </h2>
             <p className="text-xs text-slate-400 mb-4">
-              Consultez les tables d&apos;enregistrements bruts et exportez vos données certifiées.
+              Consultez les tables d&apos;enregistrements bruts et exportez vos
+              données certifiées.
             </p>
 
             <div className="space-y-2">
@@ -652,7 +753,9 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigateToReport
 
           <div className="mt-6 pt-4 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
             <span>Conformité RBAC &amp; Agence</span>
-            <span className="text-emerald-400 font-semibold">Strictement Scruté</span>
+            <span className="text-emerald-400 font-semibold">
+              Strictement Scruté
+            </span>
           </div>
         </div>
       </div>

@@ -15,17 +15,37 @@ import {
 } from "lucide-react";
 import customFetch from "../../../lib/api-client";
 
-export const reportTypes = [
-  { value: "SHIPMENTS", label: "Expéditions", desc: "Suivi des colis et tarifs" },
-  { value: "DELIVERIES", label: "Livraisons Quai", desc: "Pointages des tournées et livreurs" },
-  { value: "COLLECTIONS", label: "Collectes", desc: "Enlèvements planifiés et ramassages" },
-  { value: "INCIDENTS", label: "Incidents & Litiges", desc: "Anomalies, avaries et pertes" },
-  { value: "REVENUE", label: "Revenus & Factures", desc: "Comptabilité et encaissements" },
+const reportTypes = [
+  {
+    value: "SHIPMENTS",
+    label: "Expéditions",
+    desc: "Suivi des colis et tarifs",
+  },
+  {
+    value: "DELIVERIES",
+    label: "Livraisons Quai",
+    desc: "Pointages des tournées et livreurs",
+  },
+  {
+    value: "COLLECTIONS",
+    label: "Collectes",
+    desc: "Enlèvements planifiés et ramassages",
+  },
+  {
+    value: "INCIDENTS",
+    label: "Incidents & Litiges",
+    desc: "Anomalies, avaries et pertes",
+  },
+  {
+    value: "REVENUE",
+    label: "Revenus & Factures",
+    desc: "Comptabilité et encaissements",
+  },
 ] as const;
 
 export type ReportTypeValue = (typeof reportTypes)[number]["value"];
 
-export const periods = [
+const periods = [
   { value: "day", label: "Aujourd'hui" },
   { value: "week", label: "7 derniers jours" },
   { value: "month", label: "Mois en cours" },
@@ -127,8 +147,11 @@ interface ReportsPageProps {
   initialReportType?: ReportTypeValue;
 }
 
-export const ReportsPage: React.FC<ReportsPageProps> = ({ initialReportType = "SHIPMENTS" }) => {
-  const [reportType, setReportType] = useState<ReportTypeValue>(initialReportType);
+export const ReportsPage: React.FC<ReportsPageProps> = ({
+  initialReportType = "SHIPMENTS",
+}) => {
+  const [reportType, setReportType] =
+    useState<ReportTypeValue>(initialReportType);
   const [period, setPeriod] = useState("month");
   const [status, setStatus] = useState("");
   const [agencyId, setAgencyId] = useState("");
@@ -161,13 +184,15 @@ export const ReportsPage: React.FC<ReportsPageProps> = ({ initialReportType = "S
     [appliedFilters, currentPage],
   );
 
-  const { data, isLoading, isFetching, refetch } = useQuery<ReportDataResponse>({
-    queryKey: ["reports-data", queryParams],
-    queryFn: () =>
-      customFetch<ReportDataResponse>("/reports/data", {
-        params: queryParams,
-      }),
-  });
+  const { data, isLoading, isFetching, refetch } = useQuery<ReportDataResponse>(
+    {
+      queryKey: ["reports-data", queryParams],
+      queryFn: () =>
+        customFetch<ReportDataResponse>("/reports/data", {
+          params: queryParams,
+        }),
+    },
+  );
 
   const rows = data?.data ?? [];
   const meta = data?.meta ?? {
@@ -242,7 +267,9 @@ export const ReportsPage: React.FC<ReportsPageProps> = ({ initialReportType = "S
     } catch (err: unknown) {
       console.error("Erreur lors de l'export du rapport:", err);
       const message =
-        err instanceof Error ? err.message : "Erreur inattendue lors de l'exportation du fichier.";
+        err instanceof Error
+          ? err.message
+          : "Erreur inattendue lors de l'exportation du fichier.";
       setExportError(message);
     } finally {
       setIsExporting(false);
@@ -263,7 +290,8 @@ export const ReportsPage: React.FC<ReportsPageProps> = ({ initialReportType = "S
                 Centre de Rapports &amp; Exports
               </h1>
               <p className="text-xs text-slate-400 mt-1">
-                Extraction granulaire, audit multi-agences et génération de fichiers PDF / Excel certifiés.
+                Extraction granulaire, audit multi-agences et génération de
+                fichiers PDF / Excel certifiés.
               </p>
             </div>
           </div>
@@ -277,7 +305,9 @@ export const ReportsPage: React.FC<ReportsPageProps> = ({ initialReportType = "S
             title="Actualiser les données"
             className="p-2.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 text-slate-300 rounded-xl border border-slate-700 transition-all"
           >
-            <RefreshCw className={`w-4 h-4 ${isFetching ? "animate-spin text-cyan-400" : ""}`} />
+            <RefreshCw
+              className={`w-4 h-4 ${isFetching ? "animate-spin text-cyan-400" : ""}`}
+            />
           </button>
 
           <button
@@ -307,7 +337,12 @@ export const ReportsPage: React.FC<ReportsPageProps> = ({ initialReportType = "S
         <div className="flex items-center gap-2.5">
           <ShieldCheck className="w-4 h-4 text-emerald-400" />
           <span>
-            <strong className="text-slate-200">Isolation Multi-Agences :</strong> Les données affichées et exportées sont strictement confinées à vos permissions (Agence / Rôle). Plafond de sécurité : 10 000 lignes par export.
+            <strong className="text-slate-200">
+              Isolation Multi-Agences :
+            </strong>{" "}
+            Les données affichées et exportées sont strictement confinées à vos
+            permissions (Agence / Rôle). Plafond de sécurité : 10 000 lignes par
+            export.
           </span>
         </div>
         <div className="hidden sm:flex items-center gap-1 text-[11px] font-mono text-cyan-400">
@@ -343,7 +378,9 @@ export const ReportsPage: React.FC<ReportsPageProps> = ({ initialReportType = "S
               }`}
             >
               <div className="text-xs font-bold">{type.label}</div>
-              <div className="text-[10px] text-slate-500 mt-0.5">{type.desc}</div>
+              <div className="text-[10px] text-slate-500 mt-0.5">
+                {type.desc}
+              </div>
               {isSelected && (
                 <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-cyan-400" />
               )}
@@ -357,7 +394,10 @@ export const ReportsPage: React.FC<ReportsPageProps> = ({ initialReportType = "S
         <div className="flex items-center justify-between border-b border-slate-800 pb-3">
           <div className="flex items-center gap-2 text-xs font-semibold text-slate-300">
             <Filter className="w-4 h-4 text-cyan-400" />
-            <span>Filtres de Sélection ({reportTypes.find((r) => r.value === appliedFilters.type)?.label})</span>
+            <span>
+              Filtres de Sélection (
+              {reportTypes.find((r) => r.value === appliedFilters.type)?.label})
+            </span>
           </div>
 
           <div className="flex gap-2">
@@ -424,7 +464,9 @@ export const ReportsPage: React.FC<ReportsPageProps> = ({ initialReportType = "S
               <option value="">Tous les statuts</option>
               <option value="DELIVERED">DELIVERED (Livrée / Complétée)</option>
               <option value="IN_TRANSIT">IN_TRANSIT (En transit)</option>
-              <option value="OUT_FOR_DELIVERY">OUT_FOR_DELIVERY (En tournée)</option>
+              <option value="OUT_FOR_DELIVERY">
+                OUT_FOR_DELIVERY (En tournée)
+              </option>
               <option value="REGISTERED">REGISTERED (Enregistrée)</option>
               <option value="COMPLETED">COMPLETED (Terminée)</option>
               <option value="FAILED">FAILED (Échouée)</option>
@@ -477,11 +519,13 @@ export const ReportsPage: React.FC<ReportsPageProps> = ({ initialReportType = "S
           <div className="flex items-center gap-2">
             <BarChart3 className="w-4 h-4 text-cyan-400" />
             <span className="text-sm font-bold text-slate-100">
-              Résultats : {reportTypes.find((r) => r.value === appliedFilters.type)?.label}
+              Résultats :{" "}
+              {reportTypes.find((r) => r.value === appliedFilters.type)?.label}
             </span>
           </div>
           <div className="text-xs text-slate-400">
-            {meta.total} ligne{meta.total > 1 ? "s" : ""} trouvée{meta.total > 1 ? "s" : ""}
+            {meta.total} ligne{meta.total > 1 ? "s" : ""} trouvée
+            {meta.total > 1 ? "s" : ""}
           </div>
         </div>
 
@@ -520,8 +564,13 @@ export const ReportsPage: React.FC<ReportsPageProps> = ({ initialReportType = "S
         {/* Pagination Controls */}
         <div className="p-4 border-t border-slate-800 bg-slate-950/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
           <div>
-            Page <span className="font-semibold text-slate-200">{meta.page}</span> sur{" "}
-            <span className="font-semibold text-slate-200">{meta.totalPages}</span> ({meta.total} enregistrements)
+            Page{" "}
+            <span className="font-semibold text-slate-200">{meta.page}</span>{" "}
+            sur{" "}
+            <span className="font-semibold text-slate-200">
+              {meta.totalPages}
+            </span>{" "}
+            ({meta.total} enregistrements)
           </div>
 
           <div className="flex items-center gap-2">
@@ -551,31 +600,44 @@ export const ReportsPage: React.FC<ReportsPageProps> = ({ initialReportType = "S
   );
 };
 
-const TableRow: React.FC<{ row: ReportRow; type: ReportTypeValue }> = ({ row, type }) => {
+const TableRow: React.FC<{ row: ReportRow; type: ReportTypeValue }> = ({
+  row,
+  type,
+}) => {
   switch (type) {
     case "SHIPMENTS": {
       const tracking = row.trackingNumber ?? row.number ?? row.id;
       return (
         <tr className="hover:bg-slate-800/40 transition-colors">
-          <td className="px-4 py-3 font-mono font-bold text-cyan-300">{tracking}</td>
+          <td className="px-4 py-3 font-mono font-bold text-cyan-300">
+            {tracking}
+          </td>
           <td className="px-4 py-3">
             <StatusBadge status={row.globalStatus ?? row.status ?? "UNKNOWN"} />
           </td>
           <td className="px-4 py-3">
-            <div className="font-medium text-slate-200">{row.recipientName ?? "N/A"}</div>
+            <div className="font-medium text-slate-200">
+              {row.recipientName ?? "N/A"}
+            </div>
             <div className="text-[10px] text-slate-400">
               Exp : {row.senderCustomer?.legalName ?? "Client Standard"}
             </div>
           </td>
-          <td className="px-4 py-3 text-slate-300">{row.recipientCity ?? "N/A"}</td>
+          <td className="px-4 py-3 text-slate-300">
+            {row.recipientCity ?? "N/A"}
+          </td>
           <td className="px-4 py-3 text-slate-400">
             {row.originAgency?.code ? `Agence ${row.originAgency.code}` : "-"}
           </td>
           <td className="px-4 py-3 text-right font-mono font-medium text-slate-200">
-            {row.shippingFee != null ? `${Number(row.shippingFee).toLocaleString("fr-FR")} MAD` : "-"}
+            {row.shippingFee != null
+              ? `${Number(row.shippingFee).toLocaleString("fr-FR")} MAD`
+              : "-"}
           </td>
           <td className="px-4 py-3 text-right text-slate-400 text-[11px]">
-            {row.createdAt ? new Date(row.createdAt).toLocaleDateString("fr-FR") : "-"}
+            {row.createdAt
+              ? new Date(row.createdAt).toLocaleDateString("fr-FR")
+              : "-"}
           </td>
         </tr>
       );
@@ -594,19 +656,32 @@ const TableRow: React.FC<{ row: ReportRow; type: ReportTypeValue }> = ({ row, ty
             <StatusBadge status={row.status ?? "PENDING"} />
           </td>
           <td className="px-4 py-3">
-            <div className="font-medium text-slate-200">{shipment?.recipientName ?? "Destinataire"}</div>
-            <div className="text-[10px] text-slate-400">Expéd. {shipment?.trackingNumber ?? "-"}</div>
+            <div className="font-medium text-slate-200">
+              {shipment?.recipientName ?? "Destinataire"}
+            </div>
+            <div className="text-[10px] text-slate-400">
+              Expéd. {shipment?.trackingNumber ?? "-"}
+            </div>
           </td>
-          <td className="px-4 py-3 text-slate-300">{shipment?.recipientCity ?? "N/A"}</td>
+          <td className="px-4 py-3 text-slate-300">
+            {shipment?.recipientCity ?? "N/A"}
+          </td>
           <td className="px-4 py-3 text-slate-400">
             <div className="text-slate-200">
-              {courierUser ? `${courierUser.firstName ?? ""} ${courierUser.lastName ?? ""}`.trim() : "Non assigné"}
+              {courierUser
+                ? `${courierUser.firstName ?? ""} ${courierUser.lastName ?? ""}`.trim()
+                : "Non assigné"}
             </div>
-            <div className="text-[10px] text-slate-500">Tournée {row.deliveryRun?.number ?? row.deliveryRun?.runNumber ?? "-"}</div>
+            <div className="text-[10px] text-slate-500">
+              Tournée{" "}
+              {row.deliveryRun?.number ?? row.deliveryRun?.runNumber ?? "-"}
+            </div>
           </td>
           <td className="px-4 py-3 text-right font-mono text-slate-400">-</td>
           <td className="px-4 py-3 text-right text-slate-400 text-[11px]">
-            {row.deliveredAt ? new Date(row.deliveredAt).toLocaleDateString("fr-FR") : "-"}
+            {row.deliveredAt
+              ? new Date(row.deliveredAt).toLocaleDateString("fr-FR")
+              : "-"}
           </td>
         </tr>
       );
@@ -624,7 +699,9 @@ const TableRow: React.FC<{ row: ReportRow; type: ReportTypeValue }> = ({ row, ty
           <td className="px-4 py-3 font-medium text-slate-200">
             {row.customer?.legalName ?? "Client"}
           </td>
-          <td className="px-4 py-3 text-slate-300">{row.pickupCity ?? "N/A"}</td>
+          <td className="px-4 py-3 text-slate-300">
+            {row.pickupCity ?? "N/A"}
+          </td>
           <td className="px-4 py-3 text-slate-400">
             {row.assignedCourier
               ? `${row.assignedCourier.firstName ?? ""} ${row.assignedCourier.lastName ?? ""}`.trim()
@@ -632,7 +709,9 @@ const TableRow: React.FC<{ row: ReportRow; type: ReportTypeValue }> = ({ row, ty
           </td>
           <td className="px-4 py-3 text-right font-mono text-slate-400">-</td>
           <td className="px-4 py-3 text-right text-slate-400 text-[11px]">
-            {row.scheduledDate ? new Date(row.scheduledDate).toLocaleDateString("fr-FR") : "-"}
+            {row.scheduledDate
+              ? new Date(row.scheduledDate).toLocaleDateString("fr-FR")
+              : "-"}
           </td>
         </tr>
       );
@@ -648,25 +727,35 @@ const TableRow: React.FC<{ row: ReportRow; type: ReportTypeValue }> = ({ row, ty
             <StatusBadge status={row.status ?? "REPORTED"} />
           </td>
           <td className="px-4 py-3">
-            <div className="font-semibold text-slate-200">{row.type ?? "ANOMALIE"}</div>
-            <div className="text-[10px] text-amber-400">Sévérité : {row.severity ?? "MEDIUM"}</div>
+            <div className="font-semibold text-slate-200">
+              {row.type ?? "ANOMALIE"}
+            </div>
+            <div className="text-[10px] text-amber-400">
+              Sévérité : {row.severity ?? "MEDIUM"}
+            </div>
           </td>
           <td className="px-4 py-3 text-slate-300 font-mono">
             {row.shipment?.trackingNumber ?? "-"}
           </td>
           <td className="px-4 py-3 text-slate-400">
-            {row.shipment?.originAgency?.code ? `Agence ${row.shipment.originAgency.code}` : "-"}
+            {row.shipment?.originAgency?.code
+              ? `Agence ${row.shipment.originAgency.code}`
+              : "-"}
           </td>
           <td className="px-4 py-3 text-right font-mono text-slate-400">-</td>
           <td className="px-4 py-3 text-right text-slate-400 text-[11px]">
-            {row.createdAt ? new Date(row.createdAt).toLocaleDateString("fr-FR") : "-"}
+            {row.createdAt
+              ? new Date(row.createdAt).toLocaleDateString("fr-FR")
+              : "-"}
           </td>
         </tr>
       );
     }
 
     case "REVENUE": {
-      const remaining = row.remainingAmount ?? (Number(row.totalAmount || 0) - Number(row.paidAmount || 0));
+      const remaining =
+        row.remainingAmount ??
+        Number(row.totalAmount || 0) - Number(row.paidAmount || 0);
       return (
         <tr className="hover:bg-slate-800/40 transition-colors">
           <td className="px-4 py-3 font-mono font-bold text-amber-300">
@@ -682,13 +771,22 @@ const TableRow: React.FC<{ row: ReportRow; type: ReportTypeValue }> = ({ row, ty
             Payé : {Number(row.paidAmount || 0).toLocaleString("fr-FR")} MAD
           </td>
           <td className="px-4 py-3 font-mono text-slate-300">
-            Reste : <span className={remaining > 0 ? "text-rose-400 font-bold" : "text-emerald-400"}>{remaining.toLocaleString("fr-FR")} MAD</span>
+            Reste :{" "}
+            <span
+              className={
+                remaining > 0 ? "text-rose-400 font-bold" : "text-emerald-400"
+              }
+            >
+              {remaining.toLocaleString("fr-FR")} MAD
+            </span>
           </td>
           <td className="px-4 py-3 text-right font-mono font-bold text-slate-100">
             {Number(row.totalAmount || 0).toLocaleString("fr-FR")} MAD
           </td>
           <td className="px-4 py-3 text-right text-slate-400 text-[11px]">
-            {row.issueDate ? new Date(row.issueDate).toLocaleDateString("fr-FR") : "-"}
+            {row.issueDate
+              ? new Date(row.issueDate).toLocaleDateString("fr-FR")
+              : "-"}
           </td>
         </tr>
       );
@@ -727,7 +825,9 @@ const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
   }
 
   return (
-    <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold border ${badgeStyle}`}>
+    <span
+      className={`px-2 py-0.5 rounded-md text-[10px] font-bold border ${badgeStyle}`}
+    >
       {status}
     </span>
   );

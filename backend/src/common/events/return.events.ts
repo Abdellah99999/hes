@@ -16,9 +16,7 @@ export interface ReturnCreatedPayload {
   createdAt: Date;
 }
 
-export class ReturnCreatedEvent
-  implements DomainEvent<ReturnCreatedPayload>
-{
+export class ReturnCreatedEvent implements DomainEvent<ReturnCreatedPayload> {
   readonly eventId: string;
   readonly eventName = "ReturnCreated";
   readonly occurredAt: Date;

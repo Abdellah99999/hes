@@ -50,7 +50,8 @@ export class TransferManifestGenerator implements IDocumentGenerator {
     const destName = transfer.destinationAgency?.name || "Destination";
     const destCode = transfer.destinationAgency?.code || "TNG";
 
-    const transferNum = transfer.transferNumber || transfer.number || context.entityId;
+    const transferNum =
+      transfer.transferNumber || transfer.number || context.entityId;
     const title = `MANIFESTE DE TRANSFERT NAVETTE - ${transferNum}`;
     const lines = [
       `ROUTAGE          : ${originName} (${originCode}) -> ${destName} (${destCode})`,

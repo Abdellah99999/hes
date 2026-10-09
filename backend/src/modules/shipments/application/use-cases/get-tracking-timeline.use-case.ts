@@ -118,14 +118,25 @@ export class GetTrackingTimelineUseCase {
         },
         recipientName: shipment.recipientName,
         recipientCity:
-          (shipment as any).destinationAddress?.city ||
-          (shipment as any).recipientCity ||
-          (shipment as any).recipientAddress?.split(",")?.pop()?.trim() ||
+          (
+            shipment as unknown as {
+              destinationAddress?: { city?: string };
+              recipientCity?: string;
+              recipientAddress?: string;
+            }
+          ).destinationAddress?.city ||
+          (shipment as unknown as { recipientCity?: string }).recipientCity ||
+          (
+            shipment as unknown as { recipientAddress?: string }
+          ).recipientAddress
+            ?.split(",")
+            ?.pop()
+            ?.trim() ||
           "N/A",
         totalParcels: shipment.totalParcels,
       },
       eventsCount: rawEvents.length,
-      events: rawEvents.map((e: any) => ({
+      events: rawEvents.map((e) => ({
         id: e.id,
         source: e.source,
         status: e.status,
@@ -140,14 +151,52 @@ export class GetTrackingTimelineUseCase {
               email: e.user.email,
             }
           : null,
-        parcel: e.parcel,
+        parcel: e.parcel
+          ? {
+              id: e.parcel.id,
+              parcelIndex: e.parcel.parcelIndex,
+              trackingNumber: e.parcel.trackingNumber ?? "",
+            }
+          : null,
         scan: e.scan
           ? {
               id: e.scan.id,
-              rawCode: e.scan.rawCode,
-              rawBarcode: e.scan.rawCode,
-              scanType: e.scan.scanType || e.scan.scannerType || "BARCODE",
-              scannerType: e.scan.scanType || e.scan.scannerType || "BARCODE",
+              rawCode:
+                e.scan.rawCode ||
+                (e.scan as unknown as { rawBarcode?: string }).rawBarcode ||
+                "",
+              rawBarcode:
+                e.scan.rawCode ||
+                (e.scan as unknown as { rawBarcode?: string }).rawBarcode ||
+                "",
+              scanType:
+                (
+                  e.scan as unknown as {
+                    scanType?: string;
+                    scannerType?: string;
+                  }
+                ).scanType ||
+                (
+                  e.scan as unknown as {
+                    scanType?: string;
+                    scannerType?: string;
+                  }
+                ).scannerType ||
+                "BARCODE",
+              scannerType:
+                (
+                  e.scan as unknown as {
+                    scanType?: string;
+                    scannerType?: string;
+                  }
+                ).scannerType ||
+                (
+                  e.scan as unknown as {
+                    scanType?: string;
+                    scannerType?: string;
+                  }
+                ).scanType ||
+                "BARCODE",
             }
           : null,
       })),
@@ -209,8 +258,10 @@ export class GetTrackingTimelineUseCase {
     return {
       shipment: {
         id: parcel.shipment.id,
-        trackingNumber: parcel.shipment.trackingNumber || parcel.shipment.number || "",
-        globalStatus: parcel.shipment.globalStatus || parcel.shipment.status || "",
+        trackingNumber:
+          parcel.shipment.trackingNumber || parcel.shipment.number || "",
+        globalStatus:
+          parcel.shipment.globalStatus || parcel.shipment.status || "",
         originAgency: parcel.shipment.originAgency,
         destinationAgency: parcel.shipment.destinationAgency || {
           id: "",
@@ -219,15 +270,27 @@ export class GetTrackingTimelineUseCase {
         },
         recipientName: parcel.shipment.recipientName,
         recipientCity:
-          (parcel.shipment as any).destinationAddress?.city ||
-          (parcel.shipment as any).recipientCity ||
-          (parcel.shipment as any).recipientAddress?.split(",")?.pop()?.trim() ||
+          (
+            parcel.shipment as unknown as {
+              destinationAddress?: { city?: string };
+              recipientCity?: string;
+              recipientAddress?: string;
+            }
+          ).destinationAddress?.city ||
+          (parcel.shipment as unknown as { recipientCity?: string })
+            .recipientCity ||
+          (
+            parcel.shipment as unknown as { recipientAddress?: string }
+          ).recipientAddress
+            ?.split(",")
+            ?.pop()
+            ?.trim() ||
           "N/A",
         totalParcels: parcel.shipment.totalParcels,
       },
       filterParcelId: parcel.id,
       eventsCount: rawEvents.length,
-      events: rawEvents.map((e: any) => ({
+      events: rawEvents.map((e) => ({
         id: e.id,
         source: e.source,
         status: e.status,
@@ -242,14 +305,52 @@ export class GetTrackingTimelineUseCase {
               email: e.user.email,
             }
           : null,
-        parcel: e.parcel,
+        parcel: e.parcel
+          ? {
+              id: e.parcel.id,
+              parcelIndex: e.parcel.parcelIndex,
+              trackingNumber: e.parcel.trackingNumber ?? "",
+            }
+          : null,
         scan: e.scan
           ? {
               id: e.scan.id,
-              rawCode: e.scan.rawCode,
-              rawBarcode: e.scan.rawCode,
-              scanType: e.scan.scanType || e.scan.scannerType || "BARCODE",
-              scannerType: e.scan.scanType || e.scan.scannerType || "BARCODE",
+              rawCode:
+                e.scan.rawCode ||
+                (e.scan as unknown as { rawBarcode?: string }).rawBarcode ||
+                "",
+              rawBarcode:
+                e.scan.rawCode ||
+                (e.scan as unknown as { rawBarcode?: string }).rawBarcode ||
+                "",
+              scanType:
+                (
+                  e.scan as unknown as {
+                    scanType?: string;
+                    scannerType?: string;
+                  }
+                ).scanType ||
+                (
+                  e.scan as unknown as {
+                    scanType?: string;
+                    scannerType?: string;
+                  }
+                ).scannerType ||
+                "BARCODE",
+              scannerType:
+                (
+                  e.scan as unknown as {
+                    scanType?: string;
+                    scannerType?: string;
+                  }
+                ).scannerType ||
+                (
+                  e.scan as unknown as {
+                    scanType?: string;
+                    scannerType?: string;
+                  }
+                ).scanType ||
+                "BARCODE",
             }
           : null,
       })),

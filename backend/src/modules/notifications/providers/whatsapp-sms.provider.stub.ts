@@ -12,8 +12,7 @@ export class WhatsappSmsProviderStub implements INotificationProvider {
 
   supports(channel: NotificationChannel): boolean {
     return (
-      channel === NotificationChannel.SMS ||
-      (channel as any) === "WHATSAPP_SMS"
+      channel === NotificationChannel.SMS || (channel as any) === "WHATSAPP_SMS"
     );
   }
 

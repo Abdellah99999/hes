@@ -45,7 +45,10 @@ export class DeliveryNoteGenerator implements IDocumentGenerator {
     const title = `BORDEREAU DE LIVRAISON (BL) - ${shipment.trackingNumber}`;
     const senderName = shipment.senderCustomer?.legalName || "Expéditeur HES";
     const senderIce = shipment.senderCustomer?.ice || "N/A";
-    const destCity = (shipment as any).recipientCity || shipment.destinationAgency?.city || "Destination";
+    const destCity =
+      (shipment as any).recipientCity ||
+      shipment.destinationAgency?.city ||
+      "Destination";
     const destAgency = shipment.destinationAgency?.name || "Agence Dest";
     const origAgency = shipment.originAgency?.name || "Agence Orig";
 
@@ -71,4 +74,3 @@ export class DeliveryNoteGenerator implements IDocumentGenerator {
     };
   }
 }
-

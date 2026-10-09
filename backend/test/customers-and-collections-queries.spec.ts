@@ -41,7 +41,13 @@ describe("Customers & Collections Query Use Cases", () => {
     agencyId: "ag-casa-1",
     isActive: true,
     tokenVersion: 1,
-    permissions: ["customers:read", "customers:create", "customers:update", "customers:delete", "collections:read"],
+    permissions: [
+      "customers:read",
+      "customers:create",
+      "customers:update",
+      "customers:delete",
+      "collections:read",
+    ],
     isGlobalScope: false,
   };
 
@@ -89,30 +95,50 @@ describe("Customers & Collections Query Use Cases", () => {
     });
 
     it("CreateCustomerUseCase: should throw BadRequestException if target agency cannot be resolved", async () => {
-      const userWithoutAgency = { ...mockAdminUser, isGlobalScope: false, agencyId: null as any };
+      const userWithoutAgency = {
+        ...mockAdminUser,
+        isGlobalScope: false,
+        agencyId: null as any,
+      };
       const useCase = new CreateCustomerUseCase(mockRepo);
 
       await expect(
-        useCase.execute({ code: "CUST-001", companyName: "ACME" } as any, userWithoutAgency),
+        useCase.execute(
+          { code: "CUST-001", companyName: "ACME" } as any,
+          userWithoutAgency,
+        ),
       ).rejects.toThrow(BadRequestException);
     });
 
     it("CreateCustomerUseCase: should throw ConflictException if code already exists", async () => {
-      mockRepo.findByCode.mockResolvedValue({ id: "c-1", code: "CUST-001" } as any);
+      mockRepo.findByCode.mockResolvedValue({
+        id: "c-1",
+        code: "CUST-001",
+      } as any);
       const useCase = new CreateCustomerUseCase(mockRepo);
 
       await expect(
-        useCase.execute({ code: "CUST-001", companyName: "ACME" } as any, mockAgentCasa),
+        useCase.execute(
+          { code: "CUST-001", companyName: "ACME" } as any,
+          mockAgentCasa,
+        ),
       ).rejects.toThrow(ConflictException);
     });
 
     it("CreateCustomerUseCase: should create customer when code is unique", async () => {
       mockRepo.findByCode.mockResolvedValue(null);
-      const created = { id: "c-1", code: "CUST-002", companyName: "ACME" } as any;
+      const created = {
+        id: "c-1",
+        code: "CUST-002",
+        companyName: "ACME",
+      } as any;
       mockRepo.create.mockResolvedValue(created);
       const useCase = new CreateCustomerUseCase(mockRepo);
 
-      const res = await useCase.execute({ code: "CUST-002", companyName: "ACME" } as any, mockAgentCasa);
+      const res = await useCase.execute(
+        { code: "CUST-002", companyName: "ACME" } as any,
+        mockAgentCasa,
+      );
       expect(res).toBe(created);
       expect(mockRepo.create).toHaveBeenCalledWith(
         expect.objectContaining({ code: "CUST-002" }),
@@ -125,7 +151,9 @@ describe("Customers & Collections Query Use Cases", () => {
       mockRepo.findById.mockResolvedValue(null);
       const useCase = new GetCustomerUseCase(mockRepo);
 
-      await expect(useCase.execute("missing-id", mockAgentCasa)).rejects.toThrow(NotFoundException);
+      await expect(
+        useCase.execute("missing-id", mockAgentCasa),
+      ).rejects.toThrow(NotFoundException);
     });
 
     it("GetCustomerUseCase: should return customer if found", async () => {
@@ -140,14 +168,24 @@ describe("Customers & Collections Query Use Cases", () => {
     it("ListCustomersUseCase: should call repo.findAll", async () => {
       const paginated: any = {
         data: [{ id: "c-1" }],
-        meta: { page: 1, limit: 10, total: 1, totalPages: 1, hasNextPage: false, hasPrevPage: false },
+        meta: {
+          page: 1,
+          limit: 10,
+          total: 1,
+          totalPages: 1,
+          hasNextPage: false,
+          hasPrevPage: false,
+        },
       };
       mockRepo.findAll.mockResolvedValue(paginated);
       const useCase = new ListCustomersUseCase(mockRepo);
 
       const res = await useCase.execute({ page: 1, limit: 10 }, mockAgentCasa);
       expect(res).toBe(paginated);
-      expect(mockRepo.findAll).toHaveBeenCalledWith({ page: 1, limit: 10 }, mockAgentCasa);
+      expect(mockRepo.findAll).toHaveBeenCalledWith(
+        { page: 1, limit: 10 },
+        mockAgentCasa,
+      );
     });
 
     it("UpdateCustomerUseCase: should call repo.update", async () => {
@@ -155,9 +193,17 @@ describe("Customers & Collections Query Use Cases", () => {
       mockRepo.update.mockResolvedValue(updated);
       const useCase = new UpdateCustomerUseCase(mockRepo);
 
-      const res = await useCase.execute("c-1", { companyName: "ACME Corp" } as any, mockAgentCasa);
+      const res = await useCase.execute(
+        "c-1",
+        { companyName: "ACME Corp" } as any,
+        mockAgentCasa,
+      );
       expect(res).toBe(updated);
-      expect(mockRepo.update).toHaveBeenCalledWith("c-1", { companyName: "ACME Corp" }, mockAgentCasa);
+      expect(mockRepo.update).toHaveBeenCalledWith(
+        "c-1",
+        { companyName: "ACME Corp" },
+        mockAgentCasa,
+      );
     });
 
     it("DeleteCustomerUseCase: should call repo.softDelete", async () => {
@@ -171,7 +217,11 @@ describe("Customers & Collections Query Use Cases", () => {
     });
 
     it("AssignCustomerManagerUseCase: should call repo.assignManager", async () => {
-      const assignment = { id: "asgn-1", customerId: "c-1", userId: "u-mgr" } as any;
+      const assignment = {
+        id: "asgn-1",
+        customerId: "c-1",
+        userId: "u-mgr",
+      } as any;
       mockRepo.assignManager.mockResolvedValue(assignment);
       const useCase = new AssignCustomerManagerUseCase(mockRepo);
 
@@ -181,7 +231,13 @@ describe("Customers & Collections Query Use Cases", () => {
         mockAgentCasa,
       );
       expect(res).toBe(assignment);
-      expect(mockRepo.assignManager).toHaveBeenCalledWith("c-1", "u-mgr", "Account Manager", mockAgentCasa.id, mockAgentCasa);
+      expect(mockRepo.assignManager).toHaveBeenCalledWith(
+        "c-1",
+        "u-mgr",
+        "Account Manager",
+        mockAgentCasa.id,
+        mockAgentCasa,
+      );
     });
 
     it("GetCustomerManagerHistoryUseCase: should call repo.getManagerHistory", async () => {
@@ -191,7 +247,10 @@ describe("Customers & Collections Query Use Cases", () => {
 
       const res = await useCase.execute("c-1", mockAgentCasa);
       expect(res).toBe(history);
-      expect(mockRepo.getManagerHistory).toHaveBeenCalledWith("c-1", mockAgentCasa);
+      expect(mockRepo.getManagerHistory).toHaveBeenCalledWith(
+        "c-1",
+        mockAgentCasa,
+      );
     });
   });
 
@@ -210,7 +269,9 @@ describe("Customers & Collections Query Use Cases", () => {
       mockPrisma.collection.findFirst.mockResolvedValue(null);
       const useCase = new GetCollectionUseCase(mockPrisma);
 
-      await expect(useCase.execute("missing-col", mockAgentCasa)).rejects.toThrow(NotFoundException);
+      await expect(
+        useCase.execute("missing-col", mockAgentCasa),
+      ).rejects.toThrow(NotFoundException);
     });
 
     it("GetCollectionUseCase: should forbid customer from viewing another customer's collection", async () => {
@@ -221,7 +282,9 @@ describe("Customers & Collections Query Use Cases", () => {
       });
       const useCase = new GetCollectionUseCase(mockPrisma);
 
-      await expect(useCase.execute("col-1", mockCustomerUser)).rejects.toThrow(ForbiddenException);
+      await expect(useCase.execute("col-1", mockCustomerUser)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
 
     it("GetCollectionUseCase: should forbid courier from viewing collection assigned to another courier", async () => {
@@ -233,7 +296,9 @@ describe("Customers & Collections Query Use Cases", () => {
       });
       const useCase = new GetCollectionUseCase(mockPrisma);
 
-      await expect(useCase.execute("col-1", mockCourierUser)).rejects.toThrow(ForbiddenException);
+      await expect(useCase.execute("col-1", mockCourierUser)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
 
     it("GetCollectionUseCase: should forbid agent from viewing collection of another agency", async () => {
@@ -244,7 +309,9 @@ describe("Customers & Collections Query Use Cases", () => {
       });
       const useCase = new GetCollectionUseCase(mockPrisma);
 
-      await expect(useCase.execute("col-1", mockAgentCasa)).rejects.toThrow(ForbiddenException);
+      await expect(useCase.execute("col-1", mockAgentCasa)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
 
     it("GetCollectionUseCase: should return collection if authorized", async () => {

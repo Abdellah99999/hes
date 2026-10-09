@@ -18,9 +18,7 @@ export interface ShipmentRegisteredPayload {
   registeredAt: Date;
 }
 
-export class ShipmentRegisteredEvent
-  implements DomainEvent<ShipmentRegisteredPayload>
-{
+export class ShipmentRegisteredEvent implements DomainEvent<ShipmentRegisteredPayload> {
   readonly eventId: string;
   readonly eventName = "ShipmentRegistered";
   readonly occurredAt: Date;

@@ -48,8 +48,12 @@ export class ParcelLabelGenerator implements IDocumentGenerator {
       this.configService?.get<string>("appName", "HES Logistics Platform") ||
       "HES Logistics Platform";
     const title = `ETIQUETTE COLIS - ${appName}`;
-    const senderName = parcel.shipment?.senderCustomer?.legalName || "Expéditeur HES";
-    const destCity = (parcel.shipment as any)?.recipientCity || parcel.shipment?.destinationAgency?.city || "Destination";
+    const senderName =
+      parcel.shipment?.senderCustomer?.legalName || "Expéditeur HES";
+    const destCity =
+      (parcel.shipment as any)?.recipientCity ||
+      parcel.shipment?.destinationAgency?.city ||
+      "Destination";
     const destAgencyCode = parcel.shipment?.destinationAgency?.code || "TNG";
     const origAgencyCode = parcel.shipment?.originAgency?.code || "CAS";
 
@@ -75,4 +79,3 @@ export class ParcelLabelGenerator implements IDocumentGenerator {
     };
   }
 }
-

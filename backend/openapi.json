@@ -441,10 +441,3559 @@
         "summary": "Activation / Désactivation d'un utilisateur",
         "tags": ["User Management"]
       }
+    },
+    "/agencies": {
+      "post": {
+        "operationId": "AgenciesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAgencyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Agence créée avec succès"
+          },
+          "409": {
+            "description": "Code agence déjà existant"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Créer une nouvelle agence",
+        "tags": ["Agencies"]
+      },
+      "get": {
+        "operationId": "AgenciesController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Numéro de page",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Éléments par page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Terme de recherche textuel",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "isActive",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par statut actif",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Lister les agences avec pagination et filtres",
+        "tags": ["Agencies"]
+      }
+    },
+    "/agencies/{id}": {
+      "get": {
+        "operationId": "AgenciesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Agence introuvable"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtenir les détails d'une agence",
+        "tags": ["Agencies"]
+      },
+      "patch": {
+        "operationId": "AgenciesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAgencyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "404": {
+            "description": "Agence introuvable"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Modifier une agence",
+        "tags": ["Agencies"]
+      },
+      "delete": {
+        "operationId": "AgenciesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Agence introuvable"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Désactiver / Supprimer en soft-delete une agence",
+        "tags": ["Agencies"]
+      }
+    },
+    "/zones": {
+      "post": {
+        "operationId": "ZonesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateZoneDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Zone créée"
+          },
+          "409": {
+            "description": "Code zone déjà existant dans l'agence"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Créer une nouvelle zone opérationnelle",
+        "tags": ["Zones"]
+      },
+      "get": {
+        "operationId": "ZonesController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Numéro de page",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Éléments par page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Terme de recherche textuel",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "agencyId",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par agence (réservé aux admins globaux)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "isActive",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par statut actif",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Lister les zones opérationnelles (isolées par agence)",
+        "tags": ["Zones"]
+      }
+    },
+    "/zones/{id}": {
+      "get": {
+        "operationId": "ZonesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "Tentative d'accès inter-agences non autorisé"
+          },
+          "404": {
+            "description": "Zone introuvable"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtenir une zone par identifiant",
+        "tags": ["Zones"]
+      },
+      "patch": {
+        "operationId": "ZonesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateZoneDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Modifier une zone opérationnelle",
+        "tags": ["Zones"]
+      },
+      "delete": {
+        "operationId": "ZonesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Supprimer une zone (soft delete)",
+        "tags": ["Zones"]
+      }
+    },
+    "/customer-types": {
+      "post": {
+        "operationId": "CustomerTypesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomerTypeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Type client créé"
+          },
+          "409": {
+            "description": "Code type client déjà existant"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Créer un nouveau type client",
+        "tags": ["Customer Types"]
+      },
+      "get": {
+        "operationId": "CustomerTypesController_findAll",
+        "parameters": [
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Recherche textuelle (code ou libellé)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "isActive",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par statut actif",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Lister les types de clients (référentiel)",
+        "tags": ["Customer Types"]
+      }
+    },
+    "/customer-types/{id}": {
+      "get": {
+        "operationId": "CustomerTypesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Type client introuvable"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtenir un type client par son identifiant",
+        "tags": ["Customer Types"]
+      },
+      "patch": {
+        "operationId": "CustomerTypesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCustomerTypeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "404": {
+            "description": "Type client introuvable"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Modifier un type client",
+        "tags": ["Customer Types"]
+      },
+      "delete": {
+        "operationId": "CustomerTypesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Type système non supprimable"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Supprimer un type client (si non système)",
+        "tags": ["Customer Types"]
+      }
+    },
+    "/customers": {
+      "post": {
+        "operationId": "CustomersController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Client créé avec succès"
+          },
+          "409": {
+            "description": "Code client déjà existant"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Créer un nouveau client rattaché à une agence",
+        "tags": ["Customers"]
+      },
+      "get": {
+        "operationId": "CustomersController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Numéro de page",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Éléments par page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Terme de recherche textuel",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "agencyId",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par agence (réservé Super Admin / Siège)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customerTypeId",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par type de client",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par statut",
+            "schema": {
+              "enum": ["ACTIVE", "INACTIVE", "SUSPENDED"],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Lister les clients avec filtres et pagination (strictement cloisonné par agence)",
+        "tags": ["Customers"]
+      }
+    },
+    "/customers/{id}": {
+      "get": {
+        "operationId": "CustomersController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "Tentative d'accès inter-agences non autorisé (audité)"
+          },
+          "404": {
+            "description": "Client introuvable"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Consulter la fiche complète d'un client",
+        "tags": ["Customers"]
+      },
+      "patch": {
+        "operationId": "CustomersController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCustomerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "403": {
+            "description": "Modification inter-agences interdite"
+          },
+          "404": {
+            "description": "Client introuvable"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Modifier les informations d'un client",
+        "tags": ["Customers"]
+      },
+      "delete": {
+        "operationId": "CustomersController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "Suppression inter-agences interdite"
+          },
+          "404": {
+            "description": "Client introuvable"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Suppression soft-delete d'un client",
+        "tags": ["Customers"]
+      }
+    },
+    "/customers/{id}/managers": {
+      "post": {
+        "operationId": "CustomersController_assignManager",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignManagerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Responsable assigné"
+          },
+          "403": {
+            "description": "Accès inter-agences refusé"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Assigner ou changer le collaborateur interne responsable (clôture atomique de l'ancien + historique)",
+        "tags": ["Customers"]
+      }
+    },
+    "/customers/{id}/managers/history": {
+      "get": {
+        "operationId": "CustomersController_getManagerHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Consulter l'historique chronologique complet des responsables internes du client",
+        "tags": ["Customers"]
+      }
+    },
+    "/customer-contacts": {
+      "post": {
+        "operationId": "CustomerContactsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomerContactDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Contact créé"
+          },
+          "403": {
+            "description": "Accès inter-agences refusé"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Créer un interlocuteur chez le client",
+        "tags": ["Customer Contacts"]
+      }
+    },
+    "/customer-contacts/by-customer/{customerId}": {
+      "get": {
+        "operationId": "CustomerContactsController_findByCustomer",
+        "parameters": [
+          {
+            "name": "customerId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Lister tous les contacts d'un client (isolé par agence)",
+        "tags": ["Customer Contacts"]
+      }
+    },
+    "/customer-contacts/{id}": {
+      "get": {
+        "operationId": "CustomerContactsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "Accès inter-agences refusé"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtenir les détails d'un contact",
+        "tags": ["Customer Contacts"]
+      },
+      "patch": {
+        "operationId": "CustomerContactsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCustomerContactDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Modifier un contact client",
+        "tags": ["Customer Contacts"]
+      },
+      "delete": {
+        "operationId": "CustomerContactsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Supprimer un contact (soft-delete)",
+        "tags": ["Customer Contacts"]
+      }
+    },
+    "/addresses": {
+      "post": {
+        "operationId": "AddressesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAddressDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Adresse créée"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Créer une nouvelle adresse (isolée par agence)",
+        "tags": ["Addresses"]
+      },
+      "get": {
+        "operationId": "AddressesController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Numéro de page",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Éléments par page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Terme de recherche textuel",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "agencyId",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par agence (réservé Super Admin)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customerId",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par client",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "zoneId",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par zone",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par type d'adresse",
+            "schema": {
+              "enum": ["HOME", "DELIVERY", "BUSINESS", "OTHER"],
+              "type": "string"
+            }
+          },
+          {
+            "name": "city",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par ville",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Lister les adresses avec filtres et pagination",
+        "tags": ["Addresses"]
+      }
+    },
+    "/addresses/{id}": {
+      "get": {
+        "operationId": "AddressesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "Accès refusé inter-agences"
+          },
+          "404": {
+            "description": "Adresse introuvable"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtenir une adresse par ID",
+        "tags": ["Addresses"]
+      },
+      "patch": {
+        "operationId": "AddressesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAddressDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Modifier une adresse",
+        "tags": ["Addresses"]
+      },
+      "delete": {
+        "operationId": "AddressesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Supprimer une adresse (soft-delete)",
+        "tags": ["Addresses"]
+      }
+    },
+    "/shipments": {
+      "post": {
+        "operationId": "ShipmentsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateShipmentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Expédition créée avec succès"
+          },
+          "400": {
+            "description": "Données de validation invalides"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Créer une expédition avec colis multiples (Transactionnel de bout en bout)",
+        "tags": ["Shipments"]
+      },
+      "get": {
+        "operationId": "ShipmentsController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Numéro de page",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Éléments par page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Terme de recherche textuel",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "originAgencyId",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par agence d'origine",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "destinationAgencyId",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par agence de destination",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "senderCustomerId",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par compte client expéditeur",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "globalStatus",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par statut global",
+            "schema": {
+              "enum": [
+                "DRAFT",
+                "REGISTERED",
+                "CANCELLED",
+                "EXCEPTION",
+                "CREATED",
+                "WAITING_FOR_COLLECTION",
+                "COLLECTED",
+                "ARRIVED_AGENCY",
+                "IN_TRANSIT",
+                "ARRIVED_DESTINATION_AGENCY",
+                "ASSIGNED_TO_COURIER",
+                "OUT_FOR_DELIVERY",
+                "DELIVERED",
+                "PARTIALLY_DELIVERED",
+                "RECIPIENT_ABSENT",
+                "REFUSED",
+                "ADDRESS_INCORRECT",
+                "DAMAGED",
+                "LOST",
+                "DELAYED",
+                "VEHICLE_BREAKDOWN",
+                "ACCIDENT",
+                "PAYMENT_ISSUE",
+                "RETURNED"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Lister les expéditions avec pagination et filtres",
+        "tags": ["Shipments"]
+      }
+    },
+    "/shipments/track/scan": {
+      "post": {
+        "operationId": "ShipmentsController_trackScan",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScanBarcodeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Scan traité avec succès"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Enregistrer un scan optique (Code 128 / QR Code 2D) avec idempotence et machine à états",
+        "tags": ["Shipments"]
+      }
+    },
+    "/shipments/track/manual": {
+      "post": {
+        "operationId": "ShipmentsController_trackManual",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManualTrackingEventDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Changement de statut manuel enregistré"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Enregistrer un changement de statut manuel avec commentaire obligatoire",
+        "tags": ["Shipments"]
+      }
+    },
+    "/shipments/{id}/timeline": {
+      "get": {
+        "operationId": "ShipmentsController_getShipmentTimeline",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Reconstruire la timeline chronologique d'une expédition",
+        "tags": ["Shipments"]
+      }
+    },
+    "/shipments/parcels/{parcelId}/timeline": {
+      "get": {
+        "operationId": "ShipmentsController_getParcelTimeline",
+        "parameters": [
+          {
+            "name": "parcelId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Reconstruire la timeline chronologique d'un colis physique spécifique",
+        "tags": ["Shipments"]
+      }
+    },
+    "/shipments/parcels/{parcelId}/tag": {
+      "get": {
+        "operationId": "ShipmentsController_getParcelTag",
+        "parameters": [
+          {
+            "name": "parcelId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Générer les payloads d'étiquette Code-Barres 1D et QR Code 2D pour un colis",
+        "tags": ["Shipments"]
+      }
+    },
+    "/shipments/tracking/{trackingNumber}": {
+      "get": {
+        "operationId": "ShipmentsController_findByTracking",
+        "parameters": [
+          {
+            "name": "trackingNumber",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Consulter une expédition par numéro de tracking",
+        "tags": ["Shipments"]
+      }
+    },
+    "/shipments/{id}": {
+      "get": {
+        "operationId": "ShipmentsController_findById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Consulter les détails d'une expédition par son ID",
+        "tags": ["Shipments"]
+      }
+    },
+    "/shipments/parcels/{parcelId}/status": {
+      "patch": {
+        "operationId": "ShipmentsController_updateParcelStatus",
+        "parameters": [
+          {
+            "name": "parcelId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateParcelStatusDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Mettre à jour le statut d'un colis avec validation de transition d'état",
+        "tags": ["Shipments"]
+      }
+    },
+    "/transfers": {
+      "post": {
+        "operationId": "TransfersController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTransferDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Transfert préparé avec succès"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Préparer un nouveau transfert inter-agences avec colis multiples",
+        "tags": ["Transfers & Routing"]
+      },
+      "get": {
+        "operationId": "TransfersController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Numéro de page",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Éléments par page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Terme de recherche textuel",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par statut de transfert",
+            "schema": {
+              "enum": [
+                "DRAFT",
+                "PREPARED",
+                "IN_TRANSIT",
+                "RECEIVED",
+                "RECEIVED_WITH_DISCREPANCY",
+                "CANCELLED"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "originAgencyId",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par agence d'origine",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "destinationAgencyId",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par agence de destination",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Lister les transferts avec filtres d'agence et statut",
+        "tags": ["Transfers & Routing"]
+      }
+    },
+    "/transfers/{id}": {
+      "get": {
+        "operationId": "TransfersController_findById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Consulter les détails d'un transfert et son manifeste de colis",
+        "tags": ["Transfers & Routing"]
+      }
+    },
+    "/transfers/{id}/dispatch": {
+      "post": {
+        "operationId": "TransfersController_dispatch",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DispatchTransferDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Valider le départ du transfert (statut IN_TRANSIT, currentAgencyId -> NULL)",
+        "tags": ["Transfers & Routing"]
+      }
+    },
+    "/transfers/{id}/receive": {
+      "post": {
+        "operationId": "TransfersController_receive",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReceiveTransferDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Réceptionner le transfert (Transaction atomique, réconciliation attendus vs reçus vs manquants)",
+        "tags": ["Transfers & Routing"]
+      }
+    },
+    "/agencies/{agencyId}/stock": {
+      "get": {
+        "operationId": "TransfersController_getAgencyStock",
+        "parameters": [
+          {
+            "name": "agencyId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Numéro de page",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Éléments par page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Terme de recherche textuel",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par statut présent en agence (REGISTERED, AT_HUB, OUT_FOR_DELIVERY, DELIVERY_FAILED, etc.)",
+            "schema": {
+              "enum": [
+                "PICKED_UP",
+                "REGISTERED",
+                "AT_HUB",
+                "CANCELLED",
+                "DELIVERY_FAILED",
+                "CREATED",
+                "WAITING_FOR_COLLECTION",
+                "COLLECTED",
+                "ARRIVED_AGENCY",
+                "IN_TRANSIT",
+                "ARRIVED_DESTINATION_AGENCY",
+                "ASSIGNED_TO_COURIER",
+                "OUT_FOR_DELIVERY",
+                "DELIVERED",
+                "PARTIALLY_DELIVERED",
+                "RECIPIENT_ABSENT",
+                "REFUSED",
+                "ADDRESS_INCORRECT",
+                "DAMAGED",
+                "LOST",
+                "DELAYED",
+                "RETURNED"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Consulter le stock quai présent dans une agence avec métriques volumétriques et de rétention",
+        "tags": ["Transfers & Routing"]
+      }
+    },
+    "/routing/evaluate": {
+      "post": {
+        "operationId": "TransfersController_evaluateRouting",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Évaluer l'action d'aiguillage quai pour un colis (UNLOAD vs HOLD_AND_RETRANSFER vs MISROUTED)",
+        "tags": ["Transfers & Routing"]
+      }
+    },
+    "/collections": {
+      "post": {
+        "operationId": "CollectionsController_requestCollection",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestCollectionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Demande d'enlèvement créée avec succès"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Créer une demande d'enlèvement / collecte (Portail client ou agence)",
+        "tags": ["Customer Collections & Enlèvements"]
+      },
+      "get": {
+        "operationId": "CollectionsController_listCollections",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Numéro de page",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Éléments par page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Terme de recherche textuel",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par statut",
+            "schema": {
+              "enum": [
+                "REQUESTED",
+                "ASSIGNED",
+                "PICKED_UP",
+                "IN_PROGRESS",
+                "COMPLETED",
+                "CANCELLED"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "agencyId",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par agence",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "zoneId",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par zone d'enlèvement",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "scheduledDate",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par date d'enlèvement (YYYY-MM-DD)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Lister les collectes avec cloisonnement automatique selon le rôle (Client, Coursier, Dispatch)",
+        "tags": ["Customer Collections & Enlèvements"]
+      }
+    },
+    "/collections/my-missions": {
+      "get": {
+        "operationId": "CollectionsController_getMyMissions",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Numéro de page",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Éléments par page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Terme de recherche textuel",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par statut",
+            "schema": {
+              "enum": [
+                "REQUESTED",
+                "ASSIGNED",
+                "PICKED_UP",
+                "IN_PROGRESS",
+                "COMPLETED",
+                "CANCELLED"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "agencyId",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par agence",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "zoneId",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par zone d'enlèvement",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "scheduledDate",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par date d'enlèvement (YYYY-MM-DD)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Consulter la feuille de route du coursier connecté pour la journée",
+        "tags": ["Customer Collections & Enlèvements"]
+      }
+    },
+    "/collections/{id}": {
+      "get": {
+        "operationId": "CollectionsController_getCollection",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Consulter le détail d'une demande de collecte et son expédition générée",
+        "tags": ["Customer Collections & Enlèvements"]
+      }
+    },
+    "/collections/{id}/assign": {
+      "post": {
+        "operationId": "CollectionsController_assignCollection",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignCollectionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Affecter une collecte à un coursier d'agence",
+        "tags": ["Customer Collections & Enlèvements"]
+      }
+    },
+    "/collections/{id}/complete": {
+      "post": {
+        "operationId": "CollectionsController_completeCollection",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompleteCollectionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Clôturer la collecte et générer automatiquement l'expédition et ses colis",
+        "tags": ["Customer Collections & Enlèvements"]
+      }
+    },
+    "/runs/courier-profile": {
+      "post": {
+        "operationId": "RunsController_upsertCourierProfile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertCourierProfileDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Créer ou mettre à jour le profil opérationnel d'un coursier/livreur",
+        "tags": ["Delivery Runs & Dernier Kilomètre (Phase 8)"]
+      }
+    },
+    "/runs/auto-assign": {
+      "post": {
+        "operationId": "RunsController_autoAssign",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AutoAssignRunsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Exécuter l'algorithme d'affectation automatique adresse -> zone -> livreur",
+        "tags": ["Delivery Runs & Dernier Kilomètre (Phase 8)"]
+      }
+    },
+    "/runs/reassign": {
+      "post": {
+        "operationId": "RunsController_reassign",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReassignParcelRunDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Réaffecter manuellement un colis à une autre tournée (audit obligatoire)",
+        "tags": ["Delivery Runs & Dernier Kilomètre (Phase 8)"]
+      }
+    },
+    "/runs": {
+      "get": {
+        "operationId": "RunsController_listRuns",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Numéro de page",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Éléments par page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Terme de recherche textuel",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": ["PLANNED", "IN_PROGRESS", "COMPLETED", "CANCELLED"],
+              "type": "string"
+            }
+          },
+          {
+            "name": "shift",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": ["MORNING", "AFTERNOON", "EVENING"],
+              "type": "string"
+            }
+          },
+          {
+            "name": "runDate",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par date (YYYY-MM-DD)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "agencyId",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par agence",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "zoneId",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par zone",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Lister les tournées de livraison (cloisonné selon agence ou livreur)",
+        "tags": ["Delivery Runs & Dernier Kilomètre (Phase 8)"]
+      }
+    },
+    "/runs/my-runs": {
+      "get": {
+        "operationId": "RunsController_getMyRuns",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Numéro de page",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Éléments par page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Terme de recherche textuel",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": ["PLANNED", "IN_PROGRESS", "COMPLETED", "CANCELLED"],
+              "type": "string"
+            }
+          },
+          {
+            "name": "shift",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": ["MORNING", "AFTERNOON", "EVENING"],
+              "type": "string"
+            }
+          },
+          {
+            "name": "runDate",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par date (YYYY-MM-DD)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "agencyId",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par agence",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "zoneId",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par zone",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Consulter les tournées assignées au livreur connecté",
+        "tags": ["Delivery Runs & Dernier Kilomètre (Phase 8)"]
+      }
+    },
+    "/runs/{id}": {
+      "get": {
+        "operationId": "RunsController_getRun",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Détail de la tournée"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Consulter le détail d'une tournée et ses colis",
+        "tags": ["Delivery Runs & Dernier Kilomètre (Phase 8)"]
+      }
+    },
+    "/deliveries/refusal-reasons": {
+      "get": {
+        "operationId": "DeliveriesController_getRefusalReasons",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Consulter la liste officielle et figée des motifs de refus",
+        "tags": ["Deliveries, POD & Refusals (Phase 9)"]
+      }
+    },
+    "/deliveries/{parcelId}/confirm": {
+      "post": {
+        "operationId": "DeliveriesController_confirmDelivery",
+        "parameters": [
+          {
+            "name": "parcelId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmDeliveryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Livraison confirmée et POD enregistré"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Confirmer la livraison d'un colis avec capture obligatoire de preuve (POD)",
+        "tags": ["Deliveries, POD & Refusals (Phase 9)"]
+      }
+    },
+    "/deliveries/{parcelId}/refuse": {
+      "post": {
+        "operationId": "DeliveriesController_recordRefusal",
+        "parameters": [
+          {
+            "name": "parcelId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordRefusalDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Refus enregistré et statut colis passé à RETURNED"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Signaler le refus d'un colis (motif référentiel obligatoire, déclenche retour automatique)",
+        "tags": ["Deliveries, POD & Refusals (Phase 9)"]
+      }
+    },
+    "/deliveries/{parcelId}/deferred-pod": {
+      "post": {
+        "operationId": "DeliveriesController_registerDeferredPod",
+        "parameters": [
+          {
+            "name": "parcelId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterDeferredPodDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "POD différé enregistré par l'agent quai"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Enregistrer en différé le bon de livraison (BL) papier cacheté par l'agent",
+        "tags": ["Deliveries, POD & Refusals (Phase 9)"]
+      }
+    },
+    "/returns": {
+      "post": {
+        "operationId": "ReturnsController_createReturn",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReturnDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dossier de retour créé avec succès"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Créer un dossier de retour manuellement ou suite à réclamation",
+        "tags": ["Returns & Reverse Logistics (Phase 10)"]
+      },
+      "get": {
+        "operationId": "ReturnsController_listReturns",
+        "parameters": [
+          {
+            "name": "originAgencyId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "destinationAgencyId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Lister les dossiers et items de retour (cloisonné selon agence ou livreur)",
+        "tags": ["Returns & Reverse Logistics (Phase 10)"]
+      }
+    },
+    "/returns/recover": {
+      "post": {
+        "operationId": "ReturnsController_recoverReturn",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecoverReturnDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Colis de retour récupéré avec succès par le coursier"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Récupérer un colis retour par scan ou saisie manuelle du numéro BL/Tracking",
+        "tags": ["Returns & Reverse Logistics (Phase 10)"]
+      }
+    },
+    "/incidents": {
+      "post": {
+        "operationId": "IncidentsController_reportIncident",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportIncidentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dossier d'incident enregistré et rattaché au tracking"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Déclarer un incident (perte, casse, vol, litige de livraison)",
+        "tags": ["Incidents & Litiges (Phase 11)"]
+      },
+      "get": {
+        "operationId": "IncidentsController_listIncidents",
+        "parameters": [
+          {
+            "name": "search",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "isDeliveredDispute",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Lister les dossiers d'incidents (cloisonné selon rôle/agence)",
+        "tags": ["Incidents & Litiges (Phase 11)"]
+      }
+    },
+    "/incidents/{id}/decide": {
+      "post": {
+        "operationId": "IncidentsController_decideIncident",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecideIncidentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Décision d'enquête enregistrée dans l'historique"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Statuer sur un incident (enquête, pièces, indemnisation formelle, rejet)",
+        "tags": ["Incidents & Litiges (Phase 11)"]
+      }
+    },
+    "/incidents/{id}": {
+      "get": {
+        "operationId": "IncidentsController_getIncident",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Consulter le détail complet d'un incident et son historique d'enquête",
+        "tags": ["Incidents & Litiges (Phase 11)"]
+      }
+    },
+    "/invoices": {
+      "post": {
+        "operationId": "InvoicesController_createInvoice",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInvoiceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Facture générée avec calculs HT/TVA/TTC certifiés"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Émettre une nouvelle facture de transport (Rôle Comptable / Superviseur)",
+        "tags": ["Facturation & Prestations (Phase 12a)"]
+      },
+      "get": {
+        "operationId": "InvoicesController_listInvoices",
+        "parameters": [
+          {
+            "name": "customerId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Lister les factures (cloisonné selon rôle : client ne voit que les siennes)",
+        "tags": ["Facturation & Prestations (Phase 12a)"]
+      }
+    },
+    "/invoices/{id}": {
+      "get": {
+        "operationId": "InvoicesController_getInvoice",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Consulter le détail d'une facture et ses lignes",
+        "tags": ["Facturation & Prestations (Phase 12a)"]
+      }
+    },
+    "/invoices/{id}/payments": {
+      "post": {
+        "operationId": "InvoicesController_recordPayment",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordPaymentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Règlement enregistré avec mise à jour du solde"
+          },
+          "400": {
+            "description": "En-tête Idempotency-Key manquant ou charge utile invalide"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Enregistrer un règlement sur une facture (En-tête Idempotency-Key obligatoire)",
+        "tags": ["Facturation & Prestations (Phase 12a)"]
+      }
+    },
+    "/documents/generate": {
+      "post": {
+        "operationId": "DocumentsController_generateDocument",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateDocumentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Document généré avec URL de téléchargement pré-signée"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Générer un document officiel (PDF) avec versionnement et URL signée",
+        "tags": ["Documents & Impression (Phase 13)"]
+      }
+    },
+    "/documents/{id}/download-url": {
+      "get": {
+        "operationId": "DocumentsController_getDownloadUrl",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Obtenir une URL pré-signée éphémère (15 min) pour télécharger un document",
+        "tags": ["Documents & Impression (Phase 13)"]
+      }
+    },
+    "/documents/preview": {
+      "post": {
+        "operationId": "DocumentsController_previewDocument",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateDocumentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Prévisualisation directe PDF (stream HTTP)",
+        "tags": ["Documents & Impression (Phase 13)"]
+      }
+    },
+    "/notifications": {
+      "get": {
+        "operationId": "NotificationsController_getMyNotifications",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Notifications récupérées avec succès"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Consulter la liste de ses notifications personnelles",
+        "tags": ["Notifications (Phase 14)"]
+      }
+    },
+    "/notifications/{id}/read": {
+      "patch": {
+        "operationId": "NotificationsController_markAsRead",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Marquer une notification comme lue",
+        "tags": ["Notifications (Phase 14)"]
+      }
+    },
+    "/notifications/read-all": {
+      "patch": {
+        "operationId": "NotificationsController_markAllAsRead",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Tout marquer comme lu",
+        "tags": ["Notifications (Phase 14)"]
+      }
+    },
+    "/reports/dashboard": {
+      "get": {
+        "operationId": "ReportsController_getDashboard",
+        "parameters": [
+          {
+            "name": "period",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "month",
+              "enum": ["day", "week", "month", "year"],
+              "type": "string"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "required": false,
+            "in": "query",
+            "description": "Date de début (ISO 8601)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dateTo",
+            "required": false,
+            "in": "query",
+            "description": "Date de fin (ISO 8601)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "agencyId",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par agence",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "courierId",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par livreur (userId)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customerId",
+            "required": false,
+            "in": "query",
+            "description": "Filtrer par client",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "DRAFT",
+                "REGISTERED",
+                "CANCELLED",
+                "EXCEPTION",
+                "CREATED",
+                "WAITING_FOR_COLLECTION",
+                "COLLECTED",
+                "ARRIVED_AGENCY",
+                "IN_TRANSIT",
+                "ARRIVED_DESTINATION_AGENCY",
+                "ASSIGNED_TO_COURIER",
+                "OUT_FOR_DELIVERY",
+                "DELIVERED",
+                "PARTIALLY_DELIVERED",
+                "RECIPIENT_ABSENT",
+                "REFUSED",
+                "ADDRESS_INCORRECT",
+                "DAMAGED",
+                "LOST",
+                "DELAYED",
+                "VEHICLE_BREAKDOWN",
+                "ACCIDENT",
+                "PAYMENT_ISSUE",
+                "RETURNED"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "KPIs et répartition par statut"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Synthèse dashboard — KPIs agrégés avec filtres temporels et métier",
+        "tags": ["Dashboard & Rapports (Phase 15)"]
+      }
+    },
+    "/reports/data": {
+      "get": {
+        "operationId": "ReportsController_getReportData",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Numéro de page",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Éléments par page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Terme de recherche textuel",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "SHIPMENTS",
+                "DELIVERIES",
+                "COLLECTIONS",
+                "INCIDENTS",
+                "REVENUE"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "period",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "month",
+              "enum": ["day", "week", "month", "year"],
+              "type": "string"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dateTo",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "agencyId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "courierId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customerId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "DRAFT",
+                "REGISTERED",
+                "CANCELLED",
+                "EXCEPTION",
+                "CREATED",
+                "WAITING_FOR_COLLECTION",
+                "COLLECTED",
+                "ARRIVED_AGENCY",
+                "IN_TRANSIT",
+                "ARRIVED_DESTINATION_AGENCY",
+                "ASSIGNED_TO_COURIER",
+                "OUT_FOR_DELIVERY",
+                "DELIVERED",
+                "PARTIALLY_DELIVERED",
+                "RECIPIENT_ABSENT",
+                "REFUSED",
+                "ADDRESS_INCORRECT",
+                "DAMAGED",
+                "LOST",
+                "DELAYED",
+                "VEHICLE_BREAKDOWN",
+                "ACCIDENT",
+                "PAYMENT_ISSUE",
+                "RETURNED"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Données détaillées paginées par type de rapport",
+        "tags": ["Dashboard & Rapports (Phase 15)"]
+      }
+    },
+    "/reports/export": {
+      "get": {
+        "operationId": "ReportsController_exportReportFile",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Numéro de page",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Éléments par page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Terme de recherche textuel",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "SHIPMENTS",
+                "DELIVERIES",
+                "COLLECTIONS",
+                "INCIDENTS",
+                "REVENUE"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "period",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "month",
+              "enum": ["day", "week", "month", "year"],
+              "type": "string"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dateTo",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "agencyId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "courierId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customerId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "DRAFT",
+                "REGISTERED",
+                "CANCELLED",
+                "EXCEPTION",
+                "CREATED",
+                "WAITING_FOR_COLLECTION",
+                "COLLECTED",
+                "ARRIVED_AGENCY",
+                "IN_TRANSIT",
+                "ARRIVED_DESTINATION_AGENCY",
+                "ASSIGNED_TO_COURIER",
+                "OUT_FOR_DELIVERY",
+                "DELIVERED",
+                "PARTIALLY_DELIVERED",
+                "RECIPIENT_ABSENT",
+                "REFUSED",
+                "ADDRESS_INCORRECT",
+                "DAMAGED",
+                "LOST",
+                "DELAYED",
+                "VEHICLE_BREAKDOWN",
+                "ACCIDENT",
+                "PAYMENT_ISSUE",
+                "RETURNED"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "enum": ["pdf", "excel"],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Export PDF ou Excel (CSV) — limité à 10 000 lignes",
+        "tags": ["Dashboard & Rapports (Phase 15)"]
+      }
     }
   },
   "info": {
-    "title": "HES Logistics API",
+    "title": "HES Logistics Platform API",
     "description": "Enterprise Multi-Agency Logistics, Parcel Transport, Dispatch, Tracking & Billing REST API.",
     "version": "1.0.0",
     "contact": {}
@@ -752,6 +4301,1507 @@
             "example": "agency-uuid-5678"
           }
         }
+      },
+      "CreateAgencyDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "AGA",
+            "description": "Code unique de l'agence (ex: AGA, CAS, TNG)"
+          },
+          "name": {
+            "type": "string",
+            "example": "Agence Agadir Port",
+            "description": "Nom complet de l'agence"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+212528123456",
+            "description": "Téléphone standard"
+          },
+          "email": {
+            "type": "string",
+            "example": "contact.agadir@hes.ma",
+            "description": "Email de l'agence"
+          },
+          "city": {
+            "type": "string",
+            "example": "Agadir",
+            "description": "Ville d'implantation"
+          },
+          "address": {
+            "type": "string",
+            "example": "Boulevard Mohammed V, Port d'Agadir",
+            "description": "Adresse physique"
+          }
+        },
+        "required": ["code", "name", "city"]
+      },
+      "UpdateAgencyDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Agence Agadir Port Renommée",
+            "description": "Nom complet"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+212528123456",
+            "description": "Téléphone standard"
+          },
+          "email": {
+            "type": "string",
+            "example": "contact.agadir@hes.ma",
+            "description": "Email"
+          },
+          "city": {
+            "type": "string",
+            "example": "Agadir",
+            "description": "Ville"
+          },
+          "address": {
+            "type": "string",
+            "example": "Nouveau Boulevard Port d'Agadir",
+            "description": "Adresse"
+          },
+          "isActive": {
+            "type": "boolean",
+            "example": true,
+            "description": "Statut d'activation de l'agence"
+          }
+        }
+      },
+      "CreateZoneDto": {
+        "type": "object",
+        "properties": {
+          "agencyId": {
+            "type": "string",
+            "example": "a3b1c2d3-...",
+            "description": "ID de l'agence (obligatoire pour SuperAdmin, auto-déduit pour agent)"
+          },
+          "code": {
+            "type": "string",
+            "example": "ZN-AGA-01",
+            "description": "Code de la zone opérationnelle"
+          },
+          "name": {
+            "type": "string",
+            "example": "Zone Portuaire & Industrielle",
+            "description": "Nom de la zone"
+          },
+          "description": {
+            "type": "string",
+            "example": "Couvre les quais marchands et la zone franche",
+            "description": "Description"
+          },
+          "postalCodes": {
+            "type": "string",
+            "example": "80000, 80001, 80010",
+            "description": "Codes postaux couverts (séparés par virgules)"
+          }
+        },
+        "required": ["code", "name"]
+      },
+      "UpdateZoneDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Zone Portuaire Nord",
+            "description": "Nom de la zone"
+          },
+          "description": {
+            "type": "string",
+            "example": "Description mise à jour",
+            "description": "Description"
+          },
+          "postalCodes": {
+            "type": "string",
+            "example": "80000, 80002",
+            "description": "Codes postaux couverts"
+          },
+          "isActive": {
+            "type": "boolean",
+            "example": true,
+            "description": "Statut d'activation"
+          }
+        }
+      },
+      "CreateCustomerTypeDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "KEY_ACCOUNT",
+            "description": "Code unique du type client (ex: B2B_CORP, B2B_SME, KEY_ACCOUNT)"
+          },
+          "name": {
+            "type": "string",
+            "example": "Grand Compte",
+            "description": "Désignation"
+          },
+          "description": {
+            "type": "string",
+            "example": "Clients stratégiques à fort volume",
+            "description": "Description"
+          },
+          "isSystem": {
+            "type": "boolean",
+            "example": false,
+            "description": "Type système protégé"
+          }
+        },
+        "required": ["code", "name"]
+      },
+      "UpdateCustomerTypeDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Grand Compte Clé",
+            "description": "Désignation"
+          },
+          "description": {
+            "type": "string",
+            "example": "Clients stratégiques à très fort volume logistique",
+            "description": "Description"
+          },
+          "isActive": {
+            "type": "boolean",
+            "example": true,
+            "description": "Statut actif"
+          }
+        }
+      },
+      "CreateCustomerDto": {
+        "type": "object",
+        "properties": {
+          "agencyId": {
+            "type": "string",
+            "example": "a3b1c2d3-...",
+            "description": "ID de l'agence (obligatoire si Super Admin, déduit pour agent)"
+          },
+          "customerTypeId": {
+            "type": "string",
+            "example": "b2c3d4e5-...",
+            "description": "ID du type de client (référentiel)"
+          },
+          "code": {
+            "type": "string",
+            "example": "CLI-AGA-2026-001",
+            "description": "Code unique client"
+          },
+          "legalName": {
+            "type": "string",
+            "example": "Atlas Trading SARL",
+            "description": "Raison sociale légale"
+          },
+          "tradeName": {
+            "type": "string",
+            "example": "Atlas Express",
+            "description": "Nom commercial"
+          },
+          "ice": {
+            "type": "string",
+            "example": "001234567000089",
+            "description": "Identifiant Commun de l'Entreprise (15 chiffres)"
+          },
+          "taxId": {
+            "type": "string",
+            "example": "12345678",
+            "description": "Identifiant Fiscal (IF)"
+          },
+          "email": {
+            "type": "string",
+            "example": "direction@atlastrading.ma",
+            "description": "Email commercial/facturation"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+212528223344",
+            "description": "Téléphone principal"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["ACTIVE", "INACTIVE", "SUSPENDED"],
+            "default": "ACTIVE"
+          },
+          "notes": {
+            "type": "string",
+            "example": "Client import/export fruits et légumes",
+            "description": "Notes internes"
+          },
+          "initialManagerUserId": {
+            "type": "string",
+            "example": "c4d5e6f7-...",
+            "description": "ID de l'utilisateur gestionnaire de compte initial"
+          },
+          "initialManagerReason": {
+            "type": "string",
+            "example": "Attribution initiale à la création du compte",
+            "description": "Motif d'attribution initiale"
+          }
+        },
+        "required": ["customerTypeId", "code", "legalName"]
+      },
+      "UpdateCustomerDto": {
+        "type": "object",
+        "properties": {
+          "customerTypeId": {
+            "type": "string",
+            "example": "b2c3d4e5-...",
+            "description": "ID du type de client"
+          },
+          "legalName": {
+            "type": "string",
+            "example": "Atlas Trading International SARL",
+            "description": "Raison sociale"
+          },
+          "tradeName": {
+            "type": "string",
+            "example": "Atlas Express Global",
+            "description": "Nom commercial"
+          },
+          "ice": {
+            "type": "string",
+            "example": "001234567000089",
+            "description": "ICE marocain (15 chiffres)"
+          },
+          "taxId": {
+            "type": "string",
+            "example": "12345678",
+            "description": "Identifiant Fiscal"
+          },
+          "email": {
+            "type": "string",
+            "example": "direction@atlastrading.ma",
+            "description": "Email"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+212528223344",
+            "description": "Téléphone"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["ACTIVE", "INACTIVE", "SUSPENDED"]
+          },
+          "notes": {
+            "type": "string",
+            "example": "Mise à jour conditions de paiement",
+            "description": "Notes"
+          }
+        }
+      },
+      "AssignManagerDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "example": "d5e6f7a8-...",
+            "description": "ID du collaborateur interne qui devient responsable"
+          },
+          "assignmentReason": {
+            "type": "string",
+            "example": "Changement de gestionnaire suite à mutation interne",
+            "description": "Motif du transfert ou de l'affectation"
+          }
+        },
+        "required": ["userId"]
+      },
+      "CreateCustomerContactDto": {
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "example": "c1d2e3f4-...",
+            "description": "ID du client rattaché"
+          },
+          "firstName": {
+            "type": "string",
+            "example": "Karim",
+            "description": "Prénom du contact"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Benjelloun",
+            "description": "Nom de famille"
+          },
+          "email": {
+            "type": "string",
+            "example": "k.benjelloun@client.ma",
+            "description": "Email"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+212528112233",
+            "description": "Téléphone fixe"
+          },
+          "mobile": {
+            "type": "string",
+            "example": "+212661223344",
+            "description": "Téléphone mobile"
+          },
+          "roleTitle": {
+            "type": "string",
+            "example": "Directeur Logistique & Supply Chain",
+            "description": "Fonction / Rôle"
+          },
+          "isPrimary": {
+            "type": "boolean",
+            "example": true,
+            "description": "Contact principal"
+          }
+        },
+        "required": ["customerId", "firstName", "lastName"]
+      },
+      "UpdateCustomerContactDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "example": "Karim",
+            "description": "Prénom"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Benjelloun",
+            "description": "Nom"
+          },
+          "email": {
+            "type": "string",
+            "example": "k.benjelloun@client.ma",
+            "description": "Email"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+212528112233",
+            "description": "Téléphone fixe"
+          },
+          "mobile": {
+            "type": "string",
+            "example": "+212661223344",
+            "description": "Mobile"
+          },
+          "roleTitle": {
+            "type": "string",
+            "example": "Directeur des Opérations",
+            "description": "Fonction"
+          },
+          "isPrimary": {
+            "type": "boolean",
+            "example": true,
+            "description": "Contact principal"
+          }
+        }
+      },
+      "CreateAddressDto": {
+        "type": "object",
+        "properties": {
+          "agencyId": {
+            "type": "string",
+            "example": "a1b2c3d4-...",
+            "description": "ID de l'agence (déduit pour agent)"
+          },
+          "customerId": {
+            "type": "string",
+            "example": "c1d2e3f4-...",
+            "description": "ID du client (si adresse client)"
+          },
+          "zoneId": {
+            "type": "string",
+            "example": "z1d2e3f4-...",
+            "description": "ID de la zone opérationnelle"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["HOME", "DELIVERY", "BUSINESS", "OTHER"],
+            "default": "DELIVERY"
+          },
+          "title": {
+            "type": "string",
+            "example": "Entrepôt Quai 4",
+            "description": "Libellé de l'adresse"
+          },
+          "street": {
+            "type": "string",
+            "example": "Zone Portuaire, Hangar 12",
+            "description": "Rue / voie"
+          },
+          "additionalInfo": {
+            "type": "string",
+            "example": "Porte B, quai de déchargement",
+            "description": "Complément"
+          },
+          "city": {
+            "type": "string",
+            "example": "Agadir",
+            "description": "Ville"
+          },
+          "postalCode": {
+            "type": "string",
+            "example": "80000",
+            "description": "Code postal"
+          },
+          "latitude": {
+            "type": "number",
+            "example": 30.4278,
+            "description": "Latitude GPS"
+          },
+          "longitude": {
+            "type": "number",
+            "example": -9.5981,
+            "description": "Longitude GPS"
+          },
+          "isDefault": {
+            "type": "boolean",
+            "example": true,
+            "description": "Adresse par défaut"
+          }
+        },
+        "required": ["title", "street", "city"]
+      },
+      "UpdateAddressDto": {
+        "type": "object",
+        "properties": {
+          "zoneId": {
+            "type": "string",
+            "example": "z1d2e3f4-...",
+            "description": "ID de la zone"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["HOME", "DELIVERY", "BUSINESS", "OTHER"]
+          },
+          "title": {
+            "type": "string",
+            "example": "Entrepôt Quai 4 - Rénové",
+            "description": "Libellé"
+          },
+          "street": {
+            "type": "string",
+            "example": "Zone Portuaire, Hangar 12B",
+            "description": "Rue"
+          },
+          "additionalInfo": {
+            "type": "string",
+            "example": "Porte B2",
+            "description": "Complément"
+          },
+          "city": {
+            "type": "string",
+            "example": "Agadir",
+            "description": "Ville"
+          },
+          "postalCode": {
+            "type": "string",
+            "example": "80000",
+            "description": "Code postal"
+          },
+          "latitude": {
+            "type": "number",
+            "example": 30.428,
+            "description": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "example": -9.5985,
+            "description": "Longitude"
+          },
+          "isDefault": {
+            "type": "boolean",
+            "example": false,
+            "description": "Adresse par défaut"
+          }
+        }
+      },
+      "CreateParcelItemDto": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "Désignation de l'article"
+          },
+          "quantity": {
+            "type": "number",
+            "default": 1,
+            "description": "Quantité"
+          },
+          "declaredValue": {
+            "type": "number",
+            "description": "Valeur unitaire déclarée"
+          },
+          "hsCode": {
+            "type": "string",
+            "description": "Code douanier HS Code"
+          }
+        },
+        "required": ["description"]
+      },
+      "CreateParcelDto": {
+        "type": "object",
+        "properties": {
+          "parcelTypeId": {
+            "type": "string",
+            "description": "ID du type de colis (référentiel)"
+          },
+          "weightKg": {
+            "type": "number",
+            "description": "Poids réel en kilogrammes (strictement positif)"
+          },
+          "lengthCm": {
+            "type": "number",
+            "description": "Longueur en cm"
+          },
+          "widthCm": {
+            "type": "number",
+            "description": "Largeur en cm"
+          },
+          "heightCm": {
+            "type": "number",
+            "description": "Hauteur en cm"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Instructions ou notes spécifiques au colis"
+          },
+          "items": {
+            "description": "Articles détaillés à l'intérieur du colis",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateParcelItemDto"
+            }
+          }
+        },
+        "required": ["parcelTypeId", "weightKg"]
+      },
+      "CreateShipmentDto": {
+        "type": "object",
+        "properties": {
+          "originAgencyId": {
+            "type": "string",
+            "description": "ID de l'agence d'origine (optionnel pour les agents, injecté depuis leur token)"
+          },
+          "destinationAgencyId": {
+            "type": "string",
+            "description": "ID de l'agence de destination / distribution"
+          },
+          "senderCustomerId": {
+            "type": "string",
+            "description": "ID du compte client expéditeur"
+          },
+          "senderAddressId": {
+            "type": "string",
+            "description": "ID de l'adresse d'enlèvement"
+          },
+          "recipientName": {
+            "type": "string",
+            "description": "Nom complet du destinataire"
+          },
+          "recipientPhone": {
+            "type": "string",
+            "description": "Numéro de téléphone du destinataire"
+          },
+          "recipientEmail": {
+            "type": "string",
+            "description": "Email de notification du destinataire"
+          },
+          "recipientAddress": {
+            "type": "string",
+            "description": "Adresse physique de livraison"
+          },
+          "recipientCity": {
+            "type": "string",
+            "description": "Ville de destination"
+          },
+          "recipientZoneId": {
+            "type": "string",
+            "description": "Zone géographique de livraison"
+          },
+          "serviceType": {
+            "type": "string",
+            "enum": ["STANDARD", "EXPRESS", "SAME_DAY", "ECONOMIC"],
+            "default": "STANDARD"
+          },
+          "paymentMethod": {
+            "type": "string",
+            "enum": [
+              "CASH",
+              "CASH_ON_DELIVERY",
+              "BANK_TRANSFER",
+              "CUSTOMER_ACCOUNT",
+              "CHEQUE",
+              "BILL_OF_EXCHANGE"
+            ],
+            "default": "CASH"
+          },
+          "shippingFee": {
+            "type": "number",
+            "description": "Frais de transport (MAD)"
+          },
+          "declaredValue": {
+            "type": "number",
+            "description": "Valeur déclarée pour assurance (MAD)"
+          },
+          "codAmount": {
+            "type": "number",
+            "description": "Montant Cash On Delivery à encaisser (MAD)"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Instructions spéciales"
+          },
+          "parcels": {
+            "description": "Liste des colis physiques de l'expédition (au moins 1 colis requis)",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateParcelDto"
+            }
+          }
+        },
+        "required": [
+          "destinationAgencyId",
+          "senderCustomerId",
+          "recipientName",
+          "recipientPhone",
+          "recipientAddress",
+          "recipientCity",
+          "serviceType",
+          "paymentMethod",
+          "shippingFee",
+          "parcels"
+        ]
+      },
+      "ScanBarcodeDto": {
+        "type": "object",
+        "properties": {
+          "barcode": {
+            "type": "string",
+            "description": "Code-barres brut scanné (ou QR Code URI hes://scan/v1?t=... ou numéro de tracking direct)"
+          },
+          "targetStatus": {
+            "type": "string",
+            "enum": [
+              "PICKED_UP",
+              "REGISTERED",
+              "AT_HUB",
+              "CANCELLED",
+              "DELIVERY_FAILED",
+              "CREATED",
+              "WAITING_FOR_COLLECTION",
+              "COLLECTED",
+              "ARRIVED_AGENCY",
+              "IN_TRANSIT",
+              "ARRIVED_DESTINATION_AGENCY",
+              "ASSIGNED_TO_COURIER",
+              "OUT_FOR_DELIVERY",
+              "DELIVERED",
+              "PARTIALLY_DELIVERED",
+              "RECIPIENT_ABSENT",
+              "REFUSED",
+              "ADDRESS_INCORRECT",
+              "DAMAGED",
+              "LOST",
+              "DELAYED",
+              "RETURNED"
+            ],
+            "description": "Statut cible déduit du contexte opérationnel du scanneur (ex: PICKED_UP, AT_HUB, OUT_FOR_DELIVERY, DELIVERED)"
+          },
+          "scannerType": {
+            "type": "string",
+            "enum": ["BARCODE_1D", "QR_2D", "MANUAL_ENTRY"],
+            "default": "BARCODE_1D",
+            "description": "Type de périphérique utilisé pour la capture"
+          },
+          "deviceId": {
+            "type": "string",
+            "description": "Identifiant matériel de l'appareil lecteur / PDA"
+          },
+          "latitude": {
+            "type": "number",
+            "description": "Coordonnée GPS Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "description": "Coordonnée GPS Longitude"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "description": "Clé d'idempotence optionnelle transmise par le client (UUID du terminal)"
+          }
+        },
+        "required": ["barcode"]
+      },
+      "ManualTrackingEventDto": {
+        "type": "object",
+        "properties": {
+          "trackingNumberOrId": {
+            "type": "string",
+            "description": "Numéro de tracking du colis (ou UUID du colis)"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PICKED_UP",
+              "REGISTERED",
+              "AT_HUB",
+              "CANCELLED",
+              "DELIVERY_FAILED",
+              "CREATED",
+              "WAITING_FOR_COLLECTION",
+              "COLLECTED",
+              "ARRIVED_AGENCY",
+              "IN_TRANSIT",
+              "ARRIVED_DESTINATION_AGENCY",
+              "ASSIGNED_TO_COURIER",
+              "OUT_FOR_DELIVERY",
+              "DELIVERED",
+              "PARTIALLY_DELIVERED",
+              "RECIPIENT_ABSENT",
+              "REFUSED",
+              "ADDRESS_INCORRECT",
+              "DAMAGED",
+              "LOST",
+              "DELAYED",
+              "RETURNED"
+            ],
+            "description": "Nouveau statut à appliquer au colis (doit respecter la machine à états)"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Commentaire obligatoire justifiant la modification manuelle de statut (audit trail)",
+            "minLength": 5
+          },
+          "agencyId": {
+            "type": "string",
+            "description": "ID de l'agence où a lieu l'événement manuel (si différent du profil utilisateur)"
+          }
+        },
+        "required": ["trackingNumberOrId", "status", "notes"]
+      },
+      "UpdateParcelStatusDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "PICKED_UP",
+              "REGISTERED",
+              "AT_HUB",
+              "CANCELLED",
+              "DELIVERY_FAILED",
+              "CREATED",
+              "WAITING_FOR_COLLECTION",
+              "COLLECTED",
+              "ARRIVED_AGENCY",
+              "IN_TRANSIT",
+              "ARRIVED_DESTINATION_AGENCY",
+              "ASSIGNED_TO_COURIER",
+              "OUT_FOR_DELIVERY",
+              "DELIVERED",
+              "PARTIALLY_DELIVERED",
+              "RECIPIENT_ABSENT",
+              "REFUSED",
+              "ADDRESS_INCORRECT",
+              "DAMAGED",
+              "LOST",
+              "DELAYED",
+              "RETURNED"
+            ],
+            "description": "Nouveau statut du colis (doit respecter la machine à états)"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Motif ou commentaire associé au changement de statut"
+          }
+        },
+        "required": ["status"]
+      },
+      "CreateTransferDto": {
+        "type": "object",
+        "properties": {
+          "originAgencyId": {
+            "type": "string",
+            "description": "ID de l'agence de départ"
+          },
+          "destinationAgencyId": {
+            "type": "string",
+            "description": "ID de l'agence de destination suivante"
+          },
+          "routeId": {
+            "type": "string",
+            "description": "ID de la route / ligne logistique"
+          },
+          "vehiclePlate": {
+            "type": "string",
+            "description": "Numéro d'immatriculation du véhicule"
+          },
+          "driverName": {
+            "type": "string",
+            "description": "Nom du chauffeur responsable du transport"
+          },
+          "driverPhone": {
+            "type": "string",
+            "description": "Téléphone du chauffeur"
+          },
+          "sealNumber": {
+            "type": "string",
+            "description": "Numéro de scellé camion"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Instructions particulières pour ce transfert"
+          },
+          "parcelIds": {
+            "description": "Liste des IDs de colis physiques à regrouper dans ce transfert",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["originAgencyId", "destinationAgencyId", "parcelIds"]
+      },
+      "DispatchTransferDto": {
+        "type": "object",
+        "properties": {
+          "sealNumber": {
+            "type": "string",
+            "description": "Numéro de scellé camion au départ"
+          },
+          "vehiclePlate": {
+            "type": "string",
+            "description": "Immatriculation véhicule confirmée"
+          },
+          "driverName": {
+            "type": "string",
+            "description": "Nom du chauffeur"
+          },
+          "driverPhone": {
+            "type": "string",
+            "description": "Téléphone du chauffeur"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Commentaire de départ"
+          }
+        }
+      },
+      "ReceiveTransferDto": {
+        "type": "object",
+        "properties": {
+          "receivedParcelIds": {
+            "description": "Liste des IDs ou numéros de tracking des colis physiquement scannés et reçus sur quai",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "missingParcelNotes": {
+            "type": "object",
+            "description": "Dictionnaire de commentaires justifiant les colis manquants (clé = parcelId/tracking, valeur = motif)"
+          },
+          "sealIntact": {
+            "type": "boolean",
+            "description": "Confirmation de conformité du scellé à l'arrivée"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Commentaire général de réception"
+          }
+        },
+        "required": ["receivedParcelIds"]
+      },
+      "RequestCollectionItemDto": {
+        "type": "object",
+        "properties": {
+          "declaredWeightKg": {
+            "type": "number",
+            "description": "Poids estimé / déclaré en kg",
+            "example": 2.5
+          },
+          "description": {
+            "type": "string",
+            "description": "Description du contenu"
+          },
+          "recipientName": {
+            "type": "string",
+            "description": "Nom complet du destinataire final",
+            "example": "Yassine Mansouri"
+          },
+          "recipientPhone": {
+            "type": "string",
+            "description": "Numéro de téléphone du destinataire",
+            "example": "+212612345678"
+          },
+          "recipientAddress": {
+            "type": "string",
+            "description": "Adresse physique de livraison",
+            "example": "14 Boulevard Hassan II"
+          },
+          "recipientCity": {
+            "type": "string",
+            "description": "Ville de destination",
+            "example": "Rabat"
+          },
+          "codAmount": {
+            "type": "number",
+            "description": "Montant contre remboursement (COD)",
+            "example": 350
+          },
+          "declaredValue": {
+            "type": "number",
+            "description": "Valeur déclarée",
+            "example": 1000
+          },
+          "notes": {
+            "type": "string",
+            "description": "Instructions spécifiques"
+          }
+        },
+        "required": [
+          "recipientName",
+          "recipientPhone",
+          "recipientAddress",
+          "recipientCity"
+        ]
+      },
+      "RequestCollectionDto": {
+        "type": "object",
+        "properties": {
+          "pickupAddressId": {
+            "type": "string",
+            "description": "ID de l'adresse enregistrée du client (optionnel)"
+          },
+          "pickupContactName": {
+            "type": "string",
+            "description": "Nom de la personne contact sur place",
+            "example": "Fatima Zahra"
+          },
+          "pickupPhone": {
+            "type": "string",
+            "description": "Téléphone du contact sur place",
+            "example": "+212655555555"
+          },
+          "pickupStreet": {
+            "type": "string",
+            "description": "Rue / Adresse d'enlèvement",
+            "example": "45 Rue des Alouettes, Maarif"
+          },
+          "pickupCity": {
+            "type": "string",
+            "description": "Ville de collecte",
+            "example": "Casablanca"
+          },
+          "pickupPostalCode": {
+            "type": "string",
+            "description": "Code postal"
+          },
+          "pickupLatitude": {
+            "type": "number",
+            "description": "Latitude GPS"
+          },
+          "pickupLongitude": {
+            "type": "number",
+            "description": "Longitude GPS"
+          },
+          "scheduledDate": {
+            "type": "string",
+            "description": "Date souhaitée pour l'enlèvement (YYYY-MM-DD)",
+            "example": "2026-09-03"
+          },
+          "timeSlotStart": {
+            "type": "string",
+            "description": "Début de créneau horaire",
+            "example": "09:00"
+          },
+          "timeSlotEnd": {
+            "type": "string",
+            "description": "Fin de créneau horaire",
+            "example": "12:00"
+          },
+          "clientNotes": {
+            "type": "string",
+            "description": "Remarques particulières pour le coursier"
+          },
+          "items": {
+            "description": "Liste des colis à enlever avec coordonnées destinataires",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RequestCollectionItemDto"
+            }
+          }
+        },
+        "required": [
+          "pickupContactName",
+          "pickupPhone",
+          "pickupStreet",
+          "pickupCity",
+          "scheduledDate",
+          "items"
+        ]
+      },
+      "AssignCollectionDto": {
+        "type": "object",
+        "properties": {
+          "courierId": {
+            "type": "string",
+            "description": "ID de l'agent de collecte / coursier affecté"
+          }
+        },
+        "required": ["courierId"]
+      },
+      "CompleteCollectionItemDto": {
+        "type": "object",
+        "properties": {
+          "itemIndex": {
+            "type": "number",
+            "description": "Index de l'article de collecte (1-indexed)",
+            "example": 1
+          },
+          "actualWeightKg": {
+            "type": "number",
+            "description": "Poids réel pesé physiquement sur place (kg)",
+            "example": 2.8
+          },
+          "description": {
+            "type": "string",
+            "description": "Description ajustée du contenu"
+          },
+          "recipientName": {
+            "type": "string",
+            "description": "Nom du destinataire (ajusté)"
+          },
+          "recipientPhone": {
+            "type": "string",
+            "description": "Téléphone du destinataire (ajusté)"
+          },
+          "recipientAddress": {
+            "type": "string",
+            "description": "Adresse destinataire (ajustée)"
+          },
+          "recipientCity": {
+            "type": "string",
+            "description": "Ville destinataire (ajustée)"
+          },
+          "codAmount": {
+            "type": "number",
+            "description": "Montant COD ajusté"
+          },
+          "declaredValue": {
+            "type": "number",
+            "description": "Valeur déclarée ajustée"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Notes coursier sur l'article"
+          }
+        },
+        "required": ["itemIndex", "actualWeightKg"]
+      },
+      "CompleteCollectionDto": {
+        "type": "object",
+        "properties": {
+          "driverNotes": {
+            "type": "string",
+            "description": "Remarques du coursier sur l'enlèvement"
+          },
+          "items": {
+            "description": "Liste des colis physiquement confirmés et pesés",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CompleteCollectionItemDto"
+            }
+          }
+        },
+        "required": ["items"]
+      },
+      "UpsertCourierProfileDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "ID de l'utilisateur (rôle COURIER)"
+          },
+          "primaryZoneId": {
+            "type": "string",
+            "description": "ID de la zone géographique principale"
+          },
+          "vehicleType": {
+            "type": "string",
+            "enum": ["MOTORCYCLE", "CAR", "VAN", "BICYCLE", "TRUCK"],
+            "default": "MOTORCYCLE"
+          },
+          "licensePlate": {
+            "type": "string",
+            "description": "Immatriculation du véhicule"
+          },
+          "maxCapacityKg": {
+            "type": "number",
+            "description": "Capacité maximale de charge en kg",
+            "default": 50
+          },
+          "maxParcelsCapacity": {
+            "type": "number",
+            "description": "Capacité maximale en nombre de colis",
+            "default": 30
+          }
+        },
+        "required": ["userId"]
+      },
+      "AutoAssignRunsDto": {
+        "type": "object",
+        "properties": {
+          "agencyId": {
+            "type": "string",
+            "description": "ID de l'agence (résolu depuis token si omis)"
+          },
+          "runDate": {
+            "type": "string",
+            "description": "Date de la tournée (YYYY-MM-DD)",
+            "example": "2026-09-03"
+          },
+          "shift": {
+            "type": "string",
+            "enum": ["MORNING", "AFTERNOON", "EVENING"],
+            "default": "MORNING"
+          }
+        },
+        "required": ["runDate"]
+      },
+      "ReassignParcelRunDto": {
+        "type": "object",
+        "properties": {
+          "parcelId": {
+            "type": "string",
+            "description": "ID du colis à réaffecter"
+          },
+          "targetRunId": {
+            "type": "string",
+            "description": "ID de la nouvelle tournée de destination"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Motif obligatoire de réaffectation manuelle (audit)",
+            "example": "Demande client pour livraison l'après-midi, coursier réorienté"
+          },
+          "isOutOfZone": {
+            "type": "boolean",
+            "description": "Marqueur de livraison hors-zone"
+          }
+        },
+        "required": ["parcelId", "targetRunId", "reason"]
+      },
+      "ConfirmDeliveryDto": {
+        "type": "object",
+        "properties": {
+          "proofType": {
+            "type": "string",
+            "enum": [
+              "SIGNATURE",
+              "DIGITAL_SIGNATURE",
+              "PAPER_BL_STAMPED",
+              "PAPER_POD_PHOTO",
+              "PHOTO",
+              "OTHER"
+            ],
+            "description": "Type de preuve de livraison fournie"
+          },
+          "recipientName": {
+            "type": "string",
+            "description": "Nom complet du réceptionnaire effectif",
+            "example": "Yassine Mansouri"
+          },
+          "recipientCin": {
+            "type": "string",
+            "description": "Numéro de CIN du réceptionnaire",
+            "example": "AB123456"
+          },
+          "signatureDataUrl": {
+            "type": "string",
+            "description": "Données de signature tactile (data URL ou SVG)"
+          },
+          "podPhotoStorageKey": {
+            "type": "string",
+            "description": "Clé de stockage de la photo du BL cacheté"
+          },
+          "collectedCodAmount": {
+            "type": "number",
+            "description": "Montant COD effectivement encaissé en espèces",
+            "example": 350
+          },
+          "courierNotes": {
+            "type": "string",
+            "description": "Notes ou observations du livreur"
+          }
+        },
+        "required": ["proofType", "recipientName"]
+      },
+      "RecordRefusalDto": {
+        "type": "object",
+        "properties": {
+          "reasonCode": {
+            "type": "string",
+            "enum": [
+              "DAMAGED_PACKAGE",
+              "CONTENT_MISMATCH",
+              "COD_AMOUNT_DISPUTED",
+              "ORDER_CANCELLED",
+              "REFUSED_WITHOUT_REASON",
+              "FRAUD_SUSPECTED"
+            ],
+            "description": "Motif obligatoire issu strictement du référentiel validé",
+            "example": "CONTENT_MISMATCH"
+          },
+          "courierNotes": {
+            "type": "string",
+            "description": "Remarques complémentaires du livreur sur le refus"
+          }
+        },
+        "required": ["reasonCode"]
+      },
+      "RegisterDeferredPodDto": {
+        "type": "object",
+        "properties": {
+          "recipientName": {
+            "type": "string",
+            "description": "Nom complet ou tampon du réceptionnaire sur le BL papier",
+            "example": "Société Maghreb Logistique"
+          },
+          "podPhotoStorageKey": {
+            "type": "string",
+            "description": "Clé de stockage ou URL du scan du bon de livraison papier cacheté",
+            "example": "pod/bl-2026-00042.jpg"
+          },
+          "recipientCin": {
+            "type": "string",
+            "description": "CIN ou matricule relevé sur le BL"
+          },
+          "agentNotes": {
+            "type": "string",
+            "description": "Notes de conformité de l'agent quai"
+          }
+        },
+        "required": ["recipientName", "podPhotoStorageKey"]
+      },
+      "CreateReturnDto": {
+        "type": "object",
+        "properties": {
+          "shipmentId": {
+            "type": "string",
+            "description": "ID de l'expédition ou du colis d'origine",
+            "example": "shipment-uuid-123"
+          },
+          "returnType": {
+            "type": "string",
+            "enum": [
+              "REFUSAL_RETURN",
+              "UNDELIVERABLE_RETURN",
+              "CUSTOMER_RETURN",
+              "CANCELLED_ORDER_RETURN"
+            ],
+            "default": "REFUSAL_RETURN"
+          },
+          "destinationAgencyId": {
+            "type": "string",
+            "description": "Agence d'origine vers laquelle renvoyer le colis"
+          },
+          "assignedCourierId": {
+            "type": "string",
+            "description": "ID du coursier assigné à la récupération"
+          },
+          "parcelIds": {
+            "description": "Liste des IDs des colis faisant l'objet du retour",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reasonNotes": {
+            "type": "string",
+            "description": "Motif ou notes explicatives du retour"
+          }
+        },
+        "required": ["shipmentId", "parcelIds"]
+      },
+      "RecoverReturnDto": {
+        "type": "object",
+        "properties": {
+          "identifier": {
+            "type": "string",
+            "description": "Numéro de tracking du colis ou numéro du BL d'origine",
+            "example": "HES-CAS-2026-000099-01"
+          },
+          "isScan": {
+            "type": "boolean",
+            "description": "Indique si la saisie provient d'un scan code-barres/QR physique ou d'une saisie manuelle",
+            "example": false
+          },
+          "isFallbackEmergency": {
+            "type": "boolean",
+            "description": "Flag indiquant l'activation de la procédure de secours si BL illisible/perdu",
+            "default": false
+          },
+          "emergencyReason": {
+            "type": "string",
+            "description": "Motif circonstancié d'urgence si BL totalement illisible ou égaré (requis si procédure d'urgence)"
+          }
+        },
+        "required": ["identifier", "isScan"]
+      },
+      "ReportIncidentDto": {
+        "type": "object",
+        "properties": {
+          "shipmentIdentifier": {
+            "type": "string",
+            "description": "ID ou numéro de tracking de l'expédition"
+          },
+          "parcelIdentifier": {
+            "type": "string",
+            "description": "ID ou numéro de tracking du colis spécifique concerné"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["LOSS", "DAMAGE", "THEFT", "DELIVERY_DISPUTE", "OTHER"],
+            "description": "Type d'anomalie constatée"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+            "default": "MEDIUM"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description détaillée des faits constatés"
+          },
+          "declaredValueClaimed": {
+            "type": "number",
+            "description": "Montant du préjudice réclamé par le client",
+            "example": 1200
+          }
+        },
+        "required": ["shipmentIdentifier", "type", "description"]
+      },
+      "DecideIncidentDto": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "OPEN_INVESTIGATION",
+              "REQUEST_ADDITIONAL_INFO",
+              "APPROVE_COMPENSATION",
+              "REJECT_CLAIM",
+              "CLOSE"
+            ],
+            "description": "Action formelle de décision d'enquête"
+          },
+          "comment": {
+            "type": "string",
+            "description": "Commentaire d'instruction motivé obligatoire"
+          },
+          "awardedAmount": {
+            "type": "number",
+            "description": "Montant d'indemnisation accordé (strictement requis si action = APPROVE_COMPENSATION)"
+          },
+          "evidenceUrl": {
+            "type": "string",
+            "description": "URL ou référence du document de preuve (PV, facture, rapport d'expertise)"
+          }
+        },
+        "required": ["action", "comment"]
+      },
+      "CreateInvoiceItemDto": {
+        "type": "object",
+        "properties": {
+          "shipmentId": {
+            "type": "string",
+            "description": "ID de l'expédition liée (optionnel)"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description de la ligne de prestation",
+            "example": "Fret Casablanca -> Marrakech (2 colis, 4.5 kg)"
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Quantité facturée",
+            "example": 1
+          },
+          "unitPrice": {
+            "type": "number",
+            "description": "Prix unitaire Hors Taxes (MAD)",
+            "example": 65
+          }
+        },
+        "required": ["description", "quantity", "unitPrice"]
+      },
+      "CreateInvoiceDto": {
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "description": "ID du client facturé",
+            "example": "cust-uuid-123"
+          },
+          "dueDate": {
+            "type": "string",
+            "description": "Date d'échéance de la facture",
+            "example": "2026-10-02T00:00:00Z"
+          },
+          "taxRate": {
+            "type": "number",
+            "description": "Taux de TVA applicable (Défaut : 20.0%)",
+            "example": 20
+          },
+          "notes": {
+            "type": "string",
+            "description": "Notes ou mentions légales complémentaires"
+          },
+          "items": {
+            "description": "Lignes de facturation",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateInvoiceItemDto"
+            }
+          }
+        },
+        "required": ["customerId", "items"]
+      },
+      "RecordPaymentDto": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "Montant du paiement en dirhams (MAD)",
+            "example": 250
+          },
+          "paymentMethod": {
+            "type": "string",
+            "enum": [
+              "CASH",
+              "CASH_ON_DELIVERY",
+              "BANK_TRANSFER",
+              "CUSTOMER_ACCOUNT",
+              "CHEQUE",
+              "BILL_OF_EXCHANGE"
+            ],
+            "default": "CASH",
+            "description": "Moyen de paiement"
+          },
+          "reference": {
+            "type": "string",
+            "description": "Référence du virement, numéro de chèque ou reçu d'encaissement",
+            "example": "VIR-2026-09-0012"
+          }
+        },
+        "required": ["amount"]
+      },
+      "GenerateDocumentDto": {
+        "type": "object",
+        "properties": {}
       }
     }
   }

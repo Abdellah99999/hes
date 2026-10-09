@@ -66,7 +66,12 @@ describe("Phase 17: OWASP Top 10 Comprehensive Security & Bundle Audit", () => {
   // =========================================================================
   describe("A02: Cryptographic Failures & Zero Secrets in Frontend Bundle", () => {
     it("should scan compiled frontend JS bundle and verify ZERO backend secrets leaked", () => {
-      const distAssetsDir = path.join(repoRootDir, "frontend", "dist", "assets");
+      const distAssetsDir = path.join(
+        repoRootDir,
+        "frontend",
+        "dist",
+        "assets",
+      );
       expect(fs.existsSync(distAssetsDir)).toBe(true);
 
       const jsFiles = fs
@@ -93,7 +98,9 @@ describe("Phase 17: OWASP Top 10 Comprehensive Security & Bundle Audit", () => {
         );
         for (const pattern of secretPatterns) {
           if (pattern.test(bundleContent)) {
-            detectedLeaks.push(`Leak detected with pattern ${pattern} in ${jsFile}`);
+            detectedLeaks.push(
+              `Leak detected with pattern ${pattern} in ${jsFile}`,
+            );
           }
         }
       }
@@ -133,7 +140,10 @@ describe("Phase 17: OWASP Top 10 Comprehensive Security & Bundle Audit", () => {
       const rawUnsafeUsages: string[] = [];
       for (const file of allTsFiles) {
         const content = fs.readFileSync(file, "utf-8");
-        if (content.includes("$queryRawUnsafe") || content.includes("$executeRawUnsafe")) {
+        if (
+          content.includes("$queryRawUnsafe") ||
+          content.includes("$executeRawUnsafe")
+        ) {
           rawUnsafeUsages.push(path.basename(file));
         }
       }
@@ -202,7 +212,9 @@ describe("Phase 17: OWASP Top 10 Comprehensive Security & Bundle Audit", () => {
 
     beforeEach(() => {
       logger = new StructuredLoggerService("OWASP-Audit");
-      stdoutSpy = jest.spyOn(process.stdout, "write").mockImplementation(() => true);
+      stdoutSpy = jest
+        .spyOn(process.stdout, "write")
+        .mockImplementation(() => true);
     });
 
     afterEach(() => {
@@ -244,7 +256,9 @@ describe("Phase 17: OWASP Top 10 Comprehensive Security & Bundle Audit", () => {
 
     it("should propagate both X-Correlation-Id and X-Request-Id across middleware", () => {
       const middleware = new CorrelationIdMiddleware();
-      const mockReq = { headers: { "x-correlation-id": "corr-uuid-777" } } as unknown as Request;
+      const mockReq = {
+        headers: { "x-correlation-id": "corr-uuid-777" },
+      } as unknown as Request;
       const setHeaderMock = jest.fn();
       const mockRes = { setHeader: setHeaderMock } as unknown as Response;
       const nextFn = jest.fn();
@@ -252,8 +266,14 @@ describe("Phase 17: OWASP Top 10 Comprehensive Security & Bundle Audit", () => {
       middleware.use(mockReq, mockRes, nextFn);
 
       expect(mockReq.correlationId).toBe("corr-uuid-777");
-      expect(setHeaderMock).toHaveBeenCalledWith("X-Correlation-Id", "corr-uuid-777");
-      expect(setHeaderMock).toHaveBeenCalledWith("X-Request-Id", "corr-uuid-777");
+      expect(setHeaderMock).toHaveBeenCalledWith(
+        "X-Correlation-Id",
+        "corr-uuid-777",
+      );
+      expect(setHeaderMock).toHaveBeenCalledWith(
+        "X-Request-Id",
+        "corr-uuid-777",
+      );
       expect(nextFn).toHaveBeenCalled();
     });
   });

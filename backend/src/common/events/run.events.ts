@@ -17,9 +17,7 @@ export interface ShipmentAssignedToCourierPayload {
   assignedByUserId: string;
 }
 
-export class ShipmentAssignedToCourierEvent
-  implements DomainEvent<ShipmentAssignedToCourierPayload>
-{
+export class ShipmentAssignedToCourierEvent implements DomainEvent<ShipmentAssignedToCourierPayload> {
   readonly eventId: string;
   readonly eventName = "ShipmentAssignedToCourier";
   readonly occurredAt: Date;

@@ -156,8 +156,7 @@ export class AutoAssignRunsUseCase {
       if (!matchedZoneId) {
         unzonedParcels.push({
           parcelId: parcel.id,
-          trackingNumber:
-            parcel.trackingNumber || parcel.number || parcel.id,
+          trackingNumber: parcel.trackingNumber || parcel.number || parcel.id,
           recipientAddress: parcel.shipment?.recipientAddress || "",
           recipientCity,
           weightKg: Number(parcel.weightKg ?? 0),
@@ -168,8 +167,7 @@ export class AutoAssignRunsUseCase {
       // Select candidate courier for this zone
       const primaryCouriers = couriers.filter(
         (c: any) =>
-          c.primaryZoneId === matchedZoneId ||
-          c.user?.zoneId === matchedZoneId,
+          c.primaryZoneId === matchedZoneId || c.user?.zoneId === matchedZoneId,
       );
       const secondaryCouriers = couriers.filter((c: any) =>
         c.secondaryZones?.some(
@@ -183,8 +181,7 @@ export class AutoAssignRunsUseCase {
         // No courier assigned to this zone -> keep in unzoned / manual pool
         unzonedParcels.push({
           parcelId: parcel.id,
-          trackingNumber:
-            parcel.trackingNumber || parcel.number || parcel.id,
+          trackingNumber: parcel.trackingNumber || parcel.number || parcel.id,
           recipientAddress: parcel.shipment?.recipientAddress || "",
           recipientCity,
           weightKg: Number(parcel.weightKg ?? 0),
@@ -198,12 +195,8 @@ export class AutoAssignRunsUseCase {
         const bRuns = b.deliveryRuns || b.runs || [];
         const aRun = aRuns[0];
         const bRun = bRuns[0];
-        const aCount = aRun
-          ? (aRun.items || aRun.runItems || []).length
-          : 0;
-        const bCount = bRun
-          ? (bRun.items || bRun.runItems || []).length
-          : 0;
+        const aCount = aRun ? (aRun.items || aRun.runItems || []).length : 0;
+        const bCount = bRun ? (bRun.items || bRun.runItems || []).length : 0;
         const aCap = a.maxParcelsCapacity ?? a.maxDailyParcels ?? 50;
         const bCap = b.maxParcelsCapacity ?? b.maxDailyParcels ?? 50;
         return aCap - aCount - (bCap - bCount);
@@ -353,9 +346,7 @@ export class AutoAssignRunsUseCase {
           await this.eventBus.publish(
             new ShipmentAssignedToCourierEvent({
               shipmentId:
-                parcel.shipmentId ||
-                (parcel.shipment as any)?.id ||
-                parcel.id,
+                parcel.shipmentId || (parcel.shipment as any)?.id || parcel.id,
               parcelId: parcel.id,
               trackingNumber: trackingNum,
               deliveryRunId: run.id,

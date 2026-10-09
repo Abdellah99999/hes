@@ -71,19 +71,24 @@ export class RecoverReturnUseCase {
             shipmentId: parcel.shipmentId,
             parcelId: parcel.id,
             originAgencyId:
-              user.agencyId || parcel.shipment.destinationAgencyId || parcel.shipment.originAgencyId,
+              user.agencyId ||
+              parcel.shipment.destinationAgencyId ||
+              parcel.shipment.originAgencyId,
             destinationAgencyId: parcel.shipment.originAgencyId,
             status: ReturnStatus.PICKED_UP,
             handledByUserId: user.id,
             createdByUserId: user.id,
-            reason: dto.emergencyReason?.trim() || "Retour créé à la volée lors de la récupération par le livreur",
+            reason:
+              dto.emergencyReason?.trim() ||
+              "Retour créé à la volée lors de la récupération par le livreur",
             pickedUpAt: new Date(),
           } as any,
         });
 
         newlyCreatedReturn = {
           ...newReturn,
-          returnNumber: (newReturn as any).number || (newReturn as any).returnNumber,
+          returnNumber:
+            (newReturn as any).number || (newReturn as any).returnNumber,
         };
 
         const createdItem = await tx.returnItem.create({
@@ -195,7 +200,9 @@ export class RecoverReturnUseCase {
           destinationAgencyId: newlyCreatedReturn.destinationAgencyId,
           parcelIds: [parcel.id],
           returnType: ReturnType.REFUSAL_RETURN,
-          reason: dto.emergencyReason?.trim() || "Récupération directe sur le terrain par le livreur",
+          reason:
+            dto.emergencyReason?.trim() ||
+            "Récupération directe sur le terrain par le livreur",
           createdByUserId: user.id,
           assignedCourierId: user.id,
           createdAt: new Date(),

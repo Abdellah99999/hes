@@ -70,8 +70,9 @@ export class NotificationEventSubscriber implements OnModuleInit {
     );
 
     // 7. Return Created -> Notify Customer
-    this.eventBus.subscribe<ReturnCreatedEvent>("ReturnCreated", async (event) =>
-      this.handleReturnCreated(event),
+    this.eventBus.subscribe<ReturnCreatedEvent>(
+      "ReturnCreated",
+      async (event) => this.handleReturnCreated(event),
     );
 
     // 8. Incident Created -> Notify Supervisor & Reporting User
@@ -147,9 +148,7 @@ export class NotificationEventSubscriber implements OnModuleInit {
     });
   }
 
-  async handleShipmentAssignedToCourier(
-    event: ShipmentAssignedToCourierEvent,
-  ) {
+  async handleShipmentAssignedToCourier(event: ShipmentAssignedToCourierEvent) {
     const { payload } = event;
     await this.notificationService.dispatch({
       userId: payload.courierUserId,

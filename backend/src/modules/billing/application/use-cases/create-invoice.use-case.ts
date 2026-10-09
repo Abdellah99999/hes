@@ -65,10 +65,7 @@ export class CreateInvoiceUseCase {
     const randomSeq = Math.floor(1000 + Math.random() * 9000);
     const invoiceNumber = `FACT-${yearMonth}-${randomSeq}`;
 
-    const agencyId =
-      customer.agencyId ||
-      user.agencyId ||
-      "AGY_DEFAULT";
+    const agencyId = customer.agencyId || user.agencyId || "AGY_DEFAULT";
 
     const invoice = await this.prisma.invoice.create({
       data: {
@@ -129,4 +126,3 @@ export class CreateInvoiceUseCase {
     return result;
   }
 }
-

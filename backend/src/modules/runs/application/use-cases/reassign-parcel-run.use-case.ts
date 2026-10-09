@@ -162,7 +162,8 @@ export class ReassignParcelRunUseCase {
             action: dto.isOutOfZone ? "ZONE_OVERRIDE" : "MANUAL_REASSIGNMENT",
             performedById: user.id,
             previousValue: previousRunNumber,
-            newValue: `${(targetRun as any).runNumber || (targetRun as any).number} (${targetRun.courier?.user?.firstName || ""} ${targetRun.courier?.user?.lastName || ""})`.trim(),
+            newValue:
+              `${(targetRun as any).runNumber || (targetRun as any).number} (${targetRun.courier?.user?.firstName || ""} ${targetRun.courier?.user?.lastName || ""})`.trim(),
             reason: dto.reason.trim(),
           },
         });

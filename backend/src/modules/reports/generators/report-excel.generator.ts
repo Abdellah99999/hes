@@ -100,8 +100,7 @@ function rowToCells(row: Record<string, unknown>, type: ReportType): string[] {
         csvEscape(row.status),
         csvEscape(
           (row.shipment as { trackingNumber?: string; number?: string })
-            ?.trackingNumber ??
-            (row.shipment as { number?: string })?.number,
+            ?.trackingNumber ?? (row.shipment as { number?: string })?.number,
         ),
         csvEscape(row.createdAt),
       ];

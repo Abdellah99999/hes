@@ -1,4 +1,12 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import {
+  describe,
+  it,
+  expect,
+  vi,
+  beforeEach,
+  afterEach,
+  type MockInstance,
+} from "vitest";
 import { GoogleMapsNavigationProvider } from "./google-maps.provider";
 import { NavigationService } from "./navigation.service";
 import { INavigationProvider, NavigationDestination } from "./navigation.types";
@@ -77,10 +85,10 @@ describe("Phase 16 Frontend: Navigation Provider & Google Maps Integration", () 
   });
 
   describe("NavigationService & Window Dispatching", () => {
-    let windowOpenSpy: any;
+    let windowOpenSpy: MockInstance;
 
     beforeEach(() => {
-      windowOpenSpy = vi.spyOn(window, "open").mockImplementation(() => null as any);
+      windowOpenSpy = vi.spyOn(window, "open").mockImplementation(() => null);
     });
 
     afterEach(() => {
@@ -110,7 +118,9 @@ describe("Phase 16 Frontend: Navigation Provider & Google Maps Integration", () 
       const customMockProvider: INavigationProvider = {
         id: "waze-mock",
         name: "Waze Mock",
-        buildNavigationUrl: vi.fn().mockReturnValue("https://waze.com/ul?q=destination"),
+        buildNavigationUrl: vi
+          .fn()
+          .mockReturnValue("https://waze.com/ul?q=destination"),
         buildAppIntent: vi.fn().mockReturnValue("waze://?q=destination"),
         openNavigation: vi.fn().mockResolvedValue(true),
         isSupported: vi.fn().mockReturnValue(true),

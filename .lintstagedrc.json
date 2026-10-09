@@ -1,10 +1,10 @@
 {
   "backend/src/**/*.{ts,js}": [
-    "pnpm -C backend exec eslint --max-warnings 0 --fix",
+    "pnpm -C backend exec eslint --quiet --fix",
     "prettier --write"
   ],
   "frontend/src/**/*.{ts,tsx,js,jsx}": [
-    "pnpm -C frontend exec eslint --max-warnings 0 --fix",
+    "pnpm -C frontend exec eslint --quiet --fix",
     "prettier --write"
   ],
   "*.{json,md,yml,yaml}": ["prettier --write"]

@@ -260,10 +260,14 @@ describe("Phase 10 Backend Tests: Returns Management, Recovery with/without Scan
     );
 
     expect(recoveryRes.recoveredVia).toBe("SCAN");
-    expect((recoveryRes.returnItem as any).status).toBe(ReturnItemStatus.RECOVERED);
+    expect((recoveryRes.returnItem as any).status).toBe(
+      ReturnItemStatus.RECOVERED,
+    );
     expect((recoveryRes.returnItem as any).recoveredViaScan).toBe(true);
     expect((recoveryRes.returnItem as any).recoveredManually).toBe(false);
-    expect((recoveryRes.returnItem as any).recoveredByCourierId).toBe(courierUser.id);
+    expect((recoveryRes.returnItem as any).recoveredByCourierId).toBe(
+      courierUser.id,
+    );
   });
 
   it("Recovery via manual entry: Courier enters BL / tracking number on keyboard without scan", async () => {
@@ -339,7 +343,8 @@ describe("Phase 10 Backend Tests: Returns Management, Recovery with/without Scan
     const listRes = await listReturnsUseCase.execute({}, agencyOperatorUser);
     expect(listRes.data).toHaveLength(1);
     expect((listRes.data[0] as any).returnNumber).toBeDefined();
-    expect((listRes.data[0] as any).shipment.trackingNumber).toBe("HES-CAS-2026-000100");
+    expect((listRes.data[0] as any).shipment.trackingNumber).toBe(
+      "HES-CAS-2026-000100",
+    );
   });
 });
-

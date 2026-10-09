@@ -120,10 +120,7 @@ describe("Phase 17: Comprehensive End-to-End Test Suite (16 Critical Workflows)"
 
     // Transitions
     expect(() =>
-      validateParcelTransition(
-        ParcelStatus.REGISTERED,
-        ParcelStatus.PICKED_UP,
-      ),
+      validateParcelTransition(ParcelStatus.REGISTERED, ParcelStatus.PICKED_UP),
     ).not.toThrow();
     expect(() =>
       validateParcelTransition(ParcelStatus.PICKED_UP, ParcelStatus.AT_HUB),
@@ -171,12 +168,22 @@ describe("Phase 17: Comprehensive End-to-End Test Suite (16 Critical Workflows)"
   // -------------------------------------------------------------------------
   it("Workflow 7: Agency Inventory & Discrepancy Audits", () => {
     const stockItems = [
-      { parcelId: "p1", agencyId: RABAT_AGENCY_ID, status: ParcelStatus.AT_HUB },
-      { parcelId: "p2", agencyId: RABAT_AGENCY_ID, status: ParcelStatus.AT_HUB },
+      {
+        parcelId: "p1",
+        agencyId: RABAT_AGENCY_ID,
+        status: ParcelStatus.AT_HUB,
+      },
+      {
+        parcelId: "p2",
+        agencyId: RABAT_AGENCY_ID,
+        status: ParcelStatus.AT_HUB,
+      },
     ];
 
     expect(stockItems.length).toBe(2);
-    expect(stockItems.every((it) => it.agencyId === RABAT_AGENCY_ID)).toBe(true);
+    expect(stockItems.every((it) => it.agencyId === RABAT_AGENCY_ID)).toBe(
+      true,
+    );
   });
 
   // -------------------------------------------------------------------------
@@ -320,7 +327,9 @@ describe("Phase 17: Comprehensive End-to-End Test Suite (16 Critical Workflows)"
     });
 
     eventBus.subscribe<InvoiceCreatedEvent>("InvoiceCreated", (evt) => {
-      receivedEvents.push(`Send Invoice Email for ${evt.payload.invoiceNumber}`);
+      receivedEvents.push(
+        `Send Invoice Email for ${evt.payload.invoiceNumber}`,
+      );
     });
 
     await eventBus.publish(

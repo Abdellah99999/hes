@@ -208,7 +208,13 @@ describe("Phase 15 Reporting: dashboard consistency and security scope", () => {
     };
 
     const excelExport = await useCase.execute(
-      { type: "SHIPMENTS", period: "month", format: "excel", page: 1, limit: 20 },
+      {
+        type: "SHIPMENTS",
+        period: "month",
+        format: "excel",
+        page: 1,
+        limit: 20,
+      },
       user,
     );
     expect(excelExport.contentType).toBe("text/csv; charset=utf-8");

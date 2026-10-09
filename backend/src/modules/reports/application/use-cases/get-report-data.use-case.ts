@@ -211,10 +211,14 @@ export class GetReportDataUseCase {
         shipment: {
           ...item.parcel?.shipment,
           trackingNumber:
-            item.parcel?.shipment?.trackingNumber || item.parcel?.shipment?.number,
+            item.parcel?.shipment?.trackingNumber ||
+            item.parcel?.shipment?.number,
           recipientCity:
             item.parcel?.shipment?.destinationAddress?.city ||
-            item.parcel?.shipment?.recipientAddress?.split(",")?.pop()?.trim() ||
+            item.parcel?.shipment?.recipientAddress
+              ?.split(",")
+              ?.pop()
+              ?.trim() ||
             "N/A",
         },
       },

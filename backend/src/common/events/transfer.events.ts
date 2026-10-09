@@ -23,9 +23,7 @@ export interface TransferReceivedPayload {
   missingParcelIds: string[];
 }
 
-export class TransferCreatedEvent
-  implements DomainEvent<TransferCreatedPayload>
-{
+export class TransferCreatedEvent implements DomainEvent<TransferCreatedPayload> {
   readonly eventId: string;
   readonly eventName = "TransferCreated";
   readonly occurredAt: Date;
@@ -41,9 +39,7 @@ export class TransferCreatedEvent
   }
 }
 
-export class TransferReceivedEvent
-  implements DomainEvent<TransferReceivedPayload>
-{
+export class TransferReceivedEvent implements DomainEvent<TransferReceivedPayload> {
   readonly eventId: string;
   readonly eventName = "TransferReceived";
   readonly occurredAt: Date;

@@ -80,7 +80,10 @@ export class ReportIncidentUseCase {
     // 5. Generate Incident Number INC-{AGENCY}-{YYYYMMDD}-{SEQ}
     const today = new Date();
     const dateStr = today.toISOString().slice(0, 10).replace(/-/g, "");
-    const agencyCode = shipment.destinationAgency?.code || (shipment.originAgency as any)?.code || "HUB";
+    const agencyCode =
+      shipment.destinationAgency?.code ||
+      (shipment.originAgency as any)?.code ||
+      "HUB";
     const randomSuffix = Math.floor(1000 + Math.random() * 9000);
     const incidentNumber = `INC-${agencyCode}-${dateStr}-${randomSuffix}`;
 
@@ -124,7 +127,8 @@ export class ReportIncidentUseCase {
         incidentNumber: (incident as any).number || incidentNumber,
         lastTrackingEventId: lastEvent?.id ?? null,
         lastKnownStatus: lastEvent?.status ?? parcel?.status ?? null,
-        lastKnownAgencyId: lastEvent?.agencyId ?? shipment.destinationAgencyId ?? null,
+        lastKnownAgencyId:
+          lastEvent?.agencyId ?? shipment.destinationAgencyId ?? null,
         isDeliveredDispute,
         declaredByUserId: user.id,
         declaredValueClaimed: dto.declaredValueClaimed ?? null,
@@ -156,7 +160,8 @@ export class ReportIncidentUseCase {
           createdByUserId: user.id,
           isDeliveredDispute,
           lastKnownStatus: lastEvent?.status ?? parcel?.status ?? null,
-          lastKnownAgencyId: lastEvent?.agencyId ?? shipment.destinationAgencyId ?? null,
+          lastKnownAgencyId:
+            lastEvent?.agencyId ?? shipment.destinationAgencyId ?? null,
           createdAt: new Date(),
         }),
       );
@@ -165,4 +170,3 @@ export class ReportIncidentUseCase {
     return result;
   }
 }
-

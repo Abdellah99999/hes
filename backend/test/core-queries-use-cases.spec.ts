@@ -71,9 +71,9 @@ describe("Core Queries & Management Use Cases (Shipments, Transfers, Runs)", () 
       mockShipmentRepo.findById.mockResolvedValue(null);
       const useCase = new GetShipmentUseCase(mockShipmentRepo);
 
-      await expect(useCase.execute("missing-id", mockAgentCasa)).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(
+        useCase.execute("missing-id", mockAgentCasa),
+      ).rejects.toThrow(NotFoundException);
     });
 
     it("GetShipmentUseCase: should return shipment if found by ID", async () => {
@@ -86,7 +86,10 @@ describe("Core Queries & Management Use Cases (Shipments, Transfers, Runs)", () 
     });
 
     it("GetShipmentUseCase: should return shipment if found by tracking number", async () => {
-      const mockShipment = { id: "shp-1", trackingNumber: "HES-TRACK-1" } as any;
+      const mockShipment = {
+        id: "shp-1",
+        trackingNumber: "HES-TRACK-1",
+      } as any;
       mockShipmentRepo.findByTrackingNumber.mockResolvedValue(mockShipment);
       const useCase = new GetShipmentUseCase(mockShipmentRepo);
 
@@ -120,7 +123,10 @@ describe("Core Queries & Management Use Cases (Shipments, Transfers, Runs)", () 
 
       const res = await useCase.execute({ page: 1, limit: 10 }, mockAgentCasa);
       expect(res).toBe(paginatedResult);
-      expect(mockShipmentRepo.findAll).toHaveBeenCalledWith({ page: 1, limit: 10 }, mockAgentCasa);
+      expect(mockShipmentRepo.findAll).toHaveBeenCalledWith(
+        { page: 1, limit: 10 },
+        mockAgentCasa,
+      );
     });
 
     it("UpdateParcelStatusUseCase: should delegate to repo.updateParcelStatus", async () => {
@@ -159,9 +165,9 @@ describe("Core Queries & Management Use Cases (Shipments, Transfers, Runs)", () 
       mockPrisma.transfer.findFirst.mockResolvedValue(null);
       const useCase = new GetTransferUseCase(mockPrisma);
 
-      await expect(useCase.execute("missing-trf", mockAgentCasa)).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(
+        useCase.execute("missing-trf", mockAgentCasa),
+      ).rejects.toThrow(NotFoundException);
     });
 
     it("GetTransferUseCase: should throw ForbiddenException if user agency does not match origin or destination", async () => {
@@ -229,9 +235,9 @@ describe("Core Queries & Management Use Cases (Shipments, Transfers, Runs)", () 
       mockPrisma.deliveryRun.findFirst.mockResolvedValue(null);
       const useCase = new GetDeliveryRunUseCase(mockPrisma);
 
-      await expect(useCase.execute("run-missing", mockAgentCasa)).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(
+        useCase.execute("run-missing", mockAgentCasa),
+      ).rejects.toThrow(NotFoundException);
     });
 
     it("GetDeliveryRunUseCase: should forbid courier from viewing another courier's run", async () => {

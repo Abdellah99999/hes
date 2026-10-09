@@ -24,6 +24,10 @@ import { EventBusModule } from "../../common/events/event-bus.module";
     WhatsappSmsProviderStub,
     NotificationEventSubscriber,
   ],
-  exports: [NotificationService, NotificationWorker, NotificationEventSubscriber],
+  exports: [
+    NotificationService,
+    NotificationWorker,
+    NotificationEventSubscriber,
+  ],
 })
 export class NotificationsModule {}

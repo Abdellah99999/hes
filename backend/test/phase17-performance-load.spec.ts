@@ -43,7 +43,8 @@ describe("Phase 17: Performance & Concurrency Load Test Suite", () => {
         const seq = await generateNextSequence();
         const paddedSeq = String(seq).padStart(6, "0");
         const trackingNumber = `HES-CAS-${currentYear}-${paddedSeq}`;
-        const barcodeUri = barcodeService.generateCode128Payload(trackingNumber);
+        const barcodeUri =
+          barcodeService.generateCode128Payload(trackingNumber);
         return { trackingNumber, barcodeUri, seq };
       });
 
@@ -109,22 +110,30 @@ describe("Phase 17: Performance & Concurrency Load Test Suite", () => {
           const txMock = {
             scanEvent: {
               create: jest.fn().mockImplementation(async ({ data }) => {
-                const rec = { id: `scan-${Date.now()}`, ...data, createdAt: new Date() };
+                const rec = {
+                  id: `scan-${Date.now()}`,
+                  ...data,
+                  createdAt: new Date(),
+                };
                 storedScans.push(rec);
                 return rec;
               }),
             },
             trackingEvent: {
               create: jest.fn().mockImplementation(async ({ data }) => {
-                const rec = { id: `event-${Date.now()}`, ...data, createdAt: new Date() };
+                const rec = {
+                  id: `event-${Date.now()}`,
+                  ...data,
+                  createdAt: new Date(),
+                };
                 storedEvents.push(rec);
                 return rec;
               }),
             },
             parcel: {
-              findMany: jest.fn().mockResolvedValue([
-                { status: ParcelStatus.PICKED_UP },
-              ]),
+              findMany: jest
+                .fn()
+                .mockResolvedValue([{ status: ParcelStatus.PICKED_UP }]),
               update: jest.fn().mockResolvedValue({
                 id: "parcel-perf-001",
                 status: ParcelStatus.PICKED_UP,
@@ -172,17 +181,20 @@ describe("Phase 17: Performance & Concurrency Load Test Suite", () => {
       const startTime = Date.now();
 
       // Launch 200 simultaneous scans of the same parcel
-      const scanPromises = Array.from({ length: SCAN_COUNT }, async (_, idx) => {
-        return useCase.executeScan(
-          {
-            barcode: "HES-CAS-2026-000999-01",
-            targetStatus: ParcelStatus.PICKED_UP,
-            scannerType: ScannerType.BARCODE_1D,
-            deviceId: `ZEBRA-GUN-${idx % 10}`,
-          },
-          operatorUser,
-        );
-      });
+      const scanPromises = Array.from(
+        { length: SCAN_COUNT },
+        async (_, idx) => {
+          return useCase.executeScan(
+            {
+              barcode: "HES-CAS-2026-000999-01",
+              targetStatus: ParcelStatus.PICKED_UP,
+              scannerType: ScannerType.BARCODE_1D,
+              deviceId: `ZEBRA-GUN-${idx % 10}`,
+            },
+            operatorUser,
+          );
+        },
+      );
 
       const scanResults = await Promise.all(scanPromises);
       const totalDuration = Date.now() - startTime;
@@ -209,7 +221,8 @@ describe("Phase 17: Performance & Concurrency Load Test Suite", () => {
         const start = performance.now();
         // Emulate DB index scans and grouped aggregations
         const rows = Array.from({ length: 500 }, (_, i) => ({
-          status: i % 5 === 0 ? "DELIVERED" : i % 5 === 1 ? "IN_TRANSIT" : "RETURNED",
+          status:
+            i % 5 === 0 ? "DELIVERED" : i % 5 === 1 ? "IN_TRANSIT" : "RETURNED",
           revenue: (i * 12.5) % 150,
           deliveredOnTime: i % 7 !== 0,
         }));
@@ -217,7 +230,8 @@ describe("Phase 17: Performance & Concurrency Load Test Suite", () => {
         const totalRevenue = rows.reduce((acc, r) => acc + r.revenue, 0);
         const delivered = rows.filter((r) => r.status === "DELIVERED").length;
         const total = rows.length;
-        const slaRate = (rows.filter((r) => r.deliveredOnTime).length / total) * 100;
+        const slaRate =
+          (rows.filter((r) => r.deliveredOnTime).length / total) * 100;
         const duration = performance.now() - start;
 
         return { totalRevenue, delivered, slaRate, duration };
@@ -233,7 +247,9 @@ describe("Phase 17: Performance & Concurrency Load Test Suite", () => {
       const queryResults = await Promise.all(queryPromises);
       const totalWallTime = performance.now() - t0;
 
-      const latencies = queryResults.map((r) => r.duration).sort((a, b) => a - b);
+      const latencies = queryResults
+        .map((r) => r.duration)
+        .sort((a, b) => a - b);
       const p95Index = Math.floor(CONCURRENT_QUERIES * 0.95);
       const p95Latency = latencies[p95Index];
 

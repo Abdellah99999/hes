@@ -26,9 +26,7 @@ export interface DeliveryCompletedPayload {
   globalShipmentStatus: ShipmentStatus;
 }
 
-export class DeliveryCompletedEvent
-  implements DomainEvent<DeliveryCompletedPayload>
-{
+export class DeliveryCompletedEvent implements DomainEvent<DeliveryCompletedPayload> {
   readonly eventId: string;
   readonly eventName = "DeliveryCompleted";
   readonly occurredAt: Date;
@@ -61,9 +59,7 @@ export interface DeliveryFailedPayload {
   globalShipmentStatus: ShipmentStatus;
 }
 
-export class DeliveryFailedEvent
-  implements DomainEvent<DeliveryFailedPayload>
-{
+export class DeliveryFailedEvent implements DomainEvent<DeliveryFailedPayload> {
   readonly eventId: string;
   readonly eventName = "DeliveryFailed";
   readonly occurredAt: Date;

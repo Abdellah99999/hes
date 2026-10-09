@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PrismaShipmentRepository } from "../src/modules/shipments/infrastructure/prisma-shipment.repository";
 import { AuthenticatedUser } from "../src/modules/auth/domain/auth.types";
-import { CreateShipmentDto, ServiceType } from "../src/modules/shipments/dto/create-shipment.dto";
+import {
+  CreateShipmentDto,
+  ServiceType,
+} from "../src/modules/shipments/dto/create-shipment.dto";
 import { PaymentMethod, ParcelStatus } from "@prisma/client";
 
 describe("Phase 4: Shipment Concurrency & Transactional Security Tests", () => {

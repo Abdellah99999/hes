@@ -288,9 +288,9 @@ describe("Auxiliary CRUD Use Cases (Agencies, Zones, CustomerTypes, Addresses, C
       mockZoneRepo.findById.mockResolvedValue(null);
       const useCase = new GetZoneUseCase(mockZoneRepo);
 
-      await expect(useCase.execute("z-missing", mockAgencyUser)).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(
+        useCase.execute("z-missing", mockAgencyUser),
+      ).rejects.toThrow(NotFoundException);
     });
 
     it("GetZoneUseCase: should return zone if found", async () => {
@@ -495,16 +495,30 @@ describe("Auxiliary CRUD Use Cases (Agencies, Zones, CustomerTypes, Addresses, C
     });
 
     it("create: should call repo.create with agencyId and user", async () => {
-      const expected: any = { id: "addr-1", title: "Depot", street: "123 Rue Al Qods" };
+      const expected: any = {
+        id: "addr-1",
+        title: "Depot",
+        street: "123 Rue Al Qods",
+      };
       mockAddressRepo.create.mockResolvedValue(expected);
 
       const result = await useCases.create(
-        { title: "Depot", customerId: "cust-1", street: "123 Rue Al Qods", city: "Casablanca" } as any,
+        {
+          title: "Depot",
+          customerId: "cust-1",
+          street: "123 Rue Al Qods",
+          city: "Casablanca",
+        } as any,
         mockAgencyUser,
       );
       expect(result).toBe(expected);
       expect(mockAddressRepo.create).toHaveBeenCalledWith(
-        { title: "Depot", customerId: "cust-1", street: "123 Rue Al Qods", city: "Casablanca" },
+        {
+          title: "Depot",
+          customerId: "cust-1",
+          street: "123 Rue Al Qods",
+          city: "Casablanca",
+        },
         "agency-casa-1",
         mockAgencyUser,
       );
@@ -524,7 +538,10 @@ describe("Auxiliary CRUD Use Cases (Agencies, Zones, CustomerTypes, Addresses, C
       };
       mockAddressRepo.findAll.mockResolvedValue(paginated);
 
-      const result = await useCases.findAll({ page: 1, limit: 10 }, mockAgencyUser);
+      const result = await useCases.findAll(
+        { page: 1, limit: 10 },
+        mockAgencyUser,
+      );
       expect(result).toBe(paginated);
       expect(mockAddressRepo.findAll).toHaveBeenCalledWith(
         { page: 1, limit: 10 },
@@ -534,9 +551,9 @@ describe("Auxiliary CRUD Use Cases (Agencies, Zones, CustomerTypes, Addresses, C
 
     it("findById: should throw NotFoundException if missing", async () => {
       mockAddressRepo.findById.mockResolvedValue(null);
-      await expect(useCases.findById("missing", mockAgencyUser)).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(
+        useCases.findById("missing", mockAgencyUser),
+      ).rejects.toThrow(NotFoundException);
     });
 
     it("findById: should return address if found", async () => {
@@ -593,7 +610,11 @@ describe("Auxiliary CRUD Use Cases (Agencies, Zones, CustomerTypes, Addresses, C
     });
 
     it("create: should call repo.create with agencyId and user", async () => {
-      const contact: any = { id: "cc-1", firstName: "Hassan", lastName: "Alami" };
+      const contact: any = {
+        id: "cc-1",
+        firstName: "Hassan",
+        lastName: "Alami",
+      };
       mockContactRepo.create.mockResolvedValue(contact);
 
       const result = await useCases.create(
@@ -632,9 +653,9 @@ describe("Auxiliary CRUD Use Cases (Agencies, Zones, CustomerTypes, Addresses, C
 
     it("findById: should throw NotFoundException if contact not found", async () => {
       mockContactRepo.findById.mockResolvedValue(null);
-      await expect(useCases.findById("missing", mockAgencyUser)).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(
+        useCases.findById("missing", mockAgencyUser),
+      ).rejects.toThrow(NotFoundException);
     });
 
     it("findById: should return contact if found", async () => {
@@ -646,7 +667,11 @@ describe("Auxiliary CRUD Use Cases (Agencies, Zones, CustomerTypes, Addresses, C
     });
 
     it("update: should call repo.update", async () => {
-      const updated: any = { id: "cc-1", firstName: "Hassan", lastName: "Updated" };
+      const updated: any = {
+        id: "cc-1",
+        firstName: "Hassan",
+        lastName: "Updated",
+      };
       mockContactRepo.update.mockResolvedValue(updated);
 
       const result = await useCases.update(

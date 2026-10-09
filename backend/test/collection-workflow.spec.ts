@@ -110,7 +110,11 @@ describe("Phase 7 Backend Tests: Collection Workflow & Automated Shipment Creati
               id: CUSTOMER_A_ID,
               agencyId: CASA_AGENCY_ID,
               name: "Alpha Shop",
-              agency: { id: CASA_AGENCY_ID, code: "CAS", name: "Casablanca Agency" },
+              agency: {
+                id: CASA_AGENCY_ID,
+                code: "CAS",
+                name: "Casablanca Agency",
+              },
             };
           }
           if (where.id === CUSTOMER_B_ID) {
@@ -118,7 +122,11 @@ describe("Phase 7 Backend Tests: Collection Workflow & Automated Shipment Creati
               id: CUSTOMER_B_ID,
               agencyId: CASA_AGENCY_ID,
               name: "Beta Shop",
-              agency: { id: CASA_AGENCY_ID, code: "CAS", name: "Casablanca Agency" },
+              agency: {
+                id: CASA_AGENCY_ID,
+                code: "CAS",
+                name: "Casablanca Agency",
+              },
             };
           }
           return null;
@@ -128,7 +136,11 @@ describe("Phase 7 Backend Tests: Collection Workflow & Automated Shipment Creati
             return {
               id: CUSTOMER_A_ID,
               agencyId: CASA_AGENCY_ID,
-              agency: { id: CASA_AGENCY_ID, code: "CAS", name: "Casablanca Agency" },
+              agency: {
+                id: CASA_AGENCY_ID,
+                code: "CAS",
+                name: "Casablanca Agency",
+              },
             };
           }
           return null;
@@ -137,18 +149,38 @@ describe("Phase 7 Backend Tests: Collection Workflow & Automated Shipment Creati
       agency: {
         findUnique: jest.fn().mockImplementation(async ({ where }) => {
           if (where.id === CASA_AGENCY_ID) {
-            return { id: CASA_AGENCY_ID, code: "CAS", name: "Casablanca Agency", city: "Casablanca" };
+            return {
+              id: CASA_AGENCY_ID,
+              code: "CAS",
+              name: "Casablanca Agency",
+              city: "Casablanca",
+            };
           }
           if (where.id === RABAT_AGENCY_ID) {
-            return { id: RABAT_AGENCY_ID, code: "RAB", name: "Rabat Agency", city: "Rabat" };
+            return {
+              id: RABAT_AGENCY_ID,
+              code: "RAB",
+              name: "Rabat Agency",
+              city: "Rabat",
+            };
           }
           return null;
         }),
         findFirst: jest.fn().mockImplementation(async ({ where }) => {
           if (where.city?.contains === "Rabat") {
-            return { id: RABAT_AGENCY_ID, code: "RAB", name: "Rabat Agency", city: "Rabat" };
+            return {
+              id: RABAT_AGENCY_ID,
+              code: "RAB",
+              name: "Rabat Agency",
+              city: "Rabat",
+            };
           }
-          return { id: CASA_AGENCY_ID, code: "CAS", name: "Casablanca Agency", city: "Casablanca" };
+          return {
+            id: CASA_AGENCY_ID,
+            code: "CAS",
+            name: "Casablanca Agency",
+            city: "Casablanca",
+          };
         }),
       },
       address: {
@@ -184,7 +216,9 @@ describe("Phase 7 Backend Tests: Collection Workflow & Automated Shipment Creati
         }),
       },
       collection: {
-        count: jest.fn().mockImplementation(async () => collectionsRecord.length),
+        count: jest
+          .fn()
+          .mockImplementation(async () => collectionsRecord.length),
         create: jest.fn().mockImplementation(async ({ data }) => {
           const coll = {
             id: `col-${Date.now()}-${Math.random()}`,
@@ -208,7 +242,9 @@ describe("Phase 7 Backend Tests: Collection Workflow & Automated Shipment Creati
               code: "CAS",
               name: "Casablanca Agency",
             },
-            items: collectionItemsRecord.filter((item) => item.collectionId === c.id),
+            items: collectionItemsRecord.filter(
+              (item) => item.collectionId === c.id,
+            ),
           };
         }),
         update: jest.fn().mockImplementation(async ({ where, data }) => {
@@ -326,7 +362,10 @@ describe("Phase 7 Backend Tests: Collection Workflow & Automated Shipment Creati
           recipientCity: dto.recipientCity,
           globalStatus: ShipmentStatus.IN_TRANSIT,
           totalParcels: parcels.length,
-          totalWeightKg: dto.parcels.reduce((s: number, p: any) => s + p.weightKg, 0),
+          totalWeightKg: dto.parcels.reduce(
+            (s: number, p: any) => s + p.weightKg,
+            0,
+          ),
           parcels,
         };
         shipmentsRecord.push(createdShipment);
@@ -588,11 +627,36 @@ describe("Phase 7 Backend Tests: Collection Workflow & Automated Shipment Creati
   it("N+1 Query Elimination: CompleteCollectionUseCase executes exactly 1 updateMany on parcels and 1 createMany on trackingEvents for multi-parcel collections", async () => {
     // Setup a 5-parcel collection
     const fiveItemsDto = [
-      { itemIndex: 1, actualWeightKg: 1.5, recipientName: "Dest 1", recipientCity: "Casablanca" },
-      { itemIndex: 2, actualWeightKg: 2.0, recipientName: "Dest 2", recipientCity: "Casablanca" },
-      { itemIndex: 3, actualWeightKg: 3.2, recipientName: "Dest 3", recipientCity: "Casablanca" },
-      { itemIndex: 4, actualWeightKg: 0.8, recipientName: "Dest 4", recipientCity: "Casablanca" },
-      { itemIndex: 5, actualWeightKg: 4.1, recipientName: "Dest 5", recipientCity: "Casablanca" },
+      {
+        itemIndex: 1,
+        actualWeightKg: 1.5,
+        recipientName: "Dest 1",
+        recipientCity: "Casablanca",
+      },
+      {
+        itemIndex: 2,
+        actualWeightKg: 2.0,
+        recipientName: "Dest 2",
+        recipientCity: "Casablanca",
+      },
+      {
+        itemIndex: 3,
+        actualWeightKg: 3.2,
+        recipientName: "Dest 3",
+        recipientCity: "Casablanca",
+      },
+      {
+        itemIndex: 4,
+        actualWeightKg: 0.8,
+        recipientName: "Dest 4",
+        recipientCity: "Casablanca",
+      },
+      {
+        itemIndex: 5,
+        actualWeightKg: 4.1,
+        recipientName: "Dest 5",
+        recipientCity: "Casablanca",
+      },
     ];
 
     const col = await mockPrisma.collection.create({
@@ -647,6 +711,10 @@ describe("Phase 7 Backend Tests: Collection Workflow & Automated Shipment Creati
     // Assert createMany inserted 5 tracking records
     const createManyArgs = mockPrisma.trackingEvent.createMany.mock.calls[0][0];
     expect(createManyArgs.data).toHaveLength(5);
-    expect(createManyArgs.data.every((evt: any) => evt.status === ParcelStatus.PICKED_UP)).toBe(true);
+    expect(
+      createManyArgs.data.every(
+        (evt: any) => evt.status === ParcelStatus.PICKED_UP,
+      ),
+    ).toBe(true);
   });
 });

@@ -45,7 +45,7 @@ export class DecideIncidentUseCase {
         newStatus = IncidentStatus.REJECTED;
         break;
       case IncidentDecisionAction.CLOSE:
-      case ("CLOSE_WITHOUT_ACTION" as any):
+      case "CLOSE_WITHOUT_ACTION" as any:
         newStatus = IncidentStatus.RESOLVED;
         break;
       default:
@@ -100,4 +100,3 @@ export class DecideIncidentUseCase {
     });
   }
 }
-

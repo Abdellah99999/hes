@@ -48,9 +48,7 @@ export class CreateReturnUseCase {
     }
 
     const originAgencyId =
-      user.agencyId ||
-      shipment.destinationAgencyId ||
-      shipment.originAgencyId;
+      user.agencyId || shipment.destinationAgencyId || shipment.originAgencyId;
     const destinationAgencyId =
       dto.destinationAgencyId || shipment.originAgencyId;
 
@@ -103,7 +101,8 @@ export class CreateReturnUseCase {
 
       return {
         ...returnDoc,
-        returnNumber: (returnDoc as any).number || (returnDoc as any).returnNumber,
+        returnNumber:
+          (returnDoc as any).number || (returnDoc as any).returnNumber,
         items,
       };
     });

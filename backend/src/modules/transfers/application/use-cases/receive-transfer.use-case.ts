@@ -275,7 +275,8 @@ export class ReceiveTransferUseCase {
     await this.eventBus.publish(
       new TransferReceivedEvent({
         transferId: updatedTransfer.id,
-        transferNumber: updatedTransfer.transferNumber || updatedTransfer.number,
+        transferNumber:
+          updatedTransfer.transferNumber || updatedTransfer.number,
         originAgencyId: transfer.originAgencyId,
         destinationAgencyId: transfer.destinationAgencyId,
         receivedByUserId: user.id,

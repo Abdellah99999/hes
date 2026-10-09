@@ -215,12 +215,9 @@ export class DocumentService {
   ) {
     const typeStr = String(type);
     const isDeliveryNote =
-      typeStr === "DELIVERY_NOTE" ||
-      typeStr === "BILL_OF_LADING";
-    const isParcelLabel =
-      typeStr === "PARCEL_LABEL";
-    const isInvoice =
-      typeStr === "INVOICE";
+      typeStr === "DELIVERY_NOTE" || typeStr === "BILL_OF_LADING";
+    const isParcelLabel = typeStr === "PARCEL_LABEL";
+    const isInvoice = typeStr === "INVOICE";
 
     if (user.role === "CUSTOMER") {
       if (isInvoice) {

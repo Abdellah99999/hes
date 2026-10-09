@@ -46,10 +46,7 @@ export class RunSheetGenerator implements IDocumentGenerator {
       run.collectedCodAmount ??
       0;
     const totalParcels =
-      run.totalParcels ??
-      run.runItems?.length ??
-      run.items?.length ??
-      0;
+      run.totalParcels ?? run.runItems?.length ?? run.items?.length ?? 0;
     const runDateStr = run.runDate
       ? new Date(run.runDate).toISOString().slice(0, 10)
       : "N/A";

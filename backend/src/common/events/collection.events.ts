@@ -14,9 +14,7 @@ export interface CollectionCompletedPayload {
   completedAt: Date;
 }
 
-export class CollectionCompletedEvent
-  implements DomainEvent<CollectionCompletedPayload>
-{
+export class CollectionCompletedEvent implements DomainEvent<CollectionCompletedPayload> {
   readonly eventId: string;
   readonly eventName = "CollectionCompleted";
   readonly occurredAt: Date;

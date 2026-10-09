@@ -18,4 +18,3 @@ import { EventBusModule } from "../../common/events/event-bus.module";
   exports: [ReportIncidentUseCase, DecideIncidentUseCase, ListIncidentsUseCase],
 })
 export class IncidentsModule {}
-

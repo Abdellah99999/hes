@@ -220,10 +220,7 @@ describe("Phase 9 Backend Tests: POD, Refusal Automation & '3 Parcels: 2 Deliver
       mockPrisma,
       mockEventBus,
     );
-    recordRefusalUseCase = new RecordRefusalUseCase(
-      mockPrisma,
-      mockEventBus,
-    );
+    recordRefusalUseCase = new RecordRefusalUseCase(mockPrisma, mockEventBus);
     registerDeferredPodUseCase = new RegisterDeferredPodUseCase(
       mockPrisma,
       mockEventBus,

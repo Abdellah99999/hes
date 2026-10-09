@@ -140,8 +140,16 @@ describe("Phase 6 Backend Tests: Transfer Transactional Lifecycle, Discrepancy R
           transferRecord = {
             id: "transfer-100-uuid",
             ...data,
-            originAgency: { id: data.originAgencyId, code: "CAS", name: "Casablanca Hub" },
-            destinationAgency: { id: data.destinationAgencyId, code: "RAB", name: "Rabat Agency" },
+            originAgency: {
+              id: data.originAgencyId,
+              code: "CAS",
+              name: "Casablanca Hub",
+            },
+            destinationAgency: {
+              id: data.destinationAgencyId,
+              code: "RAB",
+              name: "Rabat Agency",
+            },
             items: transferItemsRecord,
           };
           return transferRecord;
@@ -224,7 +232,10 @@ describe("Phase 6 Backend Tests: Transfer Transactional Lifecycle, Discrepancy R
       },
       transferItem: {
         create: jest.fn().mockImplementation(async ({ data }) => {
-          const item = { id: `item-${transferItemsRecord.length + 1}`, ...data };
+          const item = {
+            id: `item-${transferItemsRecord.length + 1}`,
+            ...data,
+          };
           transferItemsRecord.push(item);
           return item;
         }),

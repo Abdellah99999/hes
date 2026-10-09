@@ -147,7 +147,8 @@ export class ListIncidentsUseCase {
 
     return {
       ...incident,
-      incidentNumber: (incident as any).number || (incident as any).incidentNumber,
+      incidentNumber:
+        (incident as any).number || (incident as any).incidentNumber,
       declaredByUser: (incident as any).createdByUser,
       history: incident.history?.map((h: any) => ({
         ...h,
@@ -156,4 +157,3 @@ export class ListIncidentsUseCase {
     };
   }
 }
-
