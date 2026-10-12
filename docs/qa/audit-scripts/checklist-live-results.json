@@ -1,0 +1,195 @@
+{
+  "A5": {
+    "status": 403,
+    "pass": true,
+    "evidence": "Agent Casa tentant GET /zones/b25fa65b-7427-410d-87f4-45f20b0091ba (Rabat) -> HTTP 403"
+  },
+  "B2": {
+    "pass": true,
+    "ice": "001524367000089",
+    "taxId": "IF-987654321",
+    "rc": "RC-CAS-12345",
+    "customerType": "ENTERPRISE"
+  },
+  "C1": {
+    "status": 201,
+    "pass": true,
+    "shipmentId": "e40af904-48de-40fa-ae21-09efbba99af2",
+    "trackingNumber": "HES-CASHUB-2026-000004"
+  },
+  "C2": {
+    "trackingNumber": "HES-CASHUB-2026-000004",
+    "isAgencyPrefixed": true,
+    "pass": true
+  },
+  "C3": {
+    "parcelsCount": 2,
+    "parcel1": "HES-CASHUB-2026-000004-01",
+    "parcel2": "HES-CASHUB-2026-000004-02",
+    "pass": true
+  },
+  "C2_IMMUTABLE": {
+    "status": 404,
+    "pass": true
+  },
+  "D3": {
+    "status": 400,
+    "pass": true,
+    "data": {
+      "message": ["property reason should not exist"],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+  },
+  "D9": {
+    "scan1Status": 200,
+    "scan1Duplicate": false,
+    "scanDupStatus": 200,
+    "scanDupDuplicate": false,
+    "pass": false
+  },
+  "G6": {
+    "status": 200,
+    "pass": true,
+    "runs": 0
+  },
+  "G17": {
+    "status": 200,
+    "hasCoordinatesLeaked": false,
+    "pass": true
+  },
+  "K1": {
+    "status": 201,
+    "mimeType": "application/pdf",
+    "pass": true
+  },
+  "K2": {
+    "status": 201,
+    "mimeType": "application/pdf",
+    "pass": true
+  },
+  "K11": {
+    "v1": 1,
+    "v2": 2,
+    "pass": true
+  },
+  "L1": {
+    "status": 200,
+    "pass": true,
+    "kpiKeys": [
+      "totalShipments",
+      "delivered",
+      "inTransit",
+      "outForDelivery",
+      "pending",
+      "cancelled",
+      "returned",
+      "collectionsTotal",
+      "collectionsCompleted",
+      "openIncidents",
+      "deliverySuccessRate",
+      "totalRevenue"
+    ],
+    "statusBreakdown": [
+      {
+        "status": "IN_TRANSIT",
+        "count": 1
+      },
+      {
+        "status": "PARTIALLY_DELIVERED",
+        "count": 1
+      },
+      {
+        "status": "REGISTERED",
+        "count": 2
+      }
+    ]
+  },
+  "L3": {
+    "SHIPMENTS": {
+      "status": 200,
+      "pass": true
+    },
+    "DELIVERIES": {
+      "status": 200,
+      "pass": true
+    },
+    "COLLECTIONS": {
+      "status": 200,
+      "pass": true
+    },
+    "INCIDENTS": {
+      "status": 200,
+      "pass": true
+    },
+    "REVENUE": {
+      "status": 200,
+      "pass": true
+    },
+    "PARCELS": {
+      "status": 400,
+      "pass": false
+    },
+    "TRANSFERS": {
+      "status": 400,
+      "pass": false
+    },
+    "RETURNS": {
+      "status": 400,
+      "pass": false
+    },
+    "CUSTOMERS": {
+      "status": 400,
+      "pass": false
+    },
+    "COURIERS": {
+      "status": 400,
+      "pass": false
+    },
+    "AGENCIES": {
+      "status": 429,
+      "pass": false
+    },
+    "COD": {
+      "status": 429,
+      "pass": false
+    },
+    "PAYMENTS": {
+      "status": 429,
+      "pass": false
+    },
+    "UNPAID": {
+      "status": 429,
+      "pass": false
+    }
+  },
+  "L4": {
+    "excelStatus": 200,
+    "excelContentType": "text/csv; charset=utf-8",
+    "pdfStatus": 200,
+    "pdfContentType": "application/pdf",
+    "pass": true
+  },
+  "M2": {
+    "deniedStatus": 403,
+    "restoredStatus": 200,
+    "pass": true
+  },
+  "M6": {
+    "adminDirectLogin": true,
+    "financeDirectLogin": true,
+    "enforcedOnLogin": false,
+    "pass": false
+  },
+  "M7": {
+    "logoutStatus": 200,
+    "afterLogoutStatus": 200,
+    "pass": false
+  },
+  "M8": {
+    "deleteStatus": 200,
+    "rowStillInDb": true,
+    "deletedAtSet": true,
+    "pass": true
+  }
+}

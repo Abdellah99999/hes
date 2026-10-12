@@ -17,6 +17,8 @@
     "test:cov": "jest --coverage",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
+    "prisma:deploy": "prisma migrate deploy",
+    "seed": "prisma db seed",
     "openapi:export": "ts-node -T src/scripts/export-openapi.ts"
   },
   "dependencies": {
@@ -83,5 +85,8 @@
     ],
     "coverageDirectory": "./coverage",
     "testEnvironment": "node"
+  },
+  "prisma": {
+    "seed": "ts-node -T prisma/seed.ts"
   }
 }

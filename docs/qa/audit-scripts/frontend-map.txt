@@ -1,0 +1,78 @@
+=== FRONTEND STATIC MAP AUDIT (NO BROWSER) ===
+
+1. LISTE DES ECRANS ET COMPOSANTS ENREGISTRES (App.tsx)
+------------------------------------------------------------------------------------
+View ID: [status                ] Component: [SystemStatusPage              ] File: features/system-status/SystemStatusPage.tsx (Exists: true)
+View ID: [login                 ] Component: [LoginPage                     ] File: features/auth/pages/LoginPage.tsx (Exists: true)
+View ID: [forgot-password       ] Component: [ForgotPasswordPage            ] File: features/auth/pages/ForgotPasswordPage.tsx (Exists: true)
+View ID: [dashboard             ] Component: [DashboardPage                 ] File: features/reports/pages/DashboardPage.tsx (Exists: true)
+View ID: [reports               ] Component: [ReportsPage                   ] File: features/reports/pages/ReportsPage.tsx (Exists: true)
+View ID: [shipments             ] Component: [ShipmentsPage                 ] File: features/shipments/pages/ShipmentsPage.tsx (Exists: true)
+View ID: [transfers             ] Component: [TransfersPage                 ] File: features/transfers/pages/TransfersPage.tsx (Exists: true)
+View ID: [stock                 ] Component: [AgencyStockPage               ] File: features/transfers/pages/AgencyStockPage.tsx (Exists: true)
+View ID: [request-collection    ] Component: [CustomerRequestCollectionPage ] File: features/collections/pages/CustomerRequestCollectionPage.tsx (Exists: true)
+View ID: [courier-missions      ] Component: [CourierMissionsPage           ] File: features/collections/pages/CourierMissionsPage.tsx (Exists: true)
+View ID: [delivery-assignment   ] Component: [DeliveryAssignmentPage        ] File: features/runs/pages/DeliveryAssignmentPage.tsx (Exists: true)
+View ID: [my-delivery-runs      ] Component: [CourierMyRunsPage             ] File: features/runs/pages/CourierMyRunsPage.tsx (Exists: true)
+View ID: [deferred-pod          ] Component: [DeferredPodPage               ] File: features/deliveries/pages/DeferredPodPage.tsx (Exists: true)
+View ID: [recover-return        ] Component: [RecoverReturnPage             ] File: features/returns/pages/RecoverReturnPage.tsx (Exists: true)
+View ID: [returns-monitoring    ] Component: [ReturnsMonitoringPage         ] File: features/returns/pages/ReturnsMonitoringPage.tsx (Exists: true)
+View ID: [report-incident       ] Component: [ReportIncidentPage            ] File: features/incidents/pages/ReportIncidentPage.tsx (Exists: true)
+View ID: [incidents-management  ] Component: [IncidentsManagementPage       ] File: features/incidents/pages/IncidentsManagementPage.tsx (Exists: true)
+View ID: [invoices              ] Component: [InvoicesPage                  ] File: features/billing/pages/InvoicesPage.tsx (Exists: true)
+View ID: [customers             ] Component: [CustomersPage                 ] File: features/customers/pages/CustomersPage.tsx (Exists: true)
+View ID: [zones                 ] Component: [ZonesPage                     ] File: features/zones/pages/ZonesPage.tsx (Exists: true)
+View ID: [addresses             ] Component: [AddressesPage                 ] File: features/addresses/pages/AddressesPage.tsx (Exists: true)
+View ID: [agencies              ] Component: [AgenciesPage                  ] File: features/agencies/pages/AgenciesPage.tsx (Exists: true)
+
+2. COMMUTATEUR DE ROUTAGE DANS App.tsx
+------------------------------------------------------------------------------------
+Routing Switcher: State `currentView` in `MainContent` (App.tsx:155)
+Condition: React.Suspense avec rendu conditionnel {currentView === "<id>" && <Page />}
+Pages protégées par ProtectedRoute: dashboard, reports, shipments, transfers, stock,
+request-collection, courier-missions, delivery-assignment, my-delivery-runs, deferred-pod,
+recover-return, returns-monitoring, report-incident, incidents-management, invoices,
+customers, zones, addresses, agencies.
+
+3. CONFIGURATION DE NAVIGATION PAR ROLE (ANALYSE STATIQUE)
+------------------------------------------------------------------------------------
+
+[ROLE: ADMIN]
+  Desktop Navbar: status, shipments, transfers, stock, delivery-assignment, my-delivery-runs, returns-monitoring, incidents-management, invoices, customers, zones, addresses, agencies, dashboard, reports
+  Burger Drawer:  shipments, transfers, stock, delivery-assignment, my-delivery-runs, courier-missions, recover-return, returns-monitoring, request-collection, report-incident, incidents-management, invoices, customers, zones, addresses, agencies, dashboard, reports, status
+  Bottom Bar:     None (Drawer & Navbar used)
+
+[ROLE: MANAGER / RESPONSABLE LOGISTIQUE]
+  Desktop Navbar: shipments, transfers, stock, delivery-assignment, my-delivery-runs, returns-monitoring, incidents-management, invoices, customers, zones, addresses, agencies (if perm agencies:read), dashboard, reports
+  Burger Drawer:  shipments, transfers, stock, delivery-assignment, my-delivery-runs, courier-missions, recover-return, returns-monitoring, request-collection, report-incident, incidents-management, invoices, customers, zones, addresses, dashboard, reports
+  Bottom Bar:     None
+
+[ROLE: AGENT / AGENT AGENCE]
+  Desktop Navbar: shipments, transfers, stock, my-delivery-runs, invoices, customers, zones, addresses, dashboard, reports
+  Burger Drawer:  shipments, transfers, stock, my-delivery-runs, courier-missions, recover-return, request-collection, report-incident, invoices, customers, zones, addresses, dashboard, reports
+  Bottom Bar:     None
+
+[ROLE: DISPATCHER / AGENT COLLECTE]
+  Desktop Navbar: shipments, transfers, stock, delivery-assignment, my-delivery-runs, invoices, customers, zones, addresses, dashboard, reports
+  Burger Drawer:  shipments, transfers, stock, delivery-assignment, my-delivery-runs, courier-missions, recover-return, request-collection, report-incident, invoices, customers, zones, addresses, dashboard, reports
+  Bottom Bar:     None
+
+[ROLE: COURIER / LIVREUR]
+  Desktop Navbar: my-delivery-runs, courier-missions, recover-return, report-incident
+  Burger Drawer:  None (Mobile optimized via BottomBar)
+  Bottom Bar:     my-delivery-runs (Tournées), TrackingScannerModal (Scanner), recover-return (Retours), report-incident (Incident)
+
+[ROLE: FINANCE / COMPTABLE]
+  Desktop Navbar: invoices, customers, zones, addresses, dashboard, reports
+  Burger Drawer:  invoices, customers, zones, addresses, dashboard, reports
+  Bottom Bar:     None
+
+[ROLE: SUPPORT / SERVICE CLIENT]
+  Desktop Navbar: shipments, incidents-management, invoices, customers, zones, addresses, dashboard, reports
+  Burger Drawer:  shipments, request-collection, report-incident, incidents-management, invoices, customers, zones, addresses, dashboard, reports
+  Bottom Bar:     None
+
+[ROLE: CLIENT / CUSTOMER]
+  Desktop Navbar: request-collection, shipments, invoices
+  Burger Drawer:  None (Mobile optimized via BottomBar)
+  Bottom Bar:     request-collection (Enlèvement), shipments (Suivi Colis), invoices (Factures)

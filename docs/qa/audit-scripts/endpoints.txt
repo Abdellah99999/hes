@@ -1,0 +1,97 @@
+DELETE  /api/v1/api/v1/addresses/{id}                             [PROTECTED] [Addresses] Supprimer une adresse (soft-delete)
+DELETE  /api/v1/api/v1/agencies/{id}                              [PROTECTED] [Agencies] Désactiver / Supprimer en soft-delete une agence
+DELETE  /api/v1/api/v1/customer-contacts/{id}                     [PROTECTED] [Customer Contacts] Supprimer un contact (soft-delete)
+DELETE  /api/v1/api/v1/customer-types/{id}                        [PROTECTED] [Customer Types] Supprimer un type client (si non système)
+DELETE  /api/v1/api/v1/customers/{id}                             [PROTECTED] [Customers] Suppression soft-delete d'un client
+DELETE  /api/v1/api/v1/zones/{id}                                 [PROTECTED] [Zones] Supprimer une zone (soft delete)
+GET     /api/v1/api/v1/addresses                                  [PROTECTED] [Addresses] Lister les adresses avec filtres et pagination
+GET     /api/v1/api/v1/addresses/{id}                             [PROTECTED] [Addresses] Obtenir une adresse par ID
+GET     /api/v1/api/v1/agencies                                   [PROTECTED] [Agencies] Lister les agences avec pagination et filtres
+GET     /api/v1/api/v1/agencies/{agencyId}/stock                  [PROTECTED] [Transfers & Routing] Consulter le stock quai présent dans une agence avec métriques volumétriques et de rétention
+GET     /api/v1/api/v1/agencies/{id}                              [PROTECTED] [Agencies] Obtenir les détails d'une agence
+GET     /api/v1/api/v1/auth/me                                    [PROTECTED] [Authentication & RBAC] Profil utilisateur et permissions effectives
+GET     /api/v1/api/v1/collections                                [PROTECTED] [Customer Collections & Enlèvements] Lister les collectes avec cloisonnement automatique selon le rôle (Client, Coursier, Dispatch)
+GET     /api/v1/api/v1/collections/my-missions                    [PROTECTED] [Customer Collections & Enlèvements] Consulter la feuille de route du coursier connecté pour la journée
+GET     /api/v1/api/v1/collections/{id}                           [PROTECTED] [Customer Collections & Enlèvements] Consulter le détail d'une demande de collecte et son expédition générée
+GET     /api/v1/api/v1/customer-contacts/by-customer/{customerId} [PROTECTED] [Customer Contacts] Lister tous les contacts d'un client (isolé par agence)
+GET     /api/v1/api/v1/customer-contacts/{id}                     [PROTECTED] [Customer Contacts] Obtenir les détails d'un contact
+GET     /api/v1/api/v1/customer-types                             [PROTECTED] [Customer Types] Lister les types de clients (référentiel)
+GET     /api/v1/api/v1/customer-types/{id}                        [PROTECTED] [Customer Types] Obtenir un type client par son identifiant
+GET     /api/v1/api/v1/customers                                  [PROTECTED] [Customers] Lister les clients avec filtres et pagination (strictement cloisonné par agence)
+GET     /api/v1/api/v1/customers/{id}                             [PROTECTED] [Customers] Consulter la fiche complète d'un client
+GET     /api/v1/api/v1/customers/{id}/managers/history            [PROTECTED] [Customers] Consulter l'historique chronologique complet des responsables internes du client
+GET     /api/v1/api/v1/deliveries/refusal-reasons                 [PROTECTED] [Deliveries, POD & Refusals (Phase 9)] Consulter la liste officielle et figée des motifs de refus
+GET     /api/v1/api/v1/documents/{id}/download-url                [PROTECTED] [Documents & Impression (Phase 13)] Obtenir une URL pré-signée éphémère (15 min) pour télécharger un document
+GET     /api/v1/api/v1/health                                     [PUBLIC   ] [Health & Monitoring] Check system health and dependent services status
+GET     /api/v1/api/v1/incidents                                  [PROTECTED] [Incidents & Litiges (Phase 11)] Lister les dossiers d'incidents (cloisonné selon rôle/agence)
+GET     /api/v1/api/v1/incidents/{id}                             [PROTECTED] [Incidents & Litiges (Phase 11)] Consulter le détail complet d'un incident et son historique d'enquête
+GET     /api/v1/api/v1/invoices                                   [PROTECTED] [Facturation & Prestations (Phase 12a)] Lister les factures (cloisonné selon rôle : client ne voit que les siennes)
+GET     /api/v1/api/v1/invoices/{id}                              [PROTECTED] [Facturation & Prestations (Phase 12a)] Consulter le détail d'une facture et ses lignes
+GET     /api/v1/api/v1/notifications                              [PROTECTED] [Notifications (Phase 14)] Consulter la liste de ses notifications personnelles
+GET     /api/v1/api/v1/reports/dashboard                          [PROTECTED] [Dashboard & Rapports (Phase 15)] Synthèse dashboard — KPIs agrégés avec filtres temporels et métier
+GET     /api/v1/api/v1/reports/data                               [PROTECTED] [Dashboard & Rapports (Phase 15)] Données détaillées paginées par type de rapport
+GET     /api/v1/api/v1/reports/export                             [PROTECTED] [Dashboard & Rapports (Phase 15)] Export PDF ou Excel (CSV) — limité à 10 000 lignes
+GET     /api/v1/api/v1/returns                                    [PROTECTED] [Returns & Reverse Logistics (Phase 10)] Lister les dossiers et items de retour (cloisonné selon agence ou livreur)
+GET     /api/v1/api/v1/runs                                       [PROTECTED] [Delivery Runs & Dernier Kilomètre (Phase 8)] Lister les tournées de livraison (cloisonné selon agence ou livreur)
+GET     /api/v1/api/v1/runs/my-runs                               [PROTECTED] [Delivery Runs & Dernier Kilomètre (Phase 8)] Consulter les tournées assignées au livreur connecté
+GET     /api/v1/api/v1/runs/{id}                                  [PROTECTED] [Delivery Runs & Dernier Kilomètre (Phase 8)] Consulter le détail d'une tournée et ses colis
+GET     /api/v1/api/v1/shipments                                  [PROTECTED] [Shipments] Lister les expéditions avec pagination et filtres
+GET     /api/v1/api/v1/shipments/parcels/{parcelId}/tag           [PROTECTED] [Shipments] Générer les payloads d'étiquette Code-Barres 1D et QR Code 2D pour un colis
+GET     /api/v1/api/v1/shipments/parcels/{parcelId}/timeline      [PROTECTED] [Shipments] Reconstruire la timeline chronologique d'un colis physique spécifique
+GET     /api/v1/api/v1/shipments/tracking/{trackingNumber}        [PROTECTED] [Shipments] Consulter une expédition par numéro de tracking
+GET     /api/v1/api/v1/shipments/{id}                             [PROTECTED] [Shipments] Consulter les détails d'une expédition par son ID
+GET     /api/v1/api/v1/shipments/{id}/timeline                    [PROTECTED] [Shipments] Reconstruire la timeline chronologique d'une expédition
+GET     /api/v1/api/v1/transfers                                  [PROTECTED] [Transfers & Routing] Lister les transferts avec filtres d'agence et statut
+GET     /api/v1/api/v1/transfers/{id}                             [PROTECTED] [Transfers & Routing] Consulter les détails d'un transfert et son manifeste de colis
+GET     /api/v1/api/v1/users                                      [PROTECTED] [User Management] Liste de tous les utilisateurs (Permissions: users:read)
+GET     /api/v1/api/v1/users/{id}                                 [PROTECTED] [User Management] Détails d'un utilisateur par ID
+GET     /api/v1/api/v1/zones                                      [PROTECTED] [Zones] Lister les zones opérationnelles (isolées par agence)
+GET     /api/v1/api/v1/zones/{id}                                 [PROTECTED] [Zones] Obtenir une zone par identifiant
+PATCH   /api/v1/api/v1/addresses/{id}                             [PROTECTED] [Addresses] Modifier une adresse
+PATCH   /api/v1/api/v1/agencies/{id}                              [PROTECTED] [Agencies] Modifier une agence
+PATCH   /api/v1/api/v1/customer-contacts/{id}                     [PROTECTED] [Customer Contacts] Modifier un contact client
+PATCH   /api/v1/api/v1/customer-types/{id}                        [PROTECTED] [Customer Types] Modifier un type client
+PATCH   /api/v1/api/v1/customers/{id}                             [PROTECTED] [Customers] Modifier les informations d'un client
+PATCH   /api/v1/api/v1/notifications/read-all                     [PROTECTED] [Notifications (Phase 14)] Tout marquer comme lu
+PATCH   /api/v1/api/v1/notifications/{id}/read                    [PROTECTED] [Notifications (Phase 14)] Marquer une notification comme lue
+PATCH   /api/v1/api/v1/shipments/parcels/{parcelId}/status        [PROTECTED] [Shipments] Mettre à jour le statut d'un colis avec validation de transition d'état
+PATCH   /api/v1/api/v1/users/{id}/status                          [PROTECTED] [User Management] Activation / Désactivation d'un utilisateur
+PATCH   /api/v1/api/v1/zones/{id}                                 [PROTECTED] [Zones] Modifier une zone opérationnelle
+POST    /api/v1/api/v1/addresses                                  [PROTECTED] [Addresses] Créer une nouvelle adresse (isolée par agence)
+POST    /api/v1/api/v1/agencies                                   [PROTECTED] [Agencies] Créer une nouvelle agence
+POST    /api/v1/api/v1/auth/forgot-password                       [PUBLIC   ] [Authentication & RBAC] Demande de réinitialisation de mot de passe
+POST    /api/v1/api/v1/auth/login                                 [PUBLIC   ] [Authentication & RBAC] Authentification utilisateur avec émission de tokens
+POST    /api/v1/api/v1/auth/logout                                [PROTECTED] [Authentication & RBAC] Déconnexion et révocation de session
+POST    /api/v1/api/v1/auth/refresh                               [PUBLIC   ] [Authentication & RBAC] Rafraîchissement de tokens avec détection de rejeu
+POST    /api/v1/api/v1/auth/reset-password                        [PUBLIC   ] [Authentication & RBAC] Réinitialisation de mot de passe via token
+POST    /api/v1/api/v1/collections                                [PROTECTED] [Customer Collections & Enlèvements] Créer une demande d'enlèvement / collecte (Portail client ou agence)
+POST    /api/v1/api/v1/collections/{id}/assign                    [PROTECTED] [Customer Collections & Enlèvements] Affecter une collecte à un coursier d'agence
+POST    /api/v1/api/v1/collections/{id}/complete                  [PROTECTED] [Customer Collections & Enlèvements] Clôturer la collecte et générer automatiquement l'expédition et ses colis
+POST    /api/v1/api/v1/customer-contacts                          [PROTECTED] [Customer Contacts] Créer un interlocuteur chez le client
+POST    /api/v1/api/v1/customer-types                             [PROTECTED] [Customer Types] Créer un nouveau type client
+POST    /api/v1/api/v1/customers                                  [PROTECTED] [Customers] Créer un nouveau client rattaché à une agence
+POST    /api/v1/api/v1/customers/{id}/managers                    [PROTECTED] [Customers] Assigner ou changer le collaborateur interne responsable (clôture atomique de l'ancien + historique)
+POST    /api/v1/api/v1/deliveries/{parcelId}/confirm              [PROTECTED] [Deliveries, POD & Refusals (Phase 9)] Confirmer la livraison d'un colis avec capture obligatoire de preuve (POD)
+POST    /api/v1/api/v1/deliveries/{parcelId}/deferred-pod         [PROTECTED] [Deliveries, POD & Refusals (Phase 9)] Enregistrer en différé le bon de livraison (BL) papier cacheté par l'agent
+POST    /api/v1/api/v1/deliveries/{parcelId}/refuse               [PROTECTED] [Deliveries, POD & Refusals (Phase 9)] Signaler le refus d'un colis (motif référentiel obligatoire, déclenche retour automatique)
+POST    /api/v1/api/v1/documents/generate                         [PROTECTED] [Documents & Impression (Phase 13)] Générer un document officiel (PDF) avec versionnement et URL signée
+POST    /api/v1/api/v1/documents/preview                          [PROTECTED] [Documents & Impression (Phase 13)] Prévisualisation directe PDF (stream HTTP)
+POST    /api/v1/api/v1/incidents                                  [PROTECTED] [Incidents & Litiges (Phase 11)] Déclarer un incident (perte, casse, vol, litige de livraison)
+POST    /api/v1/api/v1/incidents/{id}/decide                      [PROTECTED] [Incidents & Litiges (Phase 11)] Statuer sur un incident (enquête, pièces, indemnisation formelle, rejet)
+POST    /api/v1/api/v1/invoices                                   [PROTECTED] [Facturation & Prestations (Phase 12a)] Émettre une nouvelle facture de transport (Rôle Comptable / Superviseur)
+POST    /api/v1/api/v1/invoices/{id}/payments                     [PROTECTED] [Facturation & Prestations (Phase 12a)] Enregistrer un règlement sur une facture (En-tête Idempotency-Key obligatoire)
+POST    /api/v1/api/v1/returns                                    [PROTECTED] [Returns & Reverse Logistics (Phase 10)] Créer un dossier de retour manuellement ou suite à réclamation
+POST    /api/v1/api/v1/returns/recover                            [PROTECTED] [Returns & Reverse Logistics (Phase 10)] Récupérer un colis retour par scan ou saisie manuelle du numéro BL/Tracking
+POST    /api/v1/api/v1/routing/evaluate                           [PROTECTED] [Transfers & Routing] Évaluer l'action d'aiguillage quai pour un colis (UNLOAD vs HOLD_AND_RETRANSFER vs MISROUTED)
+POST    /api/v1/api/v1/runs/auto-assign                           [PROTECTED] [Delivery Runs & Dernier Kilomètre (Phase 8)] Exécuter l'algorithme d'affectation automatique adresse -> zone -> livreur
+POST    /api/v1/api/v1/runs/courier-profile                       [PROTECTED] [Delivery Runs & Dernier Kilomètre (Phase 8)] Créer ou mettre à jour le profil opérationnel d'un coursier/livreur
+POST    /api/v1/api/v1/runs/reassign                              [PROTECTED] [Delivery Runs & Dernier Kilomètre (Phase 8)] Réaffecter manuellement un colis à une autre tournée (audit obligatoire)
+POST    /api/v1/api/v1/shipments                                  [PROTECTED] [Shipments] Créer une expédition avec colis multiples (Transactionnel de bout en bout)
+POST    /api/v1/api/v1/shipments/track/manual                     [PROTECTED] [Shipments] Enregistrer un changement de statut manuel avec commentaire obligatoire
+POST    /api/v1/api/v1/shipments/track/scan                       [PROTECTED] [Shipments] Enregistrer un scan optique (Code 128 / QR Code 2D) avec idempotence et machine à états
+POST    /api/v1/api/v1/transfers                                  [PROTECTED] [Transfers & Routing] Préparer un nouveau transfert inter-agences avec colis multiples
+POST    /api/v1/api/v1/transfers/{id}/dispatch                    [PROTECTED] [Transfers & Routing] Valider le départ du transfert (statut IN_TRANSIT, currentAgencyId -> NULL)
+POST    /api/v1/api/v1/transfers/{id}/receive                     [PROTECTED] [Transfers & Routing] Réceptionner le transfert (Transaction atomique, réconciliation attendus vs reçus vs manquants)
+POST    /api/v1/api/v1/users                                      [PROTECTED] [User Management] Création d'un nouvel utilisateur (Permissions: users:manage)
+POST    /api/v1/api/v1/zones                                      [PROTECTED] [Zones] Créer une nouvelle zone opérationnelle
+PUT     /api/v1/api/v1/users/{id}                                 [PROTECTED] [User Management] Mise à jour d'un utilisateur

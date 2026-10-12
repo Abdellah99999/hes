@@ -1824,6 +1824,7 @@ model ShipmentSequence {
   year         Int
   currentValue Int      @default(0) @map("current_value")
   prefix       String   @default("HES")
+  createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
   agency Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
