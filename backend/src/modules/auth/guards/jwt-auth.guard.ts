@@ -41,15 +41,39 @@ export class JwtAuthGuard implements CanActivate {
     try {
       const payload = await this.tokenService.verifyAccessToken(token);
 
-      // Check fast in-memory Redis blacklist for immediate session revocation
+      // Check fast in-memory Redis blacklist for immediate revocation
       const redisClient = this.redis.getClient();
       if (redisClient) {
-        const isBlacklisted = await redisClient.get(
+        // 1. User-level revocation check
+        const isUserRevoked = await redisClient.get(
           `user:revoked:${payload.sub}`,
         );
-        if (isBlacklisted) {
+        if (isUserRevoked) {
           throw new UnauthorizedException(
             "Session révoquée. Veuillez vous reconnecter.",
+          );
+        }
+
+        // 2. Session-level revocation check
+        if (payload.sessionId) {
+          const isSessionRevoked = await redisClient.get(
+            `session:revoked:${payload.sessionId}`,
+          );
+          if (isSessionRevoked) {
+            throw new UnauthorizedException(
+              "Session révoquée. Veuillez vous reconnecter.",
+            );
+          }
+        }
+      }
+
+      // Check restricted 2FA token: can ONLY access 2FA endpoints
+      if (payload.isRestricted2fa) {
+        const path = request.originalUrl || request.url || "";
+        const is2faRoute = path.includes("/auth/2fa/");
+        if (!is2faRoute) {
+          throw new UnauthorizedException(
+            "Authentification à deux facteurs requise. Accès restreint.",
           );
         }
       }
@@ -70,6 +94,7 @@ export class JwtAuthGuard implements CanActivate {
         tokenVersion: payload.tokenVersion,
         permissions,
         isGlobalScope,
+        sessionId: payload.sessionId,
       };
 
       return true;

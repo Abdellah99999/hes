@@ -33,6 +33,9 @@ export class UserDto {
     example: ["shipments:read", "shipments:create", "users:manage"],
   })
   permissions!: string[];
+
+  @ApiProperty({ example: false, required: false })
+  twoFactorEnabled?: boolean;
 }
 
 export class TokenPairDto {
@@ -56,14 +59,26 @@ export class TokenPairDto {
 
   @ApiProperty({ example: "Bearer" })
   tokenType!: string;
+
+  @ApiProperty({ example: "session-uuid-1234", required: false })
+  sessionId?: string;
 }
 
 export class AuthResponseDto {
   @ApiProperty({ type: UserDto })
   user!: UserDto;
 
-  @ApiProperty({ type: TokenPairDto })
-  tokens!: TokenPairDto;
+  @ApiProperty({ type: TokenPairDto, required: false })
+  tokens?: TokenPairDto;
+
+  @ApiProperty({ example: false, required: false })
+  requires2fa?: boolean;
+
+  @ApiProperty({ example: false, required: false })
+  twoFactorEnrolled?: boolean;
+
+  @ApiProperty({ example: "temp-jwt-token...", required: false })
+  tempToken?: string;
 }
 
 export class MessageResponseDto {

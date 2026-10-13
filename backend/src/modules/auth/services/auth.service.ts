@@ -2,6 +2,7 @@ import {
   Injectable,
   UnauthorizedException,
   BadRequestException,
+  NotFoundException,
   Logger,
 } from "@nestjs/common";
 import { PrismaService } from "../../../prisma/prisma.service";
@@ -9,6 +10,7 @@ import { RedisService } from "../../redis/redis.service";
 import { PasswordService } from "./password.service";
 import { TokenService } from "./token.service";
 import { AuditService } from "./audit.service";
+import { TotpService } from "./totp.service";
 import { LoginDto } from "../dto/login.dto";
 import {
   ForgotPasswordDto,
@@ -19,6 +21,8 @@ import {
   UserDto,
   MessageResponseDto,
 } from "../dto/auth-response.dto";
+import { TwoFactorSetupResponseDto } from "../dto/two-factor.dto";
+import { JwtPayload } from "../domain/auth.types";
 import { AuditEventType, UserPermissionEffect } from "@prisma/client";
 import * as crypto from "crypto";
 
@@ -35,6 +39,7 @@ export class AuthService {
     private readonly passwordService: PasswordService,
     private readonly tokenService: TokenService,
     private readonly auditService: AuditService,
+    private readonly totpService: TotpService,
   ) {}
 
   /**
@@ -82,6 +87,7 @@ export class AuthService {
       agencyId?: string | null;
       isActive: boolean;
       role: { code: string };
+      twoFactorEnabled?: boolean;
     },
     effectivePermissions: string[],
   ): UserDto {
@@ -95,6 +101,7 @@ export class AuthService {
       agencyId: user.agencyId ?? null,
       isActive: user.isActive,
       permissions: effectivePermissions,
+      twoFactorEnabled: user.twoFactorEnabled ?? false,
     };
   }
 
@@ -224,14 +231,82 @@ export class AuthService {
     });
     const familyId = crypto.randomUUID();
 
-    const tokens = await this.tokenService.generateTokenPair({
-      sub: user.id,
-      email: user.email,
-      role: user.role.code,
-      agencyId: user.agencyId ?? null,
-      tokenVersion: user.tokenVersion,
-      permissions,
-    });
+    // 2FA obligatoire pour ADMIN, SUPER_ADMIN et FINANCE (Comptable)
+    const is2faMandatoryRole =
+      user.role.code === "ADMIN" ||
+      user.role.code === "SUPER_ADMIN" ||
+      user.role.code === "FINANCE";
+    const requires2fa = is2faMandatoryRole || user.twoFactorEnabled;
+
+    if (requires2fa) {
+      if (!user.twoFactorEnabled) {
+        // Non enrôlé : délivre un jeton restreint limité aux endpoints d'enrôlement 2FA
+        const restrictedToken = await this.tokenService.generateAccessToken({
+          sub: user.id,
+          email: user.email,
+          role: user.role.code,
+          agencyId: user.agencyId ?? null,
+          tokenVersion: user.tokenVersion,
+          permissions: ["auth:2fa:enroll"],
+          sessionId: familyId,
+          isRestricted2fa: true,
+        });
+
+        await this.auditService.logEvent({
+          eventType: AuditEventType.LOGIN_SUCCESS,
+          userId: user.id,
+          identifier: normalizedEmail,
+          ipAddress: ip,
+          userAgent,
+          metadata: { role: user.role.code, twoFactor: "ENROLLMENT_REQUIRED" },
+        });
+
+        return {
+          user: this.toUserDto({ ...user, role: user.role }, permissions),
+          tokens: {
+            accessToken: restrictedToken,
+            refreshToken: "",
+            expiresIn: 900,
+            tokenType: "Bearer",
+            sessionId: familyId,
+          },
+          requires2fa: true,
+          twoFactorEnrolled: false,
+        };
+      }
+
+      // Si enrôlé : code TOTP exigé avant les jetons complets
+      const tempToken = await this.tokenService.generateAccessToken({
+        sub: user.id,
+        email: user.email,
+        role: user.role.code,
+        agencyId: user.agencyId ?? null,
+        tokenVersion: user.tokenVersion,
+        permissions: ["auth:2fa:verify"],
+        sessionId: familyId,
+        isRestricted2fa: true,
+      });
+
+      return {
+        user: this.toUserDto({ ...user, role: user.role }, permissions),
+        requires2fa: true,
+        twoFactorEnrolled: true,
+        tempToken,
+      };
+    }
+
+    const tokens = await this.tokenService.generateTokenPair(
+      {
+        sub: user.id,
+        email: user.email,
+        role: user.role.code,
+        agencyId: user.agencyId ?? null,
+        tokenVersion: user.tokenVersion,
+        permissions,
+        sessionId: familyId,
+      },
+      familyId,
+    );
 
     // Store hashed refresh token in database
     const tokenHash = this.tokenService.hashToken(tokens.refreshToken);
@@ -385,13 +460,14 @@ export class AuthService {
   }
 
   /**
-   * Logs out user by revoking the current refresh token.
+   * Logs out user by revoking the current refresh token and blacklisting session ID in Redis.
    */
   async logout(
     userId: string,
     rawRefreshToken?: string,
     ip?: string,
     userAgent?: string,
+    sessionId?: string,
   ): Promise<MessageResponseDto> {
     if (rawRefreshToken) {
       const tokenHash = this.tokenService.hashToken(rawRefreshToken);
@@ -399,6 +475,18 @@ export class AuthService {
         where: { tokenHash, userId },
         data: { isRevoked: true },
       });
+    }
+
+    if (sessionId) {
+      await this.prisma.refreshToken.updateMany({
+        where: { userId, familyId: sessionId },
+        data: { isRevoked: true },
+      });
+
+      const redisClient = this.redis.getClient();
+      if (redisClient) {
+        await redisClient.setex(`session:revoked:${sessionId}`, 900, "revoked");
+      }
     }
 
     const user = await this.prisma.user.findUnique({
@@ -412,9 +500,273 @@ export class AuthService {
       identifier: user?.email || userId,
       ipAddress: ip,
       userAgent,
+      metadata: { sessionId },
     });
 
     return { message: "Déconnexion réussie" };
+  }
+
+  /**
+   * Revokes a specific session immediately across Redis and DB.
+   */
+  async revokeSession(userId: string, sessionId: string): Promise<void> {
+    await this.prisma.refreshToken.updateMany({
+      where: {
+        userId,
+        OR: [{ familyId: sessionId }, { id: sessionId }],
+      },
+      data: { isRevoked: true },
+    });
+
+    const redisClient = this.redis.getClient();
+    if (redisClient) {
+      await redisClient.setex(`session:revoked:${sessionId}`, 900, "revoked");
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { email: true },
+    });
+
+    await this.auditService.logEvent({
+      eventType: AuditEventType.LOGOUT,
+      userId,
+      identifier: user?.email || userId,
+      metadata: { action: "SESSION_REVOKED", sessionId },
+    });
+  }
+
+  /**
+   * 2FA Setup: generates a new TOTP secret and stores in Redis pending verification.
+   */
+  async setup2fa(userId: string): Promise<TwoFactorSetupResponseDto> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user) {
+      throw new NotFoundException("Utilisateur non trouvé");
+    }
+
+    const { secret, otpauthUrl } = this.totpService.generateSecret(user.email);
+
+    const redisClient = this.redis.getClient();
+    if (redisClient) {
+      await redisClient.setex(`2fa:pending:${userId}`, 600, secret);
+    }
+
+    return { secret, otpauthUrl };
+  }
+
+  /**
+   * 2FA Verify Setup: verifies TOTP code, enables 2FA on user, and emits full tokens.
+   */
+  async verifySetup2fa(
+    userId: string,
+    code: string,
+    ip?: string,
+    userAgent?: string,
+  ): Promise<AuthResponseDto> {
+    const redisClient = this.redis.getClient();
+    let secret: string | null = null;
+    if (redisClient) {
+      secret = await redisClient.get(`2fa:pending:${userId}`);
+    }
+
+    if (!secret) {
+      throw new BadRequestException(
+        "Session d'enrôlement 2FA expirée ou inexistante. Veuillez recommencer.",
+      );
+    }
+
+    const isValid = this.totpService.verifyCode(secret, code);
+    if (!isValid) {
+      throw new BadRequestException("Code TOTP invalide. Veuillez réessayer.");
+    }
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        twoFactorEnabled: true,
+        twoFactorSecret: secret,
+      },
+      include: {
+        role: {
+          include: {
+            rolePermissions: {
+              include: { permission: true },
+            },
+          },
+        },
+        userPermissions: {
+          include: { permission: true },
+        },
+      },
+    });
+
+    if (redisClient) {
+      await redisClient.del(`2fa:pending:${userId}`);
+    }
+
+    if (!updatedUser.role) {
+      throw new UnauthorizedException("Rôle utilisateur non assigné");
+    }
+
+    const permissions = this.calculateEffectivePermissions({
+      ...updatedUser,
+      role: updatedUser.role,
+    });
+    const familyId = crypto.randomUUID();
+
+    const tokens = await this.tokenService.generateTokenPair(
+      {
+        sub: updatedUser.id,
+        email: updatedUser.email,
+        role: updatedUser.role.code,
+        agencyId: updatedUser.agencyId ?? null,
+        tokenVersion: updatedUser.tokenVersion,
+        permissions,
+        sessionId: familyId,
+      },
+      familyId,
+    );
+
+    const tokenHash = this.tokenService.hashToken(tokens.refreshToken);
+    await this.prisma.refreshToken.create({
+      data: {
+        tokenHash,
+        userId: updatedUser.id,
+        familyId,
+        expiresAt: new Date(Date.now() + this.REFRESH_TOKEN_TTL_MS),
+        ipAddress: ip ?? null,
+        userAgent: userAgent ?? null,
+      },
+    });
+
+    await this.auditService.logEvent({
+      eventType: AuditEventType.LOGIN_SUCCESS,
+      userId: updatedUser.id,
+      identifier: updatedUser.email,
+      ipAddress: ip,
+      userAgent,
+      metadata: { action: "2FA_ENROLLED" },
+    });
+
+    return {
+      user: this.toUserDto(
+        { ...updatedUser, role: updatedUser.role },
+        permissions,
+      ),
+      tokens,
+      requires2fa: false,
+      twoFactorEnrolled: true,
+    };
+  }
+
+  /**
+   * 2FA Verify: validates TOTP with restricted temp token, returns full tokens.
+   */
+  async verify2fa(
+    rawToken: string | undefined,
+    code: string,
+    ip?: string,
+    userAgent?: string,
+  ): Promise<AuthResponseDto> {
+    if (!rawToken) {
+      throw new UnauthorizedException("Jeton temporaire 2FA manquant");
+    }
+
+    let payload: JwtPayload;
+    try {
+      payload = await this.tokenService.verifyAccessToken(rawToken);
+    } catch {
+      throw new UnauthorizedException(
+        "Jeton temporaire 2FA invalide ou expiré",
+      );
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: payload.sub },
+      include: {
+        role: {
+          include: {
+            rolePermissions: {
+              include: { permission: true },
+            },
+          },
+        },
+        userPermissions: {
+          include: { permission: true },
+        },
+      },
+    });
+
+    if (!user || !user.twoFactorEnabled || !user.twoFactorSecret) {
+      throw new BadRequestException(
+        "Configuration 2FA introuvable pour ce compte",
+      );
+    }
+
+    const isValid = this.totpService.verifyCode(user.twoFactorSecret, code);
+    if (!isValid) {
+      await this.auditService.logEvent({
+        eventType: AuditEventType.LOGIN_FAILED,
+        userId: user.id,
+        identifier: user.email,
+        ipAddress: ip,
+        userAgent,
+        metadata: { reason: "Invalid 2FA code" },
+      });
+      throw new UnauthorizedException("Code TOTP invalide");
+    }
+
+    if (!user.role) {
+      throw new UnauthorizedException("Rôle utilisateur non assigné");
+    }
+
+    const permissions = this.calculateEffectivePermissions({
+      ...user,
+      role: user.role,
+    });
+    const familyId = crypto.randomUUID();
+
+    const tokens = await this.tokenService.generateTokenPair(
+      {
+        sub: user.id,
+        email: user.email,
+        role: user.role.code,
+        agencyId: user.agencyId ?? null,
+        tokenVersion: user.tokenVersion,
+        permissions,
+        sessionId: familyId,
+      },
+      familyId,
+    );
+
+    const tokenHash = this.tokenService.hashToken(tokens.refreshToken);
+    await this.prisma.refreshToken.create({
+      data: {
+        tokenHash,
+        userId: user.id,
+        familyId,
+        expiresAt: new Date(Date.now() + this.REFRESH_TOKEN_TTL_MS),
+        ipAddress: ip ?? null,
+        userAgent: userAgent ?? null,
+      },
+    });
+
+    await this.auditService.logEvent({
+      eventType: AuditEventType.LOGIN_SUCCESS,
+      userId: user.id,
+      identifier: user.email,
+      ipAddress: ip,
+      userAgent,
+      metadata: { role: user.role.code, twoFactor: true },
+    });
+
+    return {
+      user: this.toUserDto({ ...user, role: user.role }, permissions),
+      tokens,
+    };
   }
 
   /**

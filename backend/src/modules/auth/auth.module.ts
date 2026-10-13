@@ -6,6 +6,7 @@ import { AuthService } from "./services/auth.service";
 import { PasswordService } from "./services/password.service";
 import { TokenService } from "./services/token.service";
 import { AuditService } from "./services/audit.service";
+import { TotpService } from "./services/totp.service";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { PermissionsGuard } from "./guards/permissions.guard";
 import { RedisModule } from "../redis/redis.module";
@@ -34,6 +35,7 @@ import { RedisModule } from "../redis/redis.module";
     PasswordService,
     TokenService,
     AuditService,
+    TotpService,
     JwtAuthGuard,
     PermissionsGuard,
   ],
@@ -42,6 +44,7 @@ import { RedisModule } from "../redis/redis.module";
     PasswordService,
     TokenService,
     AuditService,
+    TotpService,
     JwtAuthGuard,
     PermissionsGuard,
     JwtModule,

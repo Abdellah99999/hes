@@ -173,4 +173,130 @@ export class UsersService {
 
     return this.mapToUserDto(updated);
   }
+
+  async getUserSessions(userId: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException("Utilisateur non trouvé");
+    }
+
+    const tokens = await this.prisma.refreshToken.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return tokens.map((t) => ({
+      id: t.familyId || t.id,
+      refreshTokenId: t.id,
+      familyId: t.familyId,
+      ipAddress: t.ipAddress,
+      userAgent: t.userAgent,
+      expiresAt: t.expiresAt,
+      isRevoked: t.isRevoked || t.expiresAt < new Date(),
+      createdAt: t.createdAt,
+    }));
+  }
+
+  async revokeUserSession(userId: string, sessionId: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException("Utilisateur non trouvé");
+    }
+
+    await this.authService.revokeSession(userId, sessionId);
+    return { message: "Session révoquée avec succès" };
+  }
+
+  async getUserPermissions(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: USER_INCLUDE,
+    });
+    if (!user) {
+      throw new NotFoundException("Utilisateur non trouvé");
+    }
+
+    const rolePerms =
+      user.role?.rolePermissions.map((rp) => rp.permission.code) || [];
+    const overrides = user.userPermissions.map((up) => ({
+      permissionId: up.permission.id,
+      code: up.permission.code,
+      name: up.permission.name,
+      effect: up.effect,
+    }));
+    const effective = this.authService.calculateEffectivePermissions({
+      role: user.role || { rolePermissions: [] },
+      userPermissions: user.userPermissions,
+    });
+
+    return {
+      userId: user.id,
+      role: user.role?.code || null,
+      rolePermissions: rolePerms,
+      overrides,
+      effectivePermissions: effective,
+    };
+  }
+
+  async overrideUserPermission(
+    userId: string,
+    permissionCode: string,
+    effect: UserPermissionEffect,
+  ) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException("Utilisateur non trouvé");
+    }
+
+    const perm = await this.prisma.permission.findUnique({
+      where: { code: permissionCode },
+    });
+    if (!perm) {
+      throw new NotFoundException(`Permission ${permissionCode} introuvable`);
+    }
+
+    await this.prisma.userPermission.upsert({
+      where: {
+        userId_permissionId: {
+          userId,
+          permissionId: perm.id,
+        },
+      },
+      update: { effect },
+      create: {
+        userId,
+        permissionId: perm.id,
+        effect,
+      },
+    });
+
+    await this.authService.revokeAllSessions(userId);
+
+    return this.getUserPermissions(userId);
+  }
+
+  async deleteUserPermissionOverride(userId: string, permissionCode: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException("Utilisateur non trouvé");
+    }
+
+    const perm = await this.prisma.permission.findUnique({
+      where: { code: permissionCode },
+    });
+    if (!perm) {
+      throw new NotFoundException(`Permission ${permissionCode} introuvable`);
+    }
+
+    await this.prisma.userPermission.deleteMany({
+      where: {
+        userId,
+        permissionId: perm.id,
+      },
+    });
+
+    await this.authService.revokeAllSessions(userId);
+
+    return this.getUserPermissions(userId);
+  }
 }

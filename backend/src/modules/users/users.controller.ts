@@ -4,6 +4,7 @@ import {
   Post,
   Put,
   Patch,
+  Delete,
   Param,
   Body,
   UseGuards,
@@ -17,6 +18,7 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from "@nestjs/swagger";
+import { UserPermissionEffect } from "@prisma/client";
 import { UsersService } from "./users.service";
 import { CreateUserDto, UpdateUserDto } from "./dto/user-crud.dto";
 import { UserDto } from "../auth/dto/auth-response.dto";
@@ -83,5 +85,62 @@ export class UsersController {
     @Query("active", ParseBoolPipe) active: boolean,
   ): Promise<UserDto> {
     return this.usersService.toggleActive(id, active);
+  }
+
+  @Get(":id/sessions")
+  @RequirePermissions("users:read")
+  @ApiOperation({
+    summary: "Liste des sessions actives et passées d'un utilisateur",
+  })
+  async getUserSessions(@Param("id", ParseUUIDPipe) id: string) {
+    return this.usersService.getUserSessions(id);
+  }
+
+  @Delete(":id/sessions/:sessionId")
+  @RequirePermissions("users:manage")
+  @ApiOperation({ summary: "Révocation immédiate d'une session utilisateur" })
+  async revokeUserSession(
+    @Param("id", ParseUUIDPipe) id: string,
+    @Param("sessionId") sessionId: string,
+  ) {
+    return this.usersService.revokeUserSession(id, sessionId);
+  }
+
+  @Get(":id/permissions")
+  @RequirePermissions("users:read")
+  @ApiOperation({
+    summary:
+      "Détail des permissions d'un utilisateur (rôle, surcharges, effectives)",
+  })
+  async getUserPermissions(@Param("id", ParseUUIDPipe) id: string) {
+    return this.usersService.getUserPermissions(id);
+  }
+
+  @Post(":id/permissions")
+  @RequirePermissions("users:manage")
+  @ApiOperation({
+    summary: "Surcharge individuelle d'une permission (GRANT / DENY)",
+  })
+  async overrideUserPermission(
+    @Param("id", ParseUUIDPipe) id: string,
+    @Body() body: { permissionCode: string; effect: UserPermissionEffect },
+  ) {
+    return this.usersService.overrideUserPermission(
+      id,
+      body.permissionCode,
+      body.effect,
+    );
+  }
+
+  @Delete(":id/permissions/:permissionCode")
+  @RequirePermissions("users:manage")
+  @ApiOperation({
+    summary: "Suppression de la surcharge individuelle d'une permission",
+  })
+  async deleteUserPermissionOverride(
+    @Param("id", ParseUUIDPipe) id: string,
+    @Param("permissionCode") permissionCode: string,
+  ) {
+    return this.usersService.deleteUserPermissionOverride(id, permissionCode);
   }
 }

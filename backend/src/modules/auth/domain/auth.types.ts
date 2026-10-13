@@ -6,6 +6,8 @@ export interface JwtPayload {
   customerId?: string | null;
   tokenVersion: number;
   permissions: string[];
+  sessionId?: string;
+  isRestricted2fa?: boolean;
   iat?: number;
   exp?: number;
 }
@@ -23,6 +25,8 @@ export interface AuthenticatedUser {
   tokenVersion: number;
   permissions: string[];
   isGlobalScope: boolean;
+  twoFactorEnabled?: boolean;
+  sessionId?: string;
 }
 
 export interface TokenPair {

@@ -37,15 +37,22 @@ export class TokenService {
    */
   async generateTokenPair(
     payload: Omit<JwtPayload, "iat" | "exp">,
-  ): Promise<TokenPair> {
+    sessionId?: string,
+  ): Promise<TokenPair & { sessionId: string }> {
     const rawRefreshToken = this.generateOpaqueToken();
-    const accessToken = await this.generateAccessToken(payload);
+    const effectiveSessionId =
+      sessionId || payload.sessionId || crypto.randomUUID();
+    const accessToken = await this.generateAccessToken({
+      ...payload,
+      sessionId: effectiveSessionId,
+    });
 
     return {
       accessToken,
       refreshToken: rawRefreshToken,
       expiresIn: 900, // 15 minutes in seconds
       tokenType: "Bearer",
+      sessionId: effectiveSessionId,
     };
   }
 

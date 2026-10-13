@@ -8,6 +8,8 @@ describe("P1 - Guards Coverage Test (Systematic RBAC Scan)", () => {
   const EXPLICIT_EXCEPTIONS = new Set([
     "POST /api/v1/auth/logout",
     "GET /api/v1/auth/me",
+    "POST /api/v1/auth/2fa/setup",
+    "POST /api/v1/auth/2fa/verify-setup",
     "GET /api/v1/notifications",
     "PATCH /api/v1/notifications/:id/read",
     "PATCH /api/v1/notifications/read-all",

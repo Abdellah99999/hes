@@ -6,6 +6,7 @@ import { TokenService } from "../src/modules/auth/services/token.service";
 import { AuditService } from "../src/modules/auth/services/audit.service";
 import { PrismaService } from "../src/prisma/prisma.service";
 import { RedisService } from "../src/modules/redis/redis.service";
+import { TotpService } from "../src/modules/auth/services/totp.service";
 import { UserPermissionEffect } from "@prisma/client";
 
 describe("AuthService (Security Core Tests)", () => {
@@ -108,6 +109,14 @@ describe("AuthService (Security Core Tests)", () => {
         { provide: TokenService, useValue: tokenService },
         { provide: AuditService, useValue: auditService },
         { provide: RedisService, useValue: redisService },
+        {
+          provide: TotpService,
+          useValue: {
+            generateSecret: jest.fn(),
+            generateCode: jest.fn(),
+            verifyCode: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -131,7 +140,7 @@ describe("AuthService (Security Core Tests)", () => {
         "TestAgent",
       );
 
-      expect(response.tokens.accessToken).toBe("jwt.access.token");
+      expect(response.tokens?.accessToken).toBe("jwt.access.token");
       expect(response.user.email).toBe("operator@hes-logistics.com");
       expect(
         (response.user as unknown as Record<string, unknown>).passwordHash,
@@ -225,7 +234,7 @@ describe("AuthService (Security Core Tests)", () => {
           data: expect.objectContaining({ familyId: "family-uuid-1" }),
         }),
       );
-      expect(result.tokens.accessToken).toBe("new.jwt.access");
+      expect(result.tokens?.accessToken).toBe("new.jwt.access");
     });
 
     it("Scenario 2.2: should detect replay attack on revoked token and revoke entire family", async () => {

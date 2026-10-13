@@ -28,6 +28,11 @@ import {
   UserDto,
   MessageResponseDto,
 } from "./dto/auth-response.dto";
+import {
+  Verify2faDto,
+  Verify2faSetupDto,
+  TwoFactorSetupResponseDto,
+} from "./dto/two-factor.dto";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { Public } from "./decorators/public.decorator";
 import { CurrentUser } from "./decorators/current-user.decorator";
@@ -67,14 +72,16 @@ export class AuthController {
   ): Promise<AuthResponseDto> {
     const result = await this.authService.login(dto, ip, userAgent);
 
-    // Set secure httpOnly cookie for refresh token as defense-in-depth
-    res.cookie("hes_refresh_token", result.tokens.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/api/v1/auth",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    // Set secure httpOnly cookie for refresh token as defense-in-depth if tokens are issued
+    if (result.tokens?.refreshToken) {
+      res.cookie("hes_refresh_token", result.tokens.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        path: "/api/v1/auth",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+    }
 
     return result;
   }
@@ -108,13 +115,15 @@ export class AuthController {
       body.refreshToken || req.cookies?.["hes_refresh_token"];
     const result = await this.authService.refresh(refreshToken, ip, userAgent);
 
-    res.cookie("hes_refresh_token", result.tokens.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/api/v1/auth",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    if (result.tokens?.refreshToken) {
+      res.cookie("hes_refresh_token", result.tokens.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        path: "/api/v1/auth",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+    }
 
     return result;
   }
@@ -142,7 +151,13 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<MessageResponseDto> {
     const token = body?.refreshToken || req.cookies?.["hes_refresh_token"];
-    const result = await this.authService.logout(user.id, token, ip, userAgent);
+    const result = await this.authService.logout(
+      user.id,
+      token,
+      ip,
+      userAgent,
+      user.sessionId,
+    );
 
     res.clearCookie("hes_refresh_token", {
       httpOnly: true,
@@ -151,6 +166,93 @@ export class AuthController {
       path: "/api/v1/auth",
     });
 
+    return result;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post("2fa/setup")
+  @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth("JWT-auth")
+  @ApiOperation({
+    summary: "Enrôlement 2FA : Génération du secret TOTP",
+    description:
+      "Génère un secret Base32 et l'URL otpauth pour l'application d'authentification.",
+  })
+  @ApiResponse({ status: 200, type: TwoFactorSetupResponseDto })
+  async setup2fa(
+    @CurrentUser() user: AuthenticatedUser,
+  ): Promise<TwoFactorSetupResponseDto> {
+    return this.authService.setup2fa(user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post("2fa/verify-setup")
+  @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth("JWT-auth")
+  @ApiOperation({
+    summary: "Validation de l'enrôlement 2FA et émission des jetons complets",
+    description:
+      "Vérifie le code TOTP soumis, active le 2FA sur le compte et émet les jetons complets.",
+  })
+  @ApiResponse({ status: 200, type: AuthResponseDto })
+  async verifySetup2fa(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: Verify2faSetupDto,
+    @Ip() ip: string,
+    @Headers("user-agent") userAgent: string,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<AuthResponseDto> {
+    const result = await this.authService.verifySetup2fa(
+      user.id,
+      dto.code,
+      ip,
+      userAgent,
+    );
+    if (result.tokens?.refreshToken) {
+      res.cookie("hes_refresh_token", result.tokens.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        path: "/api/v1/auth",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+    }
+    return result;
+  }
+
+  @Public()
+  @Post("2fa/verify")
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary:
+      "Vérification TOTP après login (pour utilisateurs avec 2FA activé)",
+    description: "Vérifie le code TOTP et émet la paire de jetons complète.",
+  })
+  @ApiResponse({ status: 200, type: AuthResponseDto })
+  async verify2fa(
+    @Body() dto: Verify2faDto,
+    @Req() req: Request,
+    @Ip() ip: string,
+    @Headers("user-agent") userAgent: string,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<AuthResponseDto> {
+    const rawToken =
+      dto.tempToken || req.headers.authorization?.replace(/^Bearer\s+/i, "");
+    const result = await this.authService.verify2fa(
+      rawToken,
+      dto.code,
+      ip,
+      userAgent,
+    );
+    if (result.tokens?.refreshToken) {
+      res.cookie("hes_refresh_token", result.tokens.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        path: "/api/v1/auth",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+    }
     return result;
   }
 
