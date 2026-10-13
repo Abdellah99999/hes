@@ -86,6 +86,7 @@ export class RunsController {
   }
 
   @Get()
+  @RequirePermissions("runs:manage")
   @ApiOperation({
     summary:
       "Lister les tournées de livraison (cloisonné selon agence ou livreur)",
@@ -98,6 +99,7 @@ export class RunsController {
   }
 
   @Get("my-runs")
+  @RequirePermissions("runs:read")
   @ApiOperation({
     summary: "Consulter les tournées assignées au livreur connecté",
   })
@@ -109,6 +111,7 @@ export class RunsController {
   }
 
   @Get(":id")
+  @RequirePermissions("runs:manage")
   @ApiOperation({ summary: "Consulter le détail d'une tournée et ses colis" })
   @ApiResponse({ status: 200, description: "Détail de la tournée" })
   async getRun(

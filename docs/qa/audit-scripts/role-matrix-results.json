@@ -20,7 +20,7 @@
       "method": "POST",
       "path": "/agencies",
       "statuses": {
-        "ADMIN": 201,
+        "ADMIN": 409,
         "MANAGER": 403,
         "AGENT": 403,
         "DISPATCHER": 403,
@@ -127,7 +127,7 @@
       "statuses": {
         "ADMIN": 400,
         "MANAGER": 400,
-        "AGENT": 400,
+        "AGENT": 403,
         "DISPATCHER": 403,
         "COURIER": 403,
         "FINANCE": 403,
@@ -140,12 +140,12 @@
       "method": "GET",
       "path": "/customer-types",
       "statuses": {
-        "ADMIN": 403,
-        "MANAGER": 403,
-        "AGENT": 403,
+        "ADMIN": 200,
+        "MANAGER": 200,
+        "AGENT": 200,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 200,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -155,7 +155,7 @@
       "method": "POST",
       "path": "/customer-types",
       "statuses": {
-        "ADMIN": 403,
+        "ADMIN": 409,
         "MANAGER": 403,
         "AGENT": 403,
         "DISPATCHER": 403,
@@ -170,7 +170,7 @@
       "method": "DELETE",
       "path": "/customer-types/fake-id",
       "statuses": {
-        "ADMIN": 403,
+        "ADMIN": 404,
         "MANAGER": 403,
         "AGENT": 403,
         "DISPATCHER": 403,
@@ -185,14 +185,14 @@
       "method": "GET",
       "path": "/addresses",
       "statuses": {
-        "ADMIN": 403,
-        "MANAGER": 403,
-        "AGENT": 403,
+        "ADMIN": 200,
+        "MANAGER": 200,
+        "AGENT": 200,
         "DISPATCHER": 403,
         "COURIER": 403,
         "FINANCE": 403,
         "SUPPORT": 403,
-        "CLIENT": 403
+        "CLIENT": 200
       }
     },
     {
@@ -200,14 +200,14 @@
       "method": "POST",
       "path": "/addresses",
       "statuses": {
-        "ADMIN": 403,
-        "MANAGER": 403,
-        "AGENT": 403,
+        "ADMIN": 201,
+        "MANAGER": 201,
+        "AGENT": 201,
         "DISPATCHER": 403,
         "COURIER": 403,
         "FINANCE": 403,
         "SUPPORT": 403,
-        "CLIENT": 403
+        "CLIENT": 201
       }
     },
     {
@@ -215,9 +215,9 @@
       "method": "DELETE",
       "path": "/addresses/fake-id",
       "statuses": {
-        "ADMIN": 403,
-        "MANAGER": 403,
-        "AGENT": 403,
+        "ADMIN": 404,
+        "MANAGER": 404,
+        "AGENT": 404,
         "DISPATCHER": 403,
         "COURIER": 403,
         "FINANCE": 403,
@@ -324,9 +324,9 @@
         "MANAGER": 200,
         "AGENT": 200,
         "DISPATCHER": 200,
-        "COURIER": 200,
-        "FINANCE": 200,
-        "SUPPORT": 200,
+        "COURIER": 403,
+        "FINANCE": 403,
+        "SUPPORT": 403,
         "CLIENT": 200
       }
     },
@@ -339,9 +339,9 @@
         "MANAGER": 400,
         "AGENT": 400,
         "DISPATCHER": 400,
-        "COURIER": 400,
-        "FINANCE": 400,
-        "SUPPORT": 400,
+        "COURIER": 403,
+        "FINANCE": 403,
+        "SUPPORT": 403,
         "CLIENT": 400
       }
     },
@@ -355,9 +355,9 @@
         "AGENT": 400,
         "DISPATCHER": 400,
         "COURIER": 400,
-        "FINANCE": 400,
-        "SUPPORT": 400,
-        "CLIENT": 400
+        "FINANCE": 403,
+        "SUPPORT": 403,
+        "CLIENT": 403
       }
     },
     {
@@ -367,12 +367,12 @@
       "statuses": {
         "ADMIN": 200,
         "MANAGER": 200,
-        "AGENT": 200,
+        "AGENT": 403,
         "DISPATCHER": 200,
-        "COURIER": 200,
-        "FINANCE": 200,
-        "SUPPORT": 200,
-        "CLIENT": 200
+        "COURIER": 403,
+        "FINANCE": 403,
+        "SUPPORT": 403,
+        "CLIENT": 403
       }
     },
     {
@@ -382,12 +382,12 @@
       "statuses": {
         "ADMIN": 200,
         "MANAGER": 200,
-        "AGENT": 200,
-        "DISPATCHER": 200,
+        "AGENT": 403,
+        "DISPATCHER": 403,
         "COURIER": 200,
-        "FINANCE": 200,
-        "SUPPORT": 200,
-        "CLIENT": 200
+        "FINANCE": 403,
+        "SUPPORT": 403,
+        "CLIENT": 403
       }
     },
     {
@@ -415,9 +415,9 @@
         "AGENT": 200,
         "DISPATCHER": 200,
         "COURIER": 200,
-        "FINANCE": 200,
+        "FINANCE": 403,
         "SUPPORT": 200,
-        "CLIENT": 200
+        "CLIENT": 403
       }
     },
     {
@@ -427,12 +427,12 @@
       "statuses": {
         "ADMIN": 400,
         "MANAGER": 400,
-        "AGENT": 400,
-        "DISPATCHER": 400,
+        "AGENT": 403,
+        "DISPATCHER": 403,
         "COURIER": 400,
-        "FINANCE": 400,
-        "SUPPORT": 400,
-        "CLIENT": 400
+        "FINANCE": 403,
+        "SUPPORT": 403,
+        "CLIENT": 403
       }
     },
     {
@@ -442,12 +442,12 @@
       "statuses": {
         "ADMIN": 400,
         "MANAGER": 400,
-        "AGENT": 400,
-        "DISPATCHER": 400,
+        "AGENT": 403,
+        "DISPATCHER": 403,
         "COURIER": 400,
-        "FINANCE": 400,
-        "SUPPORT": 400,
-        "CLIENT": 400
+        "FINANCE": 403,
+        "SUPPORT": 403,
+        "CLIENT": 403
       }
     },
     {
@@ -458,11 +458,11 @@
         "ADMIN": 200,
         "MANAGER": 200,
         "AGENT": 200,
-        "DISPATCHER": 200,
-        "COURIER": 200,
-        "FINANCE": 200,
-        "SUPPORT": 200,
-        "CLIENT": 200
+        "DISPATCHER": 403,
+        "COURIER": 403,
+        "FINANCE": 403,
+        "SUPPORT": 403,
+        "CLIENT": 403
       }
     },
     {
@@ -472,9 +472,9 @@
       "statuses": {
         "ADMIN": 400,
         "MANAGER": 400,
-        "AGENT": 403,
+        "AGENT": 400,
         "DISPATCHER": 403,
-        "COURIER": 400,
+        "COURIER": 403,
         "FINANCE": 403,
         "SUPPORT": 403,
         "CLIENT": 403
@@ -488,11 +488,11 @@
         "ADMIN": 400,
         "MANAGER": 400,
         "AGENT": 400,
-        "DISPATCHER": 400,
+        "DISPATCHER": 403,
         "COURIER": 400,
-        "FINANCE": 400,
-        "SUPPORT": 400,
-        "CLIENT": 400
+        "FINANCE": 403,
+        "SUPPORT": 403,
+        "CLIENT": 403
       }
     },
     {
@@ -502,12 +502,12 @@
       "statuses": {
         "ADMIN": 200,
         "MANAGER": 200,
-        "AGENT": 200,
-        "DISPATCHER": 200,
-        "COURIER": 200,
-        "FINANCE": 200,
+        "AGENT": 403,
+        "DISPATCHER": 403,
+        "COURIER": 403,
+        "FINANCE": 403,
         "SUPPORT": 200,
-        "CLIENT": 200
+        "CLIENT": 403
       }
     },
     {
@@ -518,11 +518,11 @@
         "ADMIN": 400,
         "MANAGER": 400,
         "AGENT": 400,
-        "DISPATCHER": 400,
+        "DISPATCHER": 403,
         "COURIER": 400,
-        "FINANCE": 400,
+        "FINANCE": 403,
         "SUPPORT": 400,
-        "CLIENT": 400
+        "CLIENT": 403
       }
     },
     {
@@ -534,7 +534,7 @@
         "MANAGER": 400,
         "AGENT": 403,
         "DISPATCHER": 403,
-        "COURIER": 400,
+        "COURIER": 403,
         "FINANCE": 403,
         "SUPPORT": 400,
         "CLIENT": 403
@@ -548,10 +548,10 @@
         "ADMIN": 200,
         "MANAGER": 200,
         "AGENT": 200,
-        "DISPATCHER": 200,
-        "COURIER": 200,
+        "DISPATCHER": 403,
+        "COURIER": 403,
         "FINANCE": 200,
-        "SUPPORT": 200,
+        "SUPPORT": 403,
         "CLIENT": 200
       }
     },
@@ -560,12 +560,12 @@
       "method": "POST",
       "path": "/invoices",
       "statuses": {
-        "ADMIN": 403,
+        "ADMIN": 400,
         "MANAGER": 403,
         "AGENT": 403,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 400,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -575,12 +575,12 @@
       "method": "POST",
       "path": "/invoices/fake-id/payments",
       "statuses": {
-        "ADMIN": 403,
+        "ADMIN": 400,
         "MANAGER": 403,
         "AGENT": 403,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 400,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -656,7 +656,7 @@
         "DISPATCHER": 403,
         "COURIER": 403,
         "FINANCE": 400,
-        "SUPPORT": 400,
+        "SUPPORT": 403,
         "CLIENT": 403
       }
     },
@@ -671,7 +671,7 @@
         "DISPATCHER": 403,
         "COURIER": 403,
         "FINANCE": 400,
-        "SUPPORT": 400,
+        "SUPPORT": 403,
         "CLIENT": 403
       }
     },
@@ -681,7 +681,7 @@
       "path": "/users",
       "statuses": {
         "ADMIN": 200,
-        "MANAGER": 200,
+        "MANAGER": 403,
         "AGENT": 403,
         "DISPATCHER": 403,
         "COURIER": 403,
@@ -721,638 +721,5 @@
       }
     }
   ],
-  "discrepancies": [
-    {
-      "type": "GRAVE",
-      "role": "Agent Agence",
-      "roleKey": "AGENT",
-      "endpoint": "POST /customers/fake-id/managers",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "BLOQUANT",
-      "role": "Admin",
-      "roleKey": "ADMIN",
-      "endpoint": "GET /customer-types",
-      "status": 403,
-      "detail": "Accès refusé à tort (HTTP 403) alors que le rôle devrait y avoir accès."
-    },
-    {
-      "type": "BLOQUANT",
-      "role": "Resp. Logistique",
-      "roleKey": "MANAGER",
-      "endpoint": "GET /customer-types",
-      "status": 403,
-      "detail": "Accès refusé à tort (HTTP 403) alors que le rôle devrait y avoir accès."
-    },
-    {
-      "type": "BLOQUANT",
-      "role": "Agent Agence",
-      "roleKey": "AGENT",
-      "endpoint": "GET /customer-types",
-      "status": 403,
-      "detail": "Accès refusé à tort (HTTP 403) alors que le rôle devrait y avoir accès."
-    },
-    {
-      "type": "BLOQUANT",
-      "role": "Comptable",
-      "roleKey": "FINANCE",
-      "endpoint": "GET /customer-types",
-      "status": 403,
-      "detail": "Accès refusé à tort (HTTP 403) alors que le rôle devrait y avoir accès."
-    },
-    {
-      "type": "BLOQUANT",
-      "role": "Admin",
-      "roleKey": "ADMIN",
-      "endpoint": "POST /customer-types",
-      "status": 403,
-      "detail": "Accès refusé à tort (HTTP 403) alors que le rôle devrait y avoir accès."
-    },
-    {
-      "type": "BLOQUANT",
-      "role": "Admin",
-      "roleKey": "ADMIN",
-      "endpoint": "DELETE /customer-types/fake-id",
-      "status": 403,
-      "detail": "Accès refusé à tort (HTTP 403) alors que le rôle devrait y avoir accès."
-    },
-    {
-      "type": "BLOQUANT",
-      "role": "Admin",
-      "roleKey": "ADMIN",
-      "endpoint": "GET /addresses",
-      "status": 403,
-      "detail": "Accès refusé à tort (HTTP 403) alors que le rôle devrait y avoir accès."
-    },
-    {
-      "type": "BLOQUANT",
-      "role": "Resp. Logistique",
-      "roleKey": "MANAGER",
-      "endpoint": "GET /addresses",
-      "status": 403,
-      "detail": "Accès refusé à tort (HTTP 403) alors que le rôle devrait y avoir accès."
-    },
-    {
-      "type": "BLOQUANT",
-      "role": "Agent Agence",
-      "roleKey": "AGENT",
-      "endpoint": "GET /addresses",
-      "status": 403,
-      "detail": "Accès refusé à tort (HTTP 403) alors que le rôle devrait y avoir accès."
-    },
-    {
-      "type": "BLOQUANT",
-      "role": "Client",
-      "roleKey": "CLIENT",
-      "endpoint": "GET /addresses",
-      "status": 403,
-      "detail": "Accès refusé à tort (HTTP 403) alors que le rôle devrait y avoir accès."
-    },
-    {
-      "type": "BLOQUANT",
-      "role": "Admin",
-      "roleKey": "ADMIN",
-      "endpoint": "POST /addresses",
-      "status": 403,
-      "detail": "Accès refusé à tort (HTTP 403) alors que le rôle devrait y avoir accès."
-    },
-    {
-      "type": "BLOQUANT",
-      "role": "Resp. Logistique",
-      "roleKey": "MANAGER",
-      "endpoint": "POST /addresses",
-      "status": 403,
-      "detail": "Accès refusé à tort (HTTP 403) alors que le rôle devrait y avoir accès."
-    },
-    {
-      "type": "BLOQUANT",
-      "role": "Agent Agence",
-      "roleKey": "AGENT",
-      "endpoint": "POST /addresses",
-      "status": 403,
-      "detail": "Accès refusé à tort (HTTP 403) alors que le rôle devrait y avoir accès."
-    },
-    {
-      "type": "BLOQUANT",
-      "role": "Client",
-      "roleKey": "CLIENT",
-      "endpoint": "POST /addresses",
-      "status": 403,
-      "detail": "Accès refusé à tort (HTTP 403) alors que le rôle devrait y avoir accès."
-    },
-    {
-      "type": "BLOQUANT",
-      "role": "Admin",
-      "roleKey": "ADMIN",
-      "endpoint": "DELETE /addresses/fake-id",
-      "status": 403,
-      "detail": "Accès refusé à tort (HTTP 403) alors que le rôle devrait y avoir accès."
-    },
-    {
-      "type": "BLOQUANT",
-      "role": "Resp. Logistique",
-      "roleKey": "MANAGER",
-      "endpoint": "DELETE /addresses/fake-id",
-      "status": 403,
-      "detail": "Accès refusé à tort (HTTP 403) alors que le rôle devrait y avoir accès."
-    },
-    {
-      "type": "BLOQUANT",
-      "role": "Agent Agence",
-      "roleKey": "AGENT",
-      "endpoint": "DELETE /addresses/fake-id",
-      "status": 403,
-      "detail": "Accès refusé à tort (HTTP 403) alors que le rôle devrait y avoir accès."
-    },
-    {
-      "type": "GRAVE",
-      "role": "Livreur",
-      "roleKey": "COURIER",
-      "endpoint": "GET /collections",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Comptable",
-      "roleKey": "FINANCE",
-      "endpoint": "GET /collections",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Support",
-      "roleKey": "SUPPORT",
-      "endpoint": "GET /collections",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Livreur",
-      "roleKey": "COURIER",
-      "endpoint": "POST /collections",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Comptable",
-      "roleKey": "FINANCE",
-      "endpoint": "POST /collections",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Support",
-      "roleKey": "SUPPORT",
-      "endpoint": "POST /collections",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Comptable",
-      "roleKey": "FINANCE",
-      "endpoint": "POST /collections/fake-id/complete",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Support",
-      "roleKey": "SUPPORT",
-      "endpoint": "POST /collections/fake-id/complete",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Client",
-      "roleKey": "CLIENT",
-      "endpoint": "POST /collections/fake-id/complete",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Agent Agence",
-      "roleKey": "AGENT",
-      "endpoint": "GET /runs",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Livreur",
-      "roleKey": "COURIER",
-      "endpoint": "GET /runs",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Comptable",
-      "roleKey": "FINANCE",
-      "endpoint": "GET /runs",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Support",
-      "roleKey": "SUPPORT",
-      "endpoint": "GET /runs",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Client",
-      "roleKey": "CLIENT",
-      "endpoint": "GET /runs",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Agent Agence",
-      "roleKey": "AGENT",
-      "endpoint": "GET /runs/my-runs",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Agent Collecte",
-      "roleKey": "DISPATCHER",
-      "endpoint": "GET /runs/my-runs",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Comptable",
-      "roleKey": "FINANCE",
-      "endpoint": "GET /runs/my-runs",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Support",
-      "roleKey": "SUPPORT",
-      "endpoint": "GET /runs/my-runs",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Client",
-      "roleKey": "CLIENT",
-      "endpoint": "GET /runs/my-runs",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Comptable",
-      "roleKey": "FINANCE",
-      "endpoint": "GET /deliveries/refusal-reasons",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Client",
-      "roleKey": "CLIENT",
-      "endpoint": "GET /deliveries/refusal-reasons",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Agent Agence",
-      "roleKey": "AGENT",
-      "endpoint": "POST /deliveries/fake-parcel/confirm",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Agent Collecte",
-      "roleKey": "DISPATCHER",
-      "endpoint": "POST /deliveries/fake-parcel/confirm",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Comptable",
-      "roleKey": "FINANCE",
-      "endpoint": "POST /deliveries/fake-parcel/confirm",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Support",
-      "roleKey": "SUPPORT",
-      "endpoint": "POST /deliveries/fake-parcel/confirm",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Client",
-      "roleKey": "CLIENT",
-      "endpoint": "POST /deliveries/fake-parcel/confirm",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Agent Agence",
-      "roleKey": "AGENT",
-      "endpoint": "POST /deliveries/fake-parcel/refuse",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Agent Collecte",
-      "roleKey": "DISPATCHER",
-      "endpoint": "POST /deliveries/fake-parcel/refuse",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Comptable",
-      "roleKey": "FINANCE",
-      "endpoint": "POST /deliveries/fake-parcel/refuse",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Support",
-      "roleKey": "SUPPORT",
-      "endpoint": "POST /deliveries/fake-parcel/refuse",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Client",
-      "roleKey": "CLIENT",
-      "endpoint": "POST /deliveries/fake-parcel/refuse",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Agent Collecte",
-      "roleKey": "DISPATCHER",
-      "endpoint": "GET /returns",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Livreur",
-      "roleKey": "COURIER",
-      "endpoint": "GET /returns",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Comptable",
-      "roleKey": "FINANCE",
-      "endpoint": "GET /returns",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Support",
-      "roleKey": "SUPPORT",
-      "endpoint": "GET /returns",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Client",
-      "roleKey": "CLIENT",
-      "endpoint": "GET /returns",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "BLOQUANT",
-      "role": "Agent Agence",
-      "roleKey": "AGENT",
-      "endpoint": "POST /returns",
-      "status": 403,
-      "detail": "Accès refusé à tort (HTTP 403) alors que le rôle devrait y avoir accès."
-    },
-    {
-      "type": "GRAVE",
-      "role": "Livreur",
-      "roleKey": "COURIER",
-      "endpoint": "POST /returns",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Agent Collecte",
-      "roleKey": "DISPATCHER",
-      "endpoint": "POST /returns/recover",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Comptable",
-      "roleKey": "FINANCE",
-      "endpoint": "POST /returns/recover",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Support",
-      "roleKey": "SUPPORT",
-      "endpoint": "POST /returns/recover",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Client",
-      "roleKey": "CLIENT",
-      "endpoint": "POST /returns/recover",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Agent Agence",
-      "roleKey": "AGENT",
-      "endpoint": "GET /incidents",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Agent Collecte",
-      "roleKey": "DISPATCHER",
-      "endpoint": "GET /incidents",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Livreur",
-      "roleKey": "COURIER",
-      "endpoint": "GET /incidents",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Comptable",
-      "roleKey": "FINANCE",
-      "endpoint": "GET /incidents",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Client",
-      "roleKey": "CLIENT",
-      "endpoint": "GET /incidents",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Agent Collecte",
-      "roleKey": "DISPATCHER",
-      "endpoint": "POST /incidents",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Comptable",
-      "roleKey": "FINANCE",
-      "endpoint": "POST /incidents",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Client",
-      "roleKey": "CLIENT",
-      "endpoint": "POST /incidents",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Livreur",
-      "roleKey": "COURIER",
-      "endpoint": "POST /incidents/fake-id/decide",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Agent Collecte",
-      "roleKey": "DISPATCHER",
-      "endpoint": "GET /invoices",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Livreur",
-      "roleKey": "COURIER",
-      "endpoint": "GET /invoices",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Support",
-      "roleKey": "SUPPORT",
-      "endpoint": "GET /invoices",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "BLOQUANT",
-      "role": "Admin",
-      "roleKey": "ADMIN",
-      "endpoint": "POST /invoices",
-      "status": 403,
-      "detail": "Accès refusé à tort (HTTP 403) alors que le rôle devrait y avoir accès."
-    },
-    {
-      "type": "BLOQUANT",
-      "role": "Comptable",
-      "roleKey": "FINANCE",
-      "endpoint": "POST /invoices",
-      "status": 403,
-      "detail": "Accès refusé à tort (HTTP 403) alors que le rôle devrait y avoir accès."
-    },
-    {
-      "type": "BLOQUANT",
-      "role": "Admin",
-      "roleKey": "ADMIN",
-      "endpoint": "POST /invoices/fake-id/payments",
-      "status": 403,
-      "detail": "Accès refusé à tort (HTTP 403) alors que le rôle devrait y avoir accès."
-    },
-    {
-      "type": "BLOQUANT",
-      "role": "Comptable",
-      "roleKey": "FINANCE",
-      "endpoint": "POST /invoices/fake-id/payments",
-      "status": 403,
-      "detail": "Accès refusé à tort (HTTP 403) alors que le rôle devrait y avoir accès."
-    },
-    {
-      "type": "GRAVE",
-      "role": "Support",
-      "roleKey": "SUPPORT",
-      "endpoint": "GET /reports/data?type=shipments",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Support",
-      "roleKey": "SUPPORT",
-      "endpoint": "GET /reports/export?type=shipments&format=EXCEL",
-      "status": 400,
-      "detail": "Accès accordé à tort (HTTP 400) au lieu de 403 Forbidden !"
-    },
-    {
-      "type": "GRAVE",
-      "role": "Resp. Logistique",
-      "roleKey": "MANAGER",
-      "endpoint": "GET /users",
-      "status": 200,
-      "detail": "Accès accordé à tort (HTTP 200) au lieu de 403 Forbidden !"
-    }
-  ]
+  "discrepancies": []
 }

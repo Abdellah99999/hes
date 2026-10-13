@@ -336,8 +336,17 @@ export class PrismaShipmentRepository implements IShipmentRepository {
       ...(query.globalStatus ? { globalStatus: query.globalStatus } : {}),
     };
 
-    // Agency isolation: for local agents, only shipments where origin OR destination matches user agency
-    if (!user.isGlobalScope && user.agencyId) {
+    // Customer isolation: client only sees their own shipments
+    if (
+      user.role === "CLIENT" ||
+      user.role === "CUSTOMER" ||
+      user.role === "CUSTOMER_SERVICE"
+    ) {
+      if (user.customerId) {
+        where.senderCustomerId = user.customerId;
+      }
+    } else if (!user.isGlobalScope && user.agencyId) {
+      // Agency isolation: for local agents, only shipments where origin OR destination matches user agency
       where.OR = [
         { originAgencyId: user.agencyId },
         { destinationAgencyId: user.agencyId },

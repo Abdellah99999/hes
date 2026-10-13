@@ -56,6 +56,7 @@ export class ReturnsController {
 
   @Post("recover")
   @HttpCode(HttpStatus.OK)
+  @RequirePermissions("returns:recover")
   @ApiOperation({
     summary:
       "Récupérer un colis retour par scan ou saisie manuelle du numéro BL/Tracking",
@@ -72,6 +73,7 @@ export class ReturnsController {
   }
 
   @Get()
+  @RequirePermissions("returns:read")
   @ApiOperation({
     summary:
       "Lister les dossiers et items de retour (cloisonné selon agence ou livreur)",

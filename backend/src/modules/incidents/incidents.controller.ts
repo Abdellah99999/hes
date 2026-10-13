@@ -40,6 +40,7 @@ export class IncidentsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @RequirePermissions("incidents:create")
   @ApiOperation({
     summary: "Déclarer un incident (perte, casse, vol, litige de livraison)",
   })
@@ -74,6 +75,7 @@ export class IncidentsController {
   }
 
   @Get()
+  @RequirePermissions("incidents:read")
   @ApiOperation({
     summary: "Lister les dossiers d'incidents (cloisonné selon rôle/agence)",
   })
@@ -93,6 +95,7 @@ export class IncidentsController {
   }
 
   @Get(":id")
+  @RequirePermissions("incidents:read")
   @ApiOperation({
     summary:
       "Consulter le détail complet d'un incident et son historique d'enquête",

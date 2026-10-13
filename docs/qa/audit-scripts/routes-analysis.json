@@ -1,6 +1,6 @@
 {
-  "unprotectedCount": 25,
-  "protectedCount": 72,
+  "unprotectedCount": 10,
+  "protectedCount": 87,
   "unprotectedRoutes": [
     {
       "file": "backend\\src\\modules\\auth\\auth.controller.ts",
@@ -57,101 +57,11 @@
       "requiredPermission": null
     },
     {
-      "file": "backend\\src\\modules\\billing\\invoices.controller.ts",
-      "httpMethod": "GET",
-      "route": "/api/v1/invoices/:id",
-      "isPublic": false,
-      "hasJwtGuard": true,
-      "hasPermissionGuard": false,
-      "requiredPermission": null
-    },
-    {
-      "file": "backend\\src\\modules\\collections\\collections.controller.ts",
-      "httpMethod": "POST",
-      "route": "/api/v1/collections",
-      "isPublic": false,
-      "hasJwtGuard": true,
-      "hasPermissionGuard": false,
-      "requiredPermission": null
-    },
-    {
-      "file": "backend\\src\\modules\\collections\\collections.controller.ts",
-      "httpMethod": "GET",
-      "route": "/api/v1/collections",
-      "isPublic": false,
-      "hasJwtGuard": true,
-      "hasPermissionGuard": false,
-      "requiredPermission": null
-    },
-    {
-      "file": "backend\\src\\modules\\collections\\collections.controller.ts",
-      "httpMethod": "GET",
-      "route": "/api/v1/collections/my-missions",
-      "isPublic": false,
-      "hasJwtGuard": true,
-      "hasPermissionGuard": false,
-      "requiredPermission": null
-    },
-    {
-      "file": "backend\\src\\modules\\collections\\collections.controller.ts",
-      "httpMethod": "GET",
-      "route": "/api/v1/collections/:id",
-      "isPublic": false,
-      "hasJwtGuard": true,
-      "hasPermissionGuard": false,
-      "requiredPermission": null
-    },
-    {
-      "file": "backend\\src\\modules\\deliveries\\deliveries.controller.ts",
-      "httpMethod": "GET",
-      "route": "/api/v1/deliveries/refusal-reasons",
-      "isPublic": false,
-      "hasJwtGuard": true,
-      "hasPermissionGuard": false,
-      "requiredPermission": null
-    },
-    {
-      "file": "backend\\src\\modules\\deliveries\\deliveries.controller.ts",
-      "httpMethod": "POST",
-      "route": "/api/v1/deliveries/:parcelId/confirm",
-      "isPublic": false,
-      "hasJwtGuard": true,
-      "hasPermissionGuard": false,
-      "requiredPermission": null
-    },
-    {
-      "file": "backend\\src\\modules\\deliveries\\deliveries.controller.ts",
-      "httpMethod": "POST",
-      "route": "/api/v1/deliveries/:parcelId/refuse",
-      "isPublic": false,
-      "hasJwtGuard": true,
-      "hasPermissionGuard": false,
-      "requiredPermission": null
-    },
-    {
       "file": "backend\\src\\modules\\health\\health.controller.ts",
       "httpMethod": "GET",
       "route": "/api/v1/health",
       "isPublic": false,
       "hasJwtGuard": false,
-      "hasPermissionGuard": false,
-      "requiredPermission": null
-    },
-    {
-      "file": "backend\\src\\modules\\incidents\\incidents.controller.ts",
-      "httpMethod": "POST",
-      "route": "/api/v1/incidents",
-      "isPublic": false,
-      "hasJwtGuard": true,
-      "hasPermissionGuard": false,
-      "requiredPermission": null
-    },
-    {
-      "file": "backend\\src\\modules\\incidents\\incidents.controller.ts",
-      "httpMethod": "GET",
-      "route": "/api/v1/incidents/:id",
-      "isPublic": false,
-      "hasJwtGuard": true,
       "hasPermissionGuard": false,
       "requiredPermission": null
     },
@@ -181,51 +91,6 @@
       "hasJwtGuard": true,
       "hasPermissionGuard": false,
       "requiredPermission": null
-    },
-    {
-      "file": "backend\\src\\modules\\reports\\reports.controller.ts",
-      "httpMethod": "GET",
-      "route": "/api/v1/reports/data",
-      "isPublic": false,
-      "hasJwtGuard": true,
-      "hasPermissionGuard": false,
-      "requiredPermission": null
-    },
-    {
-      "file": "backend\\src\\modules\\reports\\reports.controller.ts",
-      "httpMethod": "GET",
-      "route": "/api/v1/reports/export",
-      "isPublic": false,
-      "hasJwtGuard": true,
-      "hasPermissionGuard": false,
-      "requiredPermission": null
-    },
-    {
-      "file": "backend\\src\\modules\\returns\\returns.controller.ts",
-      "httpMethod": "GET",
-      "route": "/api/v1/returns",
-      "isPublic": false,
-      "hasJwtGuard": true,
-      "hasPermissionGuard": false,
-      "requiredPermission": null
-    },
-    {
-      "file": "backend\\src\\modules\\runs\\runs.controller.ts",
-      "httpMethod": "GET",
-      "route": "/api/v1/runs/my-runs",
-      "isPublic": false,
-      "hasJwtGuard": true,
-      "hasPermissionGuard": false,
-      "requiredPermission": null
-    },
-    {
-      "file": "backend\\src\\modules\\runs\\runs.controller.ts",
-      "httpMethod": "GET",
-      "route": "/api/v1/runs/:id",
-      "isPublic": false,
-      "hasJwtGuard": true,
-      "hasPermissionGuard": false,
-      "requiredPermission": null
     }
   ],
   "protectedRoutes": [
@@ -236,7 +101,7 @@
       "isPublic": false,
       "hasJwtGuard": true,
       "hasPermissionGuard": true,
-      "requiredPermission": "\"addresses:manage\""
+      "requiredPermission": "\"addresses:create\""
     },
     {
       "file": "backend\\src\\modules\\addresses\\addresses.controller.ts",
@@ -245,7 +110,7 @@
       "isPublic": false,
       "hasJwtGuard": true,
       "hasPermissionGuard": true,
-      "requiredPermission": "\"addresses:manage\""
+      "requiredPermission": "\"addresses:create\""
     },
     {
       "file": "backend\\src\\modules\\addresses\\addresses.controller.ts",
@@ -326,7 +191,7 @@
       "isPublic": false,
       "hasJwtGuard": true,
       "hasPermissionGuard": true,
-      "requiredPermission": "\"billing:manage\""
+      "requiredPermission": "\"invoices:manage\""
     },
     {
       "file": "backend\\src\\modules\\billing\\invoices.controller.ts",
@@ -335,7 +200,16 @@
       "isPublic": false,
       "hasJwtGuard": true,
       "hasPermissionGuard": true,
-      "requiredPermission": "\"billing:manage\""
+      "requiredPermission": "\"invoices:manage\""
+    },
+    {
+      "file": "backend\\src\\modules\\billing\\invoices.controller.ts",
+      "httpMethod": "GET",
+      "route": "/api/v1/invoices/:id",
+      "isPublic": false,
+      "hasJwtGuard": true,
+      "hasPermissionGuard": true,
+      "requiredPermission": "\"invoices:read\""
     },
     {
       "file": "backend\\src\\modules\\billing\\invoices.controller.ts",
@@ -344,7 +218,43 @@
       "isPublic": false,
       "hasJwtGuard": true,
       "hasPermissionGuard": true,
-      "requiredPermission": "\"billing:manage\""
+      "requiredPermission": "\"invoices:read\""
+    },
+    {
+      "file": "backend\\src\\modules\\collections\\collections.controller.ts",
+      "httpMethod": "POST",
+      "route": "/api/v1/collections",
+      "isPublic": false,
+      "hasJwtGuard": true,
+      "hasPermissionGuard": true,
+      "requiredPermission": "\"collections:create\""
+    },
+    {
+      "file": "backend\\src\\modules\\collections\\collections.controller.ts",
+      "httpMethod": "GET",
+      "route": "/api/v1/collections",
+      "isPublic": false,
+      "hasJwtGuard": true,
+      "hasPermissionGuard": true,
+      "requiredPermission": "\"collections:create\""
+    },
+    {
+      "file": "backend\\src\\modules\\collections\\collections.controller.ts",
+      "httpMethod": "GET",
+      "route": "/api/v1/collections/my-missions",
+      "isPublic": false,
+      "hasJwtGuard": true,
+      "hasPermissionGuard": true,
+      "requiredPermission": "\"collections:read\""
+    },
+    {
+      "file": "backend\\src\\modules\\collections\\collections.controller.ts",
+      "httpMethod": "GET",
+      "route": "/api/v1/collections/:id",
+      "isPublic": false,
+      "hasJwtGuard": true,
+      "hasPermissionGuard": true,
+      "requiredPermission": "\"runs:read\""
     },
     {
       "file": "backend\\src\\modules\\collections\\collections.controller.ts",
@@ -353,7 +263,7 @@
       "isPublic": false,
       "hasJwtGuard": true,
       "hasPermissionGuard": true,
-      "requiredPermission": "\"collections:manage\""
+      "requiredPermission": "\"collections:read\""
     },
     {
       "file": "backend\\src\\modules\\collections\\collections.controller.ts",
@@ -519,6 +429,33 @@
     },
     {
       "file": "backend\\src\\modules\\deliveries\\deliveries.controller.ts",
+      "httpMethod": "GET",
+      "route": "/api/v1/deliveries/refusal-reasons",
+      "isPublic": false,
+      "hasJwtGuard": true,
+      "hasPermissionGuard": true,
+      "requiredPermission": "\"deliveries:read\""
+    },
+    {
+      "file": "backend\\src\\modules\\deliveries\\deliveries.controller.ts",
+      "httpMethod": "POST",
+      "route": "/api/v1/deliveries/:parcelId/confirm",
+      "isPublic": false,
+      "hasJwtGuard": true,
+      "hasPermissionGuard": true,
+      "requiredPermission": "\"deliveries:read\""
+    },
+    {
+      "file": "backend\\src\\modules\\deliveries\\deliveries.controller.ts",
+      "httpMethod": "POST",
+      "route": "/api/v1/deliveries/:parcelId/refuse",
+      "isPublic": false,
+      "hasJwtGuard": true,
+      "hasPermissionGuard": true,
+      "requiredPermission": "\"deliveries:confirm\""
+    },
+    {
+      "file": "backend\\src\\modules\\deliveries\\deliveries.controller.ts",
       "httpMethod": "POST",
       "route": "/api/v1/deliveries/:parcelId/deferred-pod",
       "isPublic": false,
@@ -556,11 +493,20 @@
     {
       "file": "backend\\src\\modules\\incidents\\incidents.controller.ts",
       "httpMethod": "POST",
+      "route": "/api/v1/incidents",
+      "isPublic": false,
+      "hasJwtGuard": true,
+      "hasPermissionGuard": true,
+      "requiredPermission": "\"incidents:create\""
+    },
+    {
+      "file": "backend\\src\\modules\\incidents\\incidents.controller.ts",
+      "httpMethod": "POST",
       "route": "/api/v1/incidents/:id/decide",
       "isPublic": false,
       "hasJwtGuard": true,
       "hasPermissionGuard": true,
-      "requiredPermission": "\"incidents:manage\""
+      "requiredPermission": "\"incidents:create\""
     },
     {
       "file": "backend\\src\\modules\\incidents\\incidents.controller.ts",
@@ -572,6 +518,15 @@
       "requiredPermission": "\"incidents:manage\""
     },
     {
+      "file": "backend\\src\\modules\\incidents\\incidents.controller.ts",
+      "httpMethod": "GET",
+      "route": "/api/v1/incidents/:id",
+      "isPublic": false,
+      "hasJwtGuard": true,
+      "hasPermissionGuard": true,
+      "requiredPermission": "\"incidents:read\""
+    },
+    {
       "file": "backend\\src\\modules\\reports\\reports.controller.ts",
       "httpMethod": "GET",
       "route": "/api/v1/reports/dashboard",
@@ -579,6 +534,24 @@
       "hasJwtGuard": true,
       "hasPermissionGuard": true,
       "requiredPermission": "\"reports:view\""
+    },
+    {
+      "file": "backend\\src\\modules\\reports\\reports.controller.ts",
+      "httpMethod": "GET",
+      "route": "/api/v1/reports/data",
+      "isPublic": false,
+      "hasJwtGuard": true,
+      "hasPermissionGuard": true,
+      "requiredPermission": "\"reports:export\""
+    },
+    {
+      "file": "backend\\src\\modules\\reports\\reports.controller.ts",
+      "httpMethod": "GET",
+      "route": "/api/v1/reports/export",
+      "isPublic": false,
+      "hasJwtGuard": true,
+      "hasPermissionGuard": true,
+      "requiredPermission": "\"reports:export\""
     },
     {
       "file": "backend\\src\\modules\\returns\\returns.controller.ts",
@@ -597,6 +570,15 @@
       "hasJwtGuard": true,
       "hasPermissionGuard": true,
       "requiredPermission": "\"returns:manage\""
+    },
+    {
+      "file": "backend\\src\\modules\\returns\\returns.controller.ts",
+      "httpMethod": "GET",
+      "route": "/api/v1/returns",
+      "isPublic": false,
+      "hasJwtGuard": true,
+      "hasPermissionGuard": true,
+      "requiredPermission": "\"returns:recover\""
     },
     {
       "file": "backend\\src\\modules\\runs\\runs.controller.ts",
@@ -633,6 +615,24 @@
       "hasJwtGuard": true,
       "hasPermissionGuard": true,
       "requiredPermission": "\"runs:manage\""
+    },
+    {
+      "file": "backend\\src\\modules\\runs\\runs.controller.ts",
+      "httpMethod": "GET",
+      "route": "/api/v1/runs/my-runs",
+      "isPublic": false,
+      "hasJwtGuard": true,
+      "hasPermissionGuard": true,
+      "requiredPermission": "\"runs:manage\""
+    },
+    {
+      "file": "backend\\src\\modules\\runs\\runs.controller.ts",
+      "httpMethod": "GET",
+      "route": "/api/v1/runs/:id",
+      "isPublic": false,
+      "hasJwtGuard": true,
+      "hasPermissionGuard": true,
+      "requiredPermission": "\"runs:read\""
     },
     {
       "file": "backend\\src\\modules\\shipments\\shipments.controller.ts",

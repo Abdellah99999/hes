@@ -35,7 +35,7 @@ export class AddressesController {
   constructor(private readonly useCases: AddressesUseCases) {}
 
   @Post()
-  @RequirePermissions("addresses:manage")
+  @RequirePermissions("addresses:create")
   @ApiOperation({ summary: "Créer une nouvelle adresse (isolée par agence)" })
   @ApiResponse({ status: 201, description: "Adresse créée" })
   async create(

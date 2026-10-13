@@ -122,7 +122,7 @@ export class CustomersController {
   }
 
   @Post(":id/managers")
-  @RequirePermissions("customers:manage")
+  @RequirePermissions("customers:assign")
   @ApiOperation({
     summary:
       "Assigner ou changer le collaborateur interne responsable (clôture atomique de l'ancien + historique)",

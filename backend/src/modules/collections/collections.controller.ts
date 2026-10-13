@@ -45,6 +45,7 @@ export class CollectionsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @RequirePermissions("collections:create")
   @ApiOperation({
     summary:
       "Créer une demande d'enlèvement / collecte (Portail client ou agence)",
@@ -61,6 +62,7 @@ export class CollectionsController {
   }
 
   @Get()
+  @RequirePermissions("collections:read")
   @ApiOperation({
     summary:
       "Lister les collectes avec cloisonnement automatique selon le rôle (Client, Coursier, Dispatch)",
@@ -73,6 +75,7 @@ export class CollectionsController {
   }
 
   @Get("my-missions")
+  @RequirePermissions("runs:read")
   @ApiOperation({
     summary:
       "Consulter la feuille de route du coursier connecté pour la journée",
@@ -87,6 +90,7 @@ export class CollectionsController {
   }
 
   @Get(":id")
+  @RequirePermissions("collections:read")
   @ApiOperation({
     summary:
       "Consulter le détail d'une demande de collecte et son expédition générée",
@@ -112,6 +116,7 @@ export class CollectionsController {
 
   @Post(":id/complete")
   @HttpCode(HttpStatus.OK)
+  @RequirePermissions("collections:manage")
   @ApiOperation({
     summary:
       "Clôturer la collecte et générer automatiquement l'expédition et ses colis",

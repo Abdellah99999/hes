@@ -41,7 +41,7 @@ export class InvoicesController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @RequirePermissions("billing:manage")
+  @RequirePermissions("invoices:manage")
   @ApiOperation({
     summary:
       "Émettre une nouvelle facture de transport (Rôle Comptable / Superviseur)",
@@ -58,6 +58,7 @@ export class InvoicesController {
   }
 
   @Get()
+  @RequirePermissions("invoices:read")
   @ApiOperation({
     summary:
       "Lister les factures (cloisonné selon rôle : client ne voit que les siennes)",
@@ -77,6 +78,7 @@ export class InvoicesController {
   }
 
   @Get(":id")
+  @RequirePermissions("invoices:read")
   @ApiOperation({ summary: "Consulter le détail d'une facture et ses lignes" })
   async getInvoice(
     @Param("id") id: string,
@@ -87,7 +89,7 @@ export class InvoicesController {
 
   @Post(":id/payments")
   @HttpCode(HttpStatus.CREATED)
-  @RequirePermissions("billing:manage")
+  @RequirePermissions("invoices:manage")
   @RequireIdempotencyKey()
   @ApiOperation({
     summary:

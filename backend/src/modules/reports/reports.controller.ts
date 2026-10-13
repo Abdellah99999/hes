@@ -53,6 +53,7 @@ export class ReportsController {
   }
 
   @Get("data")
+  @RequirePermissions("reports:export")
   @ApiOperation({ summary: "Données détaillées paginées par type de rapport" })
   async getReportData(
     @Query() query: ReportDataQueryDto,
@@ -62,6 +63,7 @@ export class ReportsController {
   }
 
   @Get("export")
+  @RequirePermissions("reports:export")
   @ApiOperation({
     summary: "Export PDF ou Excel (CSV) — limité à 10 000 lignes",
   })

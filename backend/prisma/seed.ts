@@ -227,6 +227,10 @@ export async function main() {
     { code: "zones:manage", module: "AGENCY", action: "CREATE", name: "Gérer zones" },
     { code: "customers:read", module: "CUSTOMER", action: "READ", name: "Lire clients" },
     { code: "customers:manage", module: "CUSTOMER", action: "CREATE", name: "Gérer clients" },
+    { code: "customers:assign", module: "CUSTOMER", action: "UPDATE", name: "Assigner gestionnaire client" },
+    { code: "addresses:read", module: "CUSTOMER", action: "READ", name: "Lire adresses" },
+    { code: "addresses:create", module: "CUSTOMER", action: "CREATE", name: "Créer adresses" },
+    { code: "addresses:manage", module: "CUSTOMER", action: "UPDATE", name: "Gérer adresses" },
     { code: "shipments:read", module: "SHIPMENT", action: "READ", name: "Lire expéditions" },
     { code: "shipments:create", module: "SHIPMENT", action: "CREATE", name: "Créer expédition" },
     { code: "shipments:update", module: "SHIPMENT", action: "UPDATE", name: "Modifier expédition" },
@@ -245,8 +249,10 @@ export async function main() {
     { code: "couriers:manage", module: "DELIVERY", action: "DISPATCH", name: "Gérer livreurs" },
     { code: "returns:read", module: "RETURN", action: "READ", name: "Lire retours" },
     { code: "returns:manage", module: "RETURN", action: "PROCESS", name: "Gérer retours" },
+    { code: "returns:recover", module: "RETURN", action: "PROCESS", name: "Récupérer retours" },
     { code: "incidents:read", module: "INCIDENT", action: "READ", name: "Lire incidents" },
     { code: "incidents:manage", module: "INCIDENT", action: "PROCESS", name: "Gérer incidents" },
+    { code: "incidents:create", module: "INCIDENT", action: "CREATE", name: "Créer incident" },
     { code: "invoices:read", module: "FINANCE", action: "READ", name: "Lire factures" },
     { code: "invoices:manage", module: "FINANCE", action: "CREATE", name: "Gérer factures" },
     { code: "billing:manage", module: "FINANCE", action: "CREATE", name: "Facturation et finances" },
@@ -281,14 +287,19 @@ export async function main() {
       name: "Responsable Logistique",
       perms: [
         "agencies:read", "agencies:cross_view", "all_agencies:read",
-        "zones:read", "zones:manage", "customers:read", "customers:manage",
+        "zones:read", "zones:manage", "customers:read", "customers:manage", "customers:assign",
+        "referentials:read",
+        "addresses:read", "addresses:create", "addresses:manage",
         "shipments:read", "shipments:create", "shipments:update",
         "transfers:read", "transfers:create", "transfers:update",
-        "collections:read", "collections:manage", "runs:read", "runs:manage",
-        "couriers:manage", "deliveries:read", "deliveries:manage",
-        "returns:read", "returns:manage", "incidents:read", "incidents:manage",
-        "invoices:read", "documents:generate", "documents:download",
-        "reports:view", "reports:export", "users:read", "referentials:read"
+        "collections:read", "collections:create", "collections:manage",
+        "runs:read", "runs:manage", "couriers:manage",
+        "deliveries:read", "deliveries:manage", "deliveries:confirm", "deliveries:refuse",
+        "returns:read", "returns:manage", "returns:recover",
+        "incidents:read", "incidents:manage", "incidents:create",
+        "invoices:read",
+        "documents:generate", "documents:download",
+        "reports:view", "reports:export"
       ],
     },
     {
@@ -296,28 +307,38 @@ export async function main() {
       name: "Agent Agence",
       perms: [
         "zones:read", "customers:read", "customers:manage",
+        "referentials:read",
+        "addresses:read", "addresses:create", "addresses:manage",
         "shipments:read", "shipments:create", "shipments:update",
         "transfers:read", "transfers:create", "transfers:update",
-        "collections:read", "collections:create", "deliveries:read",
-        "returns:read", "incidents:read", "invoices:read",
-        "documents:generate", "documents:download", "referentials:read"
+        "collections:read", "collections:create", "collections:manage",
+        "deliveries:read",
+        "returns:read", "returns:manage", "returns:recover",
+        "incidents:create",
+        "invoices:read",
+        "documents:generate", "documents:download"
       ],
     },
     {
       code: "DISPATCHER",
       name: "Agent Collecte / Dispatcher",
       perms: [
+        "zones:read",
+        "shipments:read",
         "collections:read", "collections:create", "collections:manage",
-        "runs:read", "runs:manage", "shipments:read", "deliveries:read",
-        "zones:read"
+        "runs:manage",
+        "deliveries:read"
       ],
     },
     {
       code: "COURIER",
       name: "Livreur",
       perms: [
-        "runs:read", "deliveries:confirm", "deliveries:refuse",
-        "returns:manage", "collections:read", "incidents:manage"
+        "runs:read",
+        "deliveries:read", "deliveries:confirm", "deliveries:refuse",
+        "returns:recover",
+        "collections:manage",
+        "incidents:create"
       ],
     },
     {
@@ -325,7 +346,9 @@ export async function main() {
       name: "Comptable",
       perms: [
         "invoices:read", "invoices:manage", "billing:manage", "payments:manage",
-        "customers:read", "reports:view", "reports:export",
+        "customers:read",
+        "referentials:read",
+        "reports:view", "reports:export",
         "documents:generate", "documents:download"
       ],
     },
@@ -333,16 +356,22 @@ export async function main() {
       code: "SUPPORT",
       name: "Support Client",
       perms: [
-        "shipments:read", "customers:read", "incidents:read",
-        "incidents:manage", "invoices:read", "reports:view"
+        "shipments:read",
+        "customers:read",
+        "deliveries:read",
+        "incidents:read", "incidents:manage", "incidents:create",
+        "reports:view"
       ],
     },
     {
       code: "CUSTOMER_SERVICE",
       name: "Client Portail",
       perms: [
-        "collections:create", "collections:read", "shipments:read",
-        "invoices:read", "documents:download"
+        "shipments:read",
+        "collections:read", "collections:create",
+        "invoices:read",
+        "addresses:read", "addresses:create",
+        "documents:download"
       ],
     },
   ];
@@ -358,6 +387,10 @@ export async function main() {
       create: { code: r.code, name: r.name, description: `Rôle ${r.name}` },
     });
     roleDbMap[r.code] = roleRecord;
+
+    await prisma.rolePermission.deleteMany({
+      where: { roleId: roleRecord.id },
+    });
 
     for (const permCode of r.perms) {
       const permId = permMap[permCode];

@@ -39,6 +39,7 @@ export class DeliveriesController {
   ) {}
 
   @Get("refusal-reasons")
+  @RequirePermissions("deliveries:read")
   @ApiOperation({
     summary: "Consulter la liste officielle et figée des motifs de refus",
   })
@@ -51,6 +52,7 @@ export class DeliveriesController {
 
   @Post(":parcelId/confirm")
   @HttpCode(HttpStatus.OK)
+  @RequirePermissions("deliveries:confirm")
   @ApiOperation({
     summary:
       "Confirmer la livraison d'un colis avec capture obligatoire de preuve (POD)",
@@ -69,6 +71,7 @@ export class DeliveriesController {
 
   @Post(":parcelId/refuse")
   @HttpCode(HttpStatus.OK)
+  @RequirePermissions("deliveries:refuse")
   @ApiOperation({
     summary:
       "Signaler le refus d'un colis (motif référentiel obligatoire, déclenche retour automatique)",
