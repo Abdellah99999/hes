@@ -114,6 +114,7 @@ Le PASS frontend est uniquement le resultat de la commande Vitest. Il ne valide 
 - `tokens.json` apparaît dans `39197c2`, `2e4e8d2` et `45be75a`; chacun est contenu dans `origin/master`. Le fichier est maintenant ignoré et retiré de l'index, mais l'historique public reste exposé.
 - `gitleaks` et `trufflehog` ne sont pas installés localement. Le scan local de l'historique n'a donc pas été possible; les workflows `ci-frontend.yml` et `ci-backend.yml` contiennent désormais `gitleaks/gitleaks-action@v2`, bloquant par défaut.
 - Révocation effectuée avec `docs/qa/e2e-scripts/revoke-dev-sessions.cjs`, exécuté avec chaque `DATABASE_URL`: `refreshToken.updateMany({isRevoked:false})` et `user.updateMany({tokenVersion: increment(1)})`. SELECT final: `delivery` 0 actif / 6 total; `hes_e2e` 0 actif / 25 total.
+- Plan `git filter-repo` non exécuté et soumis à arbitrage: faire une sauvegarde/mirror du dépôt, révoquer/rotater tous les secrets, exécuter `git filter-repo --path docs/qa/audit-scripts/tokens.json --invert-paths` sur une copie, vérifier avec `git log --all` et gitleaks, puis force-push coordonné de toutes les branches/tags. Conséquences: les SHA et références PR changent, les clones existants deviennent divergents et tous les collaborateurs doivent recloner; la révocation reste obligatoire même après réécriture.
 
 ## Plan de regroupement des migrations
 
