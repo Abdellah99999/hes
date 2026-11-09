@@ -5,14 +5,14 @@
       "method": "GET",
       "path": "/agencies",
       "statuses": {
-        "ADMIN": 200,
-        "MANAGER": 200,
-        "AGENT": 403,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -20,14 +20,14 @@
       "method": "POST",
       "path": "/agencies",
       "statuses": {
-        "ADMIN": 409,
-        "MANAGER": 403,
-        "AGENT": 403,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -35,14 +35,14 @@
       "method": "DELETE",
       "path": "/agencies/fake-id",
       "statuses": {
-        "ADMIN": 404,
-        "MANAGER": 403,
-        "AGENT": 403,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -50,14 +50,14 @@
       "method": "GET",
       "path": "/zones",
       "statuses": {
-        "ADMIN": 200,
-        "MANAGER": 200,
-        "AGENT": 200,
-        "DISPATCHER": 200,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -65,14 +65,14 @@
       "method": "POST",
       "path": "/zones",
       "statuses": {
-        "ADMIN": 400,
-        "MANAGER": 400,
-        "AGENT": 403,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -80,14 +80,14 @@
       "method": "DELETE",
       "path": "/zones/fake-id",
       "statuses": {
-        "ADMIN": 404,
-        "MANAGER": 404,
-        "AGENT": 403,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -95,14 +95,14 @@
       "method": "GET",
       "path": "/customers",
       "statuses": {
-        "ADMIN": 200,
-        "MANAGER": 200,
-        "AGENT": 200,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 200,
-        "SUPPORT": 200,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -110,14 +110,14 @@
       "method": "POST",
       "path": "/customers",
       "statuses": {
-        "ADMIN": 400,
-        "MANAGER": 400,
-        "AGENT": 400,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -125,14 +125,14 @@
       "method": "POST",
       "path": "/customers/fake-id/managers",
       "statuses": {
-        "ADMIN": 400,
-        "MANAGER": 400,
-        "AGENT": 403,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -140,14 +140,14 @@
       "method": "GET",
       "path": "/customer-types",
       "statuses": {
-        "ADMIN": 200,
-        "MANAGER": 200,
-        "AGENT": 200,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 200,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -155,14 +155,14 @@
       "method": "POST",
       "path": "/customer-types",
       "statuses": {
-        "ADMIN": 409,
-        "MANAGER": 403,
-        "AGENT": 403,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -170,14 +170,14 @@
       "method": "DELETE",
       "path": "/customer-types/fake-id",
       "statuses": {
-        "ADMIN": 404,
-        "MANAGER": 403,
-        "AGENT": 403,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -185,14 +185,14 @@
       "method": "GET",
       "path": "/addresses",
       "statuses": {
-        "ADMIN": 200,
-        "MANAGER": 200,
-        "AGENT": 200,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 200
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -200,14 +200,14 @@
       "method": "POST",
       "path": "/addresses",
       "statuses": {
-        "ADMIN": 201,
-        "MANAGER": 201,
-        "AGENT": 201,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 201
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -215,14 +215,14 @@
       "method": "DELETE",
       "path": "/addresses/fake-id",
       "statuses": {
-        "ADMIN": 404,
-        "MANAGER": 404,
-        "AGENT": 404,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -230,14 +230,14 @@
       "method": "GET",
       "path": "/shipments",
       "statuses": {
-        "ADMIN": 200,
-        "MANAGER": 200,
-        "AGENT": 200,
-        "DISPATCHER": 200,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 200,
-        "CLIENT": 200
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -245,14 +245,14 @@
       "method": "POST",
       "path": "/shipments",
       "statuses": {
-        "ADMIN": 400,
-        "MANAGER": 400,
-        "AGENT": 400,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -260,14 +260,14 @@
       "method": "POST",
       "path": "/shipments/track/manual",
       "statuses": {
-        "ADMIN": 400,
-        "MANAGER": 400,
-        "AGENT": 400,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -275,14 +275,14 @@
       "method": "GET",
       "path": "/transfers",
       "statuses": {
-        "ADMIN": 200,
-        "MANAGER": 200,
-        "AGENT": 200,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -290,14 +290,14 @@
       "method": "POST",
       "path": "/transfers",
       "statuses": {
-        "ADMIN": 400,
-        "MANAGER": 400,
-        "AGENT": 400,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -305,14 +305,14 @@
       "method": "POST",
       "path": "/transfers/fake-id/dispatch",
       "statuses": {
-        "ADMIN": 404,
-        "MANAGER": 404,
-        "AGENT": 404,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -320,14 +320,14 @@
       "method": "GET",
       "path": "/collections",
       "statuses": {
-        "ADMIN": 200,
-        "MANAGER": 200,
-        "AGENT": 200,
-        "DISPATCHER": 200,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 200
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -335,14 +335,14 @@
       "method": "POST",
       "path": "/collections",
       "statuses": {
-        "ADMIN": 400,
-        "MANAGER": 400,
-        "AGENT": 400,
-        "DISPATCHER": 400,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 400
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -350,14 +350,14 @@
       "method": "POST",
       "path": "/collections/fake-id/complete",
       "statuses": {
-        "ADMIN": 400,
-        "MANAGER": 400,
-        "AGENT": 400,
-        "DISPATCHER": 400,
-        "COURIER": 400,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -365,14 +365,14 @@
       "method": "GET",
       "path": "/runs",
       "statuses": {
-        "ADMIN": 200,
-        "MANAGER": 200,
-        "AGENT": 403,
-        "DISPATCHER": 200,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -380,14 +380,14 @@
       "method": "GET",
       "path": "/runs/my-runs",
       "statuses": {
-        "ADMIN": 200,
-        "MANAGER": 200,
-        "AGENT": 403,
-        "DISPATCHER": 403,
-        "COURIER": 200,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -395,14 +395,14 @@
       "method": "POST",
       "path": "/runs/auto-assign",
       "statuses": {
-        "ADMIN": 400,
-        "MANAGER": 400,
-        "AGENT": 403,
-        "DISPATCHER": 400,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -410,14 +410,14 @@
       "method": "GET",
       "path": "/deliveries/refusal-reasons",
       "statuses": {
-        "ADMIN": 200,
-        "MANAGER": 200,
-        "AGENT": 200,
-        "DISPATCHER": 200,
-        "COURIER": 200,
-        "FINANCE": 403,
-        "SUPPORT": 200,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -425,14 +425,14 @@
       "method": "POST",
       "path": "/deliveries/fake-parcel/confirm",
       "statuses": {
-        "ADMIN": 400,
-        "MANAGER": 400,
-        "AGENT": 403,
-        "DISPATCHER": 403,
-        "COURIER": 400,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -440,14 +440,14 @@
       "method": "POST",
       "path": "/deliveries/fake-parcel/refuse",
       "statuses": {
-        "ADMIN": 400,
-        "MANAGER": 400,
-        "AGENT": 403,
-        "DISPATCHER": 403,
-        "COURIER": 400,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -455,14 +455,14 @@
       "method": "GET",
       "path": "/returns",
       "statuses": {
-        "ADMIN": 200,
-        "MANAGER": 200,
-        "AGENT": 200,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -470,14 +470,14 @@
       "method": "POST",
       "path": "/returns",
       "statuses": {
-        "ADMIN": 400,
-        "MANAGER": 400,
-        "AGENT": 400,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -485,14 +485,14 @@
       "method": "POST",
       "path": "/returns/recover",
       "statuses": {
-        "ADMIN": 400,
-        "MANAGER": 400,
-        "AGENT": 400,
-        "DISPATCHER": 403,
-        "COURIER": 400,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -500,14 +500,14 @@
       "method": "GET",
       "path": "/incidents",
       "statuses": {
-        "ADMIN": 200,
-        "MANAGER": 200,
-        "AGENT": 403,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 200,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -515,14 +515,14 @@
       "method": "POST",
       "path": "/incidents",
       "statuses": {
-        "ADMIN": 400,
-        "MANAGER": 400,
-        "AGENT": 400,
-        "DISPATCHER": 403,
-        "COURIER": 400,
-        "FINANCE": 403,
-        "SUPPORT": 400,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -530,14 +530,14 @@
       "method": "POST",
       "path": "/incidents/fake-id/decide",
       "statuses": {
-        "ADMIN": 400,
-        "MANAGER": 400,
-        "AGENT": 403,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 400,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -545,14 +545,14 @@
       "method": "GET",
       "path": "/invoices",
       "statuses": {
-        "ADMIN": 200,
-        "MANAGER": 200,
-        "AGENT": 200,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 200,
-        "SUPPORT": 403,
-        "CLIENT": 200
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -560,14 +560,14 @@
       "method": "POST",
       "path": "/invoices",
       "statuses": {
-        "ADMIN": 400,
-        "MANAGER": 403,
-        "AGENT": 403,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 400,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -575,14 +575,14 @@
       "method": "POST",
       "path": "/invoices/fake-id/payments",
       "statuses": {
-        "ADMIN": 400,
-        "MANAGER": 403,
-        "AGENT": 403,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 400,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -590,14 +590,14 @@
       "method": "POST",
       "path": "/documents/preview",
       "statuses": {
-        "ADMIN": 400,
-        "MANAGER": 400,
-        "AGENT": 400,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 400,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -605,14 +605,14 @@
       "method": "POST",
       "path": "/documents/generate",
       "statuses": {
-        "ADMIN": 400,
-        "MANAGER": 400,
-        "AGENT": 400,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 400,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -620,14 +620,14 @@
       "method": "GET",
       "path": "/documents/fake-id/download-url",
       "statuses": {
-        "ADMIN": 404,
-        "MANAGER": 404,
-        "AGENT": 404,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 404,
-        "SUPPORT": 403,
-        "CLIENT": 404
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -635,14 +635,14 @@
       "method": "GET",
       "path": "/reports/dashboard",
       "statuses": {
-        "ADMIN": 200,
-        "MANAGER": 200,
-        "AGENT": 403,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 200,
-        "SUPPORT": 200,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -650,14 +650,14 @@
       "method": "GET",
       "path": "/reports/data?type=shipments",
       "statuses": {
-        "ADMIN": 400,
-        "MANAGER": 400,
-        "AGENT": 403,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 400,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -665,14 +665,14 @@
       "method": "GET",
       "path": "/reports/export?type=shipments&format=EXCEL",
       "statuses": {
-        "ADMIN": 400,
-        "MANAGER": 400,
-        "AGENT": 403,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 400,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -680,14 +680,14 @@
       "method": "GET",
       "path": "/users",
       "statuses": {
-        "ADMIN": 200,
-        "MANAGER": 403,
-        "AGENT": 403,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -695,14 +695,14 @@
       "method": "POST",
       "path": "/users",
       "statuses": {
-        "ADMIN": 400,
-        "MANAGER": 403,
-        "AGENT": 403,
-        "DISPATCHER": 403,
-        "COURIER": 403,
-        "FINANCE": 403,
-        "SUPPORT": 403,
-        "CLIENT": 403
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     },
     {
@@ -710,14 +710,14 @@
       "method": "GET",
       "path": "/auth/me",
       "statuses": {
-        "ADMIN": 200,
-        "MANAGER": 200,
-        "AGENT": 200,
-        "DISPATCHER": 200,
-        "COURIER": 200,
-        "FINANCE": 200,
-        "SUPPORT": 200,
-        "CLIENT": 200
+        "ADMIN": 0,
+        "MANAGER": 0,
+        "AGENT": 0,
+        "DISPATCHER": 0,
+        "COURIER": 0,
+        "FINANCE": 0,
+        "SUPPORT": 0,
+        "CLIENT": 0
       }
     }
   ],

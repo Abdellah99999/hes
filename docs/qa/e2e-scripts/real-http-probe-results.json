@@ -1,0 +1,26 @@
+{
+  "baseUrl": "http://localhost:3000/api/v1",
+  "output": [
+    {
+      "request": "GET http://localhost:3000/api/v1/health",
+      "httpStatus": 0,
+      "elapsedMs": 46,
+      "responseExcerpt": "",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "request": "GET http://localhost:3000/api/v1/auth/me",
+      "httpStatus": 0,
+      "elapsedMs": 2,
+      "responseExcerpt": "",
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "request": "POST http://localhost:3000/api/v1/auth/login",
+      "httpStatus": 0,
+      "elapsedMs": 3,
+      "responseExcerpt": "",
+      "error": "TypeError: fetch failed"
+    }
+  ]
+}
