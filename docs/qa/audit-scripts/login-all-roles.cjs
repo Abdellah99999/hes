@@ -40,6 +40,7 @@ async function main() {
 
   const tokens = {};
   const reportLines = [];
+  let networkFailure = false;
 
   for (const acc of seedAccounts) {
     try {
@@ -57,15 +58,23 @@ async function main() {
         reportLines.push(`[${status} FAIL] Role: ${acc.roleName} Email: ${acc.email} Error: ${JSON.stringify(data)}`);
       }
     } catch (err) {
+      networkFailure = true;
       reportLines.push(`[ERROR] Role: ${acc.roleName} Email: ${acc.email} Exception: ${err.message}`);
     }
   }
 
   console.log(reportLines.join('\n'));
 
+  if (networkFailure) {
+    throw new Error('Network failure detected; tokens.json was not overwritten.');
+  }
+
   const tokenFilePath = path.resolve(__dirname, 'tokens.json');
   fs.writeFileSync(tokenFilePath, JSON.stringify(tokens, null, 2), 'utf-8');
   console.log(`\n✅ Saved ${Object.keys(tokens).length} valid tokens to ${tokenFilePath}`);
 }
 
-main().catch(console.error);
+main().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});

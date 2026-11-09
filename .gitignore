@@ -46,6 +46,9 @@ build/
 !.env.example
 !.env.prod.example
 
+# QA runtime credentials and tokens
+docs/qa/audit-scripts/tokens.json
+
 # SSL Certificates & Keys
 infrastructure/docker/nginx/ssl/*.key
 infrastructure/docker/nginx/ssl/*.crt

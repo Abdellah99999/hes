@@ -129,7 +129,7 @@ async function callEndpoint(method, epPath, body, token, useIdempKey) {
     const res = await fetch(url, reqOptions);
     return res.status;
   } catch (err) {
-    return 0; // Network / execution failure
+    throw new Error(`Network / execution failure for ${method} ${url}: ${err.message}`);
   }
 }
 
@@ -155,6 +155,9 @@ async function runMatrix() {
       }
 
       const status = await callEndpoint(ep.method, ep.path, ep.body, userTokenObj.token, ep.useIdempotencyKey);
+      if (status === 0) {
+        throw new Error(`Invalid HTTP status 0 for ${ep.method} ${ep.path}`);
+      }
       row.statuses[r.key] = status;
 
       const isAllowedBySpec = ep.expectedAllowed.includes(r.key);
@@ -194,4 +197,7 @@ async function runMatrix() {
   console.log(`⚠️ Divergences identifiées : ${discrepancies.length} (Grave / Bloquant).`);
 }
 
-runMatrix().catch(console.error);
+runMatrix().catch((error) => {
+  console.error(`Matrice interrompue sans ecraser le resultat precedent: ${error.message}`);
+  process.exitCode = 1;
+});

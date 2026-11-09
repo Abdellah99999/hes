@@ -23,8 +23,15 @@ async function refreshAllTokens() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: acc.email, password: 'Password123!' })
     });
+    if (!res.ok) {
+      throw new Error(`Login failed for ${acc.email}: HTTP ${res.status}; checklist results were not overwritten.`);
+    }
     const data = await res.json();
-    map[acc.key] = data.tokens?.accessToken || data.accessToken;
+    const token = data.tokens?.accessToken || data.accessToken;
+    if (!token) {
+      throw new Error(`Login returned no access token for ${acc.email}; checklist results were not overwritten.`);
+    }
+    map[acc.key] = token;
   }
   adminToken = map.admin;
   managerToken = map.manager;
@@ -339,4 +346,7 @@ async function runAll() {
   console.log(`\n✅ TOUS LES TESTS N5 SONT TERMINES. Fichier sauvegardé : ${outPath}`);
 }
 
-runAll().catch(console.error).finally(() => prisma.$disconnect());
+runAll().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+}).finally(() => prisma.$disconnect());
