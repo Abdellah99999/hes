@@ -41,20 +41,20 @@ Les tests backend contenant `mockPrisma`, repositories mockes ou `mockMinioClien
 
 ## Scenarios E2E
 
-| ID  | Test                         | Resultat    | Preuve (requete -> code HTTP -> verification en base)                                                                     | Ecart                                                            |
-| --- | ---------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| S1  | Cycle complet multi-agence   | PASS        | POST `/shipments` -> HTTP 201, extrait `HES-CASHUB-2026-000002`; SELECT shipment -> ligne présente                        | Le runner vérifie création, pas toutes les transitions du cahier |
-| S2  | Livraison partielle          | PASS        | GET `/shipments/:id` -> HTTP 200; SELECT shipment -> ligne présente                                                       | Vérification partielle du scénario                               |
-| S3  | Refus et retour              | FAIL        | POST `/returns` -> HTTP 400, extrait `property reason should not exist`; SELECT returns -> aucune ligne                   | DTO/API incompatible avec le payload utilisé                     |
-| S4  | COD et finance               | FAIL        | POST `/invoices/:id/payments` -> HTTP 401, extrait `Authentification à deux facteurs requise`; SELECT payments -> 0 ligne | Token FINANCE restreint                                          |
-| S5  | Incident colis perdu         | FAIL        | POST `/incidents` -> HTTP 400, extrait `shipmentIdentifier must be a string`; SELECT incidents -> aucune ligne            | Payload/contrat API incompatible                                 |
-| S6  | Ecart de transfert           | PASS        | POST `/transfers` -> HTTP 201, extrait `TRF-CAS-HUB-RAB-CTR-2026-00001`; SELECT transfers -> ligne présente               | Réception avec écart non exécutée avant crash                    |
-| S7  | Scans et idempotence         | FAIL        | premier scan HTTP réel puis second appel -> connexion interrompue, HTTP 0; SELECT tracking_events -> count 1              | Crash API `ERR_HTTP_HEADERS_SENT`                                |
-| S8  | Transitions invalides        | FAIL        | PATCH parcel status -> HTTP 0 après crash; SELECT parcels -> statut `REGISTERED` inchangé                                 | API indisponible après S7                                        |
-| S9  | Documents MinIO reels        | NON EXECUTE | MinIO `9000` indisponible; aucun PDF/objet vérifiable                                                                     | Réservé CI                                                       |
-| S10 | Collecte                     | FAIL        | POST `/collections` -> HTTP 0 après crash; SELECT collections -> aucune ligne                                             | API indisponible après S7                                        |
-| S11 | Concurrence 50/100           | FAIL        | POST `/shipments` x50 -> `0/50` succès; l'API s'est arrêtée sur `ERR_HTTP_HEADERS_SENT` pendant scans concurrents         | Défaut applicatif dans idempotency interceptor                   |
-| S12 | Suppression logique et audit | FAIL        | DELETE `/shipments/:id` -> HTTP 0; SELECT shipment -> `deleted_at` NULL                                                   | API indisponible après crash                                     |
+| ID  | Test                         | Resultat    | Preuve (requete -> code HTTP -> verification en base)                                                                                                                                | Ecart                                              |
+| --- | ---------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------- |
+| S1  | Cycle complet multi-agence   | FAIL        | POST `/shipments` -> HTTP 201, extrait `HES-CASHUB-2026-000002`; SELECT shipment -> ligne présente, mais les transitions arrivée/transferts/livraison n'ont pas toutes été exécutées | PASS de la seule création interdit pour S1 complet |
+| S2  | Livraison partielle          | FAIL        | GET `/shipments/:id` -> HTTP 200; SELECT shipment -> ligne présente, mais aucune livraison partielle avec 2 preuves et 1 refus n'a été exécutée                                      | Scénario incomplet                                 |
+| S3  | Refus et retour              | FAIL        | POST `/returns` -> HTTP 400, extrait `property reason should not exist`; SELECT returns -> aucune ligne                                                                              | DTO/API incompatible avec le payload utilisé       |
+| S4  | COD et finance               | FAIL        | POST `/invoices/:id/payments` -> HTTP 401, extrait `Authentification à deux facteurs requise`; SELECT payments -> 0 ligne                                                            | Token FINANCE restreint                            |
+| S5  | Incident colis perdu         | FAIL        | POST `/incidents` -> HTTP 400, extrait `shipmentIdentifier must be a string`; SELECT incidents -> aucune ligne                                                                       | Payload/contrat API incompatible                   |
+| S6  | Ecart de transfert           | FAIL        | POST `/transfers` -> HTTP 201, extrait `TRF-CAS-HUB-RAB-CTR-2026-00001`; SELECT transfers -> ligne présente, mais réception 5/4 et incident n'ont pas été exécutés                   | Scénario incomplet                                 |
+| S7  | Scans et idempotence         | FAIL        | premier scan HTTP réel puis second appel -> connexion interrompue, HTTP 0; SELECT tracking_events -> count 1                                                                         | Crash API `ERR_HTTP_HEADERS_SENT`                  |
+| S8  | Transitions invalides        | FAIL        | PATCH parcel status -> HTTP 0 après crash; SELECT parcels -> statut `REGISTERED` inchangé                                                                                            | API indisponible après S7                          |
+| S9  | Documents MinIO reels        | NON EXECUTE | MinIO `9000` indisponible; aucun PDF/objet vérifiable                                                                                                                                | Réservé CI                                         |
+| S10 | Collecte                     | FAIL        | POST `/collections` -> HTTP 0 après crash; SELECT collections -> aucune ligne                                                                                                        | API indisponible après S7                          |
+| S11 | Concurrence 50/100           | FAIL        | POST `/shipments` x50 -> `0/50` succès; l'API s'est arrêtée sur `ERR_HTTP_HEADERS_SENT` pendant scans concurrents                                                                    | Défaut applicatif dans idempotency interceptor     |
+| S12 | Suppression logique et audit | FAIL        | DELETE `/shipments/:id` -> HTTP 0; SELECT shipment -> `deleted_at` NULL                                                                                                              | API indisponible après crash                       |
 
 ## Securite et controle d'acces
 
@@ -100,7 +100,7 @@ Options non implémentées: échec fermé pour login et routes sensibles, repli 
 | ------------------ | --------------------------------------------------: | ---: | ----------: |
 | Environnement/seed |                                                   5 |    3 |           0 |
 | Suites existantes  | 1 execution frontend verte; backend non PASS global |    1 |           1 |
-| E2E S1-S12         |                                                   3 |    8 |           1 |
+| E2E S1-S12         |                                                   0 |   11 |           1 |
 | Securite T1-T12    |                                                   3 |    1 |           8 |
 | Resilience R1-R4   |                                                   0 |    0 |           4 |
 | Sauvegarde         |                                                   0 |    0 |           1 |
