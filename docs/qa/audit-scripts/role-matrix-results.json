@@ -5,12 +5,12 @@
       "method": "GET",
       "path": "/agencies",
       "statuses": {
-        "ADMIN": 200,
+        "ADMIN": 401,
         "MANAGER": 200,
         "AGENT": 403,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -20,12 +20,12 @@
       "method": "POST",
       "path": "/agencies",
       "statuses": {
-        "ADMIN": 409,
+        "ADMIN": 401,
         "MANAGER": 403,
         "AGENT": 403,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -35,12 +35,12 @@
       "method": "DELETE",
       "path": "/agencies/fake-id",
       "statuses": {
-        "ADMIN": 404,
+        "ADMIN": 401,
         "MANAGER": 403,
         "AGENT": 403,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -50,12 +50,12 @@
       "method": "GET",
       "path": "/zones",
       "statuses": {
-        "ADMIN": 200,
+        "ADMIN": 401,
         "MANAGER": 200,
         "AGENT": 200,
         "DISPATCHER": 200,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -65,12 +65,12 @@
       "method": "POST",
       "path": "/zones",
       "statuses": {
-        "ADMIN": 400,
+        "ADMIN": 401,
         "MANAGER": 400,
         "AGENT": 403,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -80,12 +80,12 @@
       "method": "DELETE",
       "path": "/zones/fake-id",
       "statuses": {
-        "ADMIN": 404,
+        "ADMIN": 401,
         "MANAGER": 404,
         "AGENT": 403,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -95,12 +95,12 @@
       "method": "GET",
       "path": "/customers",
       "statuses": {
-        "ADMIN": 200,
+        "ADMIN": 401,
         "MANAGER": 200,
         "AGENT": 200,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 200,
+        "FINANCE": 401,
         "SUPPORT": 200,
         "CLIENT": 403
       }
@@ -110,12 +110,12 @@
       "method": "POST",
       "path": "/customers",
       "statuses": {
-        "ADMIN": 400,
+        "ADMIN": 401,
         "MANAGER": 400,
         "AGENT": 400,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -125,12 +125,12 @@
       "method": "POST",
       "path": "/customers/fake-id/managers",
       "statuses": {
-        "ADMIN": 400,
+        "ADMIN": 401,
         "MANAGER": 400,
         "AGENT": 403,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -140,12 +140,12 @@
       "method": "GET",
       "path": "/customer-types",
       "statuses": {
-        "ADMIN": 200,
+        "ADMIN": 401,
         "MANAGER": 200,
         "AGENT": 200,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 200,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -155,12 +155,12 @@
       "method": "POST",
       "path": "/customer-types",
       "statuses": {
-        "ADMIN": 409,
+        "ADMIN": 401,
         "MANAGER": 403,
         "AGENT": 403,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -170,12 +170,12 @@
       "method": "DELETE",
       "path": "/customer-types/fake-id",
       "statuses": {
-        "ADMIN": 404,
+        "ADMIN": 401,
         "MANAGER": 403,
         "AGENT": 403,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -185,12 +185,12 @@
       "method": "GET",
       "path": "/addresses",
       "statuses": {
-        "ADMIN": 200,
+        "ADMIN": 401,
         "MANAGER": 200,
         "AGENT": 200,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 200
       }
@@ -200,12 +200,12 @@
       "method": "POST",
       "path": "/addresses",
       "statuses": {
-        "ADMIN": 201,
+        "ADMIN": 401,
         "MANAGER": 201,
         "AGENT": 201,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 201
       }
@@ -215,12 +215,12 @@
       "method": "DELETE",
       "path": "/addresses/fake-id",
       "statuses": {
-        "ADMIN": 404,
+        "ADMIN": 401,
         "MANAGER": 404,
         "AGENT": 404,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -230,12 +230,12 @@
       "method": "GET",
       "path": "/shipments",
       "statuses": {
-        "ADMIN": 200,
+        "ADMIN": 401,
         "MANAGER": 200,
         "AGENT": 200,
         "DISPATCHER": 200,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 200,
         "CLIENT": 200
       }
@@ -245,12 +245,12 @@
       "method": "POST",
       "path": "/shipments",
       "statuses": {
-        "ADMIN": 400,
+        "ADMIN": 401,
         "MANAGER": 400,
         "AGENT": 400,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -260,12 +260,12 @@
       "method": "POST",
       "path": "/shipments/track/manual",
       "statuses": {
-        "ADMIN": 400,
+        "ADMIN": 401,
         "MANAGER": 400,
         "AGENT": 400,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -275,12 +275,12 @@
       "method": "GET",
       "path": "/transfers",
       "statuses": {
-        "ADMIN": 200,
+        "ADMIN": 401,
         "MANAGER": 200,
         "AGENT": 200,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -290,12 +290,12 @@
       "method": "POST",
       "path": "/transfers",
       "statuses": {
-        "ADMIN": 400,
+        "ADMIN": 401,
         "MANAGER": 400,
         "AGENT": 400,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -305,12 +305,12 @@
       "method": "POST",
       "path": "/transfers/fake-id/dispatch",
       "statuses": {
-        "ADMIN": 404,
+        "ADMIN": 401,
         "MANAGER": 404,
         "AGENT": 404,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -320,12 +320,12 @@
       "method": "GET",
       "path": "/collections",
       "statuses": {
-        "ADMIN": 200,
+        "ADMIN": 401,
         "MANAGER": 200,
         "AGENT": 200,
         "DISPATCHER": 200,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 200
       }
@@ -335,12 +335,12 @@
       "method": "POST",
       "path": "/collections",
       "statuses": {
-        "ADMIN": 400,
+        "ADMIN": 401,
         "MANAGER": 400,
         "AGENT": 400,
         "DISPATCHER": 400,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 400
       }
@@ -350,12 +350,12 @@
       "method": "POST",
       "path": "/collections/fake-id/complete",
       "statuses": {
-        "ADMIN": 400,
+        "ADMIN": 401,
         "MANAGER": 400,
         "AGENT": 400,
         "DISPATCHER": 400,
         "COURIER": 400,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -365,12 +365,12 @@
       "method": "GET",
       "path": "/runs",
       "statuses": {
-        "ADMIN": 200,
+        "ADMIN": 401,
         "MANAGER": 200,
         "AGENT": 403,
         "DISPATCHER": 200,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -380,12 +380,12 @@
       "method": "GET",
       "path": "/runs/my-runs",
       "statuses": {
-        "ADMIN": 200,
+        "ADMIN": 401,
         "MANAGER": 200,
         "AGENT": 403,
         "DISPATCHER": 403,
         "COURIER": 200,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -395,12 +395,12 @@
       "method": "POST",
       "path": "/runs/auto-assign",
       "statuses": {
-        "ADMIN": 400,
+        "ADMIN": 401,
         "MANAGER": 400,
         "AGENT": 403,
         "DISPATCHER": 400,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -410,12 +410,12 @@
       "method": "GET",
       "path": "/deliveries/refusal-reasons",
       "statuses": {
-        "ADMIN": 200,
+        "ADMIN": 401,
         "MANAGER": 200,
         "AGENT": 200,
         "DISPATCHER": 200,
         "COURIER": 200,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 200,
         "CLIENT": 403
       }
@@ -425,12 +425,12 @@
       "method": "POST",
       "path": "/deliveries/fake-parcel/confirm",
       "statuses": {
-        "ADMIN": 400,
+        "ADMIN": 401,
         "MANAGER": 400,
         "AGENT": 403,
         "DISPATCHER": 403,
         "COURIER": 400,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -440,12 +440,12 @@
       "method": "POST",
       "path": "/deliveries/fake-parcel/refuse",
       "statuses": {
-        "ADMIN": 400,
+        "ADMIN": 401,
         "MANAGER": 400,
         "AGENT": 403,
         "DISPATCHER": 403,
         "COURIER": 400,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -455,12 +455,12 @@
       "method": "GET",
       "path": "/returns",
       "statuses": {
-        "ADMIN": 200,
+        "ADMIN": 401,
         "MANAGER": 200,
         "AGENT": 200,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -470,12 +470,12 @@
       "method": "POST",
       "path": "/returns",
       "statuses": {
-        "ADMIN": 400,
+        "ADMIN": 401,
         "MANAGER": 400,
         "AGENT": 400,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -485,12 +485,12 @@
       "method": "POST",
       "path": "/returns/recover",
       "statuses": {
-        "ADMIN": 400,
+        "ADMIN": 401,
         "MANAGER": 400,
         "AGENT": 400,
         "DISPATCHER": 403,
         "COURIER": 400,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -500,12 +500,12 @@
       "method": "GET",
       "path": "/incidents",
       "statuses": {
-        "ADMIN": 200,
+        "ADMIN": 401,
         "MANAGER": 200,
         "AGENT": 403,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 200,
         "CLIENT": 403
       }
@@ -515,12 +515,12 @@
       "method": "POST",
       "path": "/incidents",
       "statuses": {
-        "ADMIN": 400,
+        "ADMIN": 401,
         "MANAGER": 400,
         "AGENT": 400,
         "DISPATCHER": 403,
         "COURIER": 400,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 400,
         "CLIENT": 403
       }
@@ -530,12 +530,12 @@
       "method": "POST",
       "path": "/incidents/fake-id/decide",
       "statuses": {
-        "ADMIN": 400,
+        "ADMIN": 401,
         "MANAGER": 400,
         "AGENT": 403,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 400,
         "CLIENT": 403
       }
@@ -545,12 +545,12 @@
       "method": "GET",
       "path": "/invoices",
       "statuses": {
-        "ADMIN": 200,
+        "ADMIN": 401,
         "MANAGER": 200,
         "AGENT": 200,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 200,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 200
       }
@@ -560,12 +560,12 @@
       "method": "POST",
       "path": "/invoices",
       "statuses": {
-        "ADMIN": 400,
+        "ADMIN": 401,
         "MANAGER": 403,
         "AGENT": 403,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 400,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -575,12 +575,12 @@
       "method": "POST",
       "path": "/invoices/fake-id/payments",
       "statuses": {
-        "ADMIN": 400,
+        "ADMIN": 401,
         "MANAGER": 403,
         "AGENT": 403,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 400,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -590,12 +590,12 @@
       "method": "POST",
       "path": "/documents/preview",
       "statuses": {
-        "ADMIN": 400,
+        "ADMIN": 401,
         "MANAGER": 400,
         "AGENT": 400,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 400,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -605,12 +605,12 @@
       "method": "POST",
       "path": "/documents/generate",
       "statuses": {
-        "ADMIN": 400,
+        "ADMIN": 401,
         "MANAGER": 400,
         "AGENT": 400,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 400,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -620,12 +620,12 @@
       "method": "GET",
       "path": "/documents/fake-id/download-url",
       "statuses": {
-        "ADMIN": 404,
+        "ADMIN": 401,
         "MANAGER": 404,
         "AGENT": 404,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 404,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 404
       }
@@ -635,12 +635,12 @@
       "method": "GET",
       "path": "/reports/dashboard",
       "statuses": {
-        "ADMIN": 200,
+        "ADMIN": 401,
         "MANAGER": 200,
         "AGENT": 403,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 200,
+        "FINANCE": 401,
         "SUPPORT": 200,
         "CLIENT": 403
       }
@@ -650,12 +650,12 @@
       "method": "GET",
       "path": "/reports/data?type=shipments",
       "statuses": {
-        "ADMIN": 400,
+        "ADMIN": 401,
         "MANAGER": 400,
         "AGENT": 403,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 400,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -665,12 +665,12 @@
       "method": "GET",
       "path": "/reports/export?type=shipments&format=EXCEL",
       "statuses": {
-        "ADMIN": 400,
+        "ADMIN": 401,
         "MANAGER": 400,
         "AGENT": 403,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 400,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -680,12 +680,12 @@
       "method": "GET",
       "path": "/users",
       "statuses": {
-        "ADMIN": 200,
+        "ADMIN": 401,
         "MANAGER": 403,
         "AGENT": 403,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -695,12 +695,12 @@
       "method": "POST",
       "path": "/users",
       "statuses": {
-        "ADMIN": 400,
+        "ADMIN": 401,
         "MANAGER": 403,
         "AGENT": 403,
         "DISPATCHER": 403,
         "COURIER": 403,
-        "FINANCE": 403,
+        "FINANCE": 401,
         "SUPPORT": 403,
         "CLIENT": 403
       }
@@ -710,16 +710,497 @@
       "method": "GET",
       "path": "/auth/me",
       "statuses": {
-        "ADMIN": 200,
+        "ADMIN": 401,
         "MANAGER": 200,
         "AGENT": 200,
         "DISPATCHER": 200,
         "COURIER": 200,
-        "FINANCE": 200,
+        "FINANCE": 401,
         "SUPPORT": 200,
         "CLIENT": 200
       }
     }
   ],
-  "discrepancies": []
+  "discrepancies": [
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "GET /agencies",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "POST /agencies",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "DELETE /agencies/fake-id",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "GET /zones",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "POST /zones",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "DELETE /zones/fake-id",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "GET /customers",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Comptable",
+      "roleKey": "FINANCE",
+      "endpoint": "GET /customers",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "POST /customers",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "POST /customers/fake-id/managers",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "GET /customer-types",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Comptable",
+      "roleKey": "FINANCE",
+      "endpoint": "GET /customer-types",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "POST /customer-types",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "DELETE /customer-types/fake-id",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "GET /addresses",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "POST /addresses",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "DELETE /addresses/fake-id",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "GET /shipments",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "POST /shipments",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "POST /shipments/track/manual",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "GET /transfers",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "POST /transfers",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "POST /transfers/fake-id/dispatch",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "GET /collections",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "POST /collections",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "POST /collections/fake-id/complete",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "GET /runs",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "GET /runs/my-runs",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "POST /runs/auto-assign",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "GET /deliveries/refusal-reasons",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "POST /deliveries/fake-parcel/confirm",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "POST /deliveries/fake-parcel/refuse",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "GET /returns",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "POST /returns",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "POST /returns/recover",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "GET /incidents",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "POST /incidents",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "POST /incidents/fake-id/decide",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "GET /invoices",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Comptable",
+      "roleKey": "FINANCE",
+      "endpoint": "GET /invoices",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "POST /invoices",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Comptable",
+      "roleKey": "FINANCE",
+      "endpoint": "POST /invoices",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "POST /invoices/fake-id/payments",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Comptable",
+      "roleKey": "FINANCE",
+      "endpoint": "POST /invoices/fake-id/payments",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "POST /documents/preview",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Comptable",
+      "roleKey": "FINANCE",
+      "endpoint": "POST /documents/preview",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "POST /documents/generate",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Comptable",
+      "roleKey": "FINANCE",
+      "endpoint": "POST /documents/generate",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "GET /documents/fake-id/download-url",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Comptable",
+      "roleKey": "FINANCE",
+      "endpoint": "GET /documents/fake-id/download-url",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "GET /reports/dashboard",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Comptable",
+      "roleKey": "FINANCE",
+      "endpoint": "GET /reports/dashboard",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "GET /reports/data?type=shipments",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Comptable",
+      "roleKey": "FINANCE",
+      "endpoint": "GET /reports/data?type=shipments",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "GET /reports/export?type=shipments&format=EXCEL",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Comptable",
+      "roleKey": "FINANCE",
+      "endpoint": "GET /reports/export?type=shipments&format=EXCEL",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "GET /users",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "POST /users",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Admin",
+      "roleKey": "ADMIN",
+      "endpoint": "GET /auth/me",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    },
+    {
+      "type": "BLOQUANT",
+      "role": "Comptable",
+      "roleKey": "FINANCE",
+      "endpoint": "GET /auth/me",
+      "status": 401,
+      "detail": "Accès refusé à tort (HTTP 401) alors que le rôle devrait y avoir accès."
+    }
+  ]
 }

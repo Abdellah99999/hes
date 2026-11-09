@@ -113,7 +113,7 @@ test("S2 livraison partielle: statuts colis distincts", async () => {
 });
 
 test("S3 refus et retour: retour lie a l'expedition", async () => {
-  const response = await record("S3", "Refus et retour", () => request("POST", "/returns", state.tokens.manager, { shipmentId: state.shipment?.id, reason: "REFUSED_WITHOUT_REASON" }), async (r) => dbRead("returns", "select id, shipment_id, status from returns where shipment_id=$1 order by created_at desc limit 1", [state.shipment?.id]), (r, db) => [200, 201, 400, 404].includes(r.status) && (r.status >= 400 || db.rowCount === 1));
+  const response = await record("S3", "Refus et retour", () => request("POST", "/returns", state.tokens.manager, { shipmentId: state.shipment?.id, reason: "REFUSED_WITHOUT_REASON" }), async (r) => dbRead("returns", "select id, shipment_id, status from returns where shipment_id=$1 order by created_at desc limit 1", [state.shipment?.id]), (r, db) => [200, 201].includes(r.status) && db.rowCount === 1);
   return response;
 });
 
@@ -129,7 +129,7 @@ test("S5 incident: incident et dernier evenement consultables", async () => {
 });
 
 test("S6 transfert: creation et reconciliation", async () => {
-  await record("S6", "Ecart de transfert", () => request("POST", "/transfers", state.tokens.manager, { originAgencyId: state.shipment?.originAgencyId, destinationAgencyId: state.shipment?.destinationAgencyId, parcelIds: state.parcels.map((p) => p.id) }), async () => dbRead("transfers", "select id, status from transfers order by created_at desc limit 1"), (r, db) => [200, 201, 400, 404].includes(r.status) && (r.status >= 400 || db.rowCount === 1));
+  await record("S6", "Ecart de transfert", () => request("POST", "/transfers", state.tokens.manager, { originAgencyId: state.shipment?.originAgencyId, destinationAgencyId: state.shipment?.destinationAgencyId, parcelIds: state.parcels.map((p) => p.id) }), async () => dbRead("transfers", "select id, status from transfers order by created_at desc limit 1"), (r, db) => [200, 201].includes(r.status) && db.rowCount === 1);
 });
 
 test("S7 scans idempotents et colis livre refuse", async () => {
@@ -144,12 +144,12 @@ test("S8 transitions invalides: CREATED vers DELIVERED refuse", async () => {
   await record("S8", "Transition invalide", () => request("PATCH", `/shipments/parcels/${state.parcels[1]?.id}/status`, state.tokens.manager, { status: "DELIVERED", reason: "invalid E2E transition" }), async () => dbRead("parcels", "select id, status from parcels where id=$1", [state.parcels[1]?.id]), (r, db) => [400, 409, 422].includes(r.status) && db.rowCount === 1);
 });
 
-test("S9 documents: generation et ligne DB", async () => {
+test("S9 documents: generation et ligne DB", { skip: process.env.SKIP_MINIO_TESTS === "1" }, async () => {
   await record("S9", "Documents MinIO", () => request("POST", "/documents/generate", state.tokens.manager, { documentType: "BILL_OF_LADING", entityId: state.shipment?.id, copiesCount: 1 }), async () => dbRead("documents", "select id, type, storage_key from documents order by created_at desc limit 1"), (r, db) => [200, 201].includes(r.status) && db.rowCount === 1);
 });
 
 test("S10 collecte: demande de collecte", async () => {
-  await record("S10", "Collecte", () => request("POST", "/collections", state.tokens.agent, { customerId: state.shipment?.senderCustomerId, estimatedParcels: 3 }), async () => dbRead("collections", "select id, status from collections order by created_at desc limit 1"), (r, db) => [200, 201, 400, 404].includes(r.status) && (r.status >= 400 || db.rowCount === 1));
+  await record("S10", "Collecte", () => request("POST", "/collections", state.tokens.agent, { customerId: state.shipment?.senderCustomerId, estimatedParcels: 3 }), async () => dbRead("collections", "select id, status from collections order by created_at desc limit 1"), (r, db) => [200, 201].includes(r.status) && db.rowCount === 1);
 });
 
 test("S11 concurrence: 50 creations et 100 scans reels", async () => {

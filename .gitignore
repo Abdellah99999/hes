@@ -48,6 +48,9 @@ build/
 
 # QA runtime credentials and tokens
 docs/qa/audit-scripts/tokens.json
+docs/qa/audit-scripts/*token*
+docs/qa/audit-scripts/*password*
+docs/qa/audit-scripts/*.secret*
 e2e-results-local/
 
 # SSL Certificates & Keys
