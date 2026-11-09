@@ -97,6 +97,7 @@ before(async () => {
 test("S1 cycle complet: creation multi-colis et etat en base", async () => {
   const references = await dbRead("references", "select (select id from agencies where code='CAS-HUB') as origin, (select id from agencies where code='RAB-CTR') as destination, (select id from customers where code='CUST-001') as customer, (select id from parcel_types where code='STANDARD') as parcel_type");
   const ref = references.rows[0];
+  state.references = ref;
   const response = await record("S1", "Cycle complet", () => request("POST", "/shipments", state.tokens.agent, {
     originAgencyId: ref.origin, destinationAgencyId: ref.destination, senderCustomerId: ref.customer,
     recipientName: "E2E Real Recipient", recipientPhone: "+212600000001", recipientAddress: "1 Rue E2E", recipientCity: "Rabat",
@@ -153,11 +154,17 @@ test("S10 collecte: demande de collecte", async () => {
 
 test("S11 concurrence: 50 creations et 100 scans reels", async () => {
   const started = Date.now();
-  const responses = await Promise.all(Array.from({ length: 50 }, (_, index) => request("POST", "/shipments", state.tokens.agent, { originAgencyId: state.shipment?.originAgencyId, destinationAgencyId: state.shipment?.destinationAgencyId, senderCustomerId: state.shipment?.senderCustomerId, recipientName: `Concurrent ${index}`, recipientPhone: `+212600${String(index).padStart(6, "0")}`, recipientAddress: "E2E", recipientCity: "Rabat", serviceType: "STANDARD", paymentMethod: "CASH", shippingFee: 1, codAmount: 0, parcels: [] })));
+  const responses = await Promise.all(Array.from({ length: 50 }, (_, index) => request("POST", "/shipments", state.tokens.agent, { originAgencyId: state.references?.origin, destinationAgencyId: state.references?.destination, senderCustomerId: state.references?.customer, recipientName: `Concurrent ${index}`, recipientPhone: `+212600${String(index).padStart(6, "0")}`, recipientAddress: "E2E", recipientCity: "Rabat", serviceType: "STANDARD", paymentMethod: "CASH", shippingFee: 1, codAmount: 0, parcels: [{ parcelTypeId: state.references?.parcel_type, weightKg: 1, lengthCm: 10, widthCm: 10, heightCm: 10 }] })));
   const db = await dbRead("concurrent_shipments", "select count(*)::int as count, count(distinct tracking_number)::int as distinct_count from shipments where recipient_name like 'Concurrent %'");
   const successful = responses.filter((r) => [200, 201].includes(r.status)).length;
-  evidence.push({ id: "S11", title: "Concurrence", result: successful === 50 && db.rows[0]?.count === 50 && db.rows[0]?.distinct_count === 50 ? "PASS" : "FAIL", request: "POST /shipments x50", httpStatus: 200, responseExcerpt: `${successful}/50 successful`, responseElapsedMs: Date.now() - started, database: db });
+  const barcode = state.parcels[0]?.barcode ?? state.parcels[0]?.trackingNumber;
+  const scans = await Promise.all(Array.from({ length: 100 }, () => request("POST", "/shipments/track/scan", state.tokens.manager, { barcode, scannerType: "BARCODE_1D" }, { "Idempotency-Key": `e2e-s11-${barcode}` })));
+  const scanDb = await dbRead("concurrent_scans", "select count(*)::int as count from tracking_events where parcel_id=$1", [state.parcels[0]?.id]);
+  const scanStatuses = scans.map((r) => r.status);
+  const pass = successful === 50 && db.rows[0]?.count === 50 && db.rows[0]?.distinct_count === 50 && scanDb.rows[0]?.count === 1;
+  evidence.push({ id: "S11", title: "Concurrence", result: pass ? "PASS" : "FAIL", request: "POST /shipments x50; POST /shipments/track/scan x100", httpStatus: scans.at(-1)?.status ?? 0, responseExcerpt: `${successful}/50 successful; scan statuses=${JSON.stringify(scanStatuses.slice(0, 5))}`, responseElapsedMs: Date.now() - started, database: { shipments: db, scans: scanDb } });
   assert.equal(successful, 50, `S11 creation concurrency: ${successful}/50`);
+  assert.equal(scanDb.rows[0]?.count, 1, `S11 scan idempotence: ${scanDb.rows[0]?.count ?? 0} events`);
 });
 
 test("S12 suppression logique et audit", async () => {
@@ -178,7 +185,11 @@ test("T1 matrice role endpoint", async () => {
       checks.push({ method, route, role, status: response.status, allowed: allowed.includes(role) });
     }
   }
-  evidence.push({ id: "T1", title: "Matrice role endpoint", result: "PASS", request: "HTTP matrix", httpStatus: 200, responseExcerpt: `${checks.length} real requests`, database: await dbRead("matrix_audit", "select count(*)::int as audit_count from audit_logs") });
+  const allowedStatuses = new Set([200, 201, 400, 404, 409, 422]);
+  const invalid = checks.filter((check) => check.allowed ? !allowedStatuses.has(check.status) : ![401, 403].includes(check.status));
+  const pass = invalid.length === 0;
+  evidence.push({ id: "T1", title: "Matrice role endpoint", result: pass ? "PASS" : "FAIL", request: "HTTP matrix", httpStatus: invalid[0]?.status ?? 200, responseExcerpt: `${checks.length} real requests; invalid=${JSON.stringify(invalid.slice(0, 5))}`, database: await dbRead("matrix_audit", "select count(*)::int as audit_count from audit_logs") });
+  assert.equal(invalid.length, 0, `T1 invalid access results: ${JSON.stringify(invalid.slice(0, 5))}`);
 });
 
 test("T2 cloisonnement agence", async () => { await record("T2", "Cloisonnement agence", () => request("GET", "/agencies/invalid-casa-resource", state.tokens.agent), async () => dbRead("agency_audit", "select count(*)::int as count from audit_logs"), (r) => [401, 403, 404].includes(r.status)); });
