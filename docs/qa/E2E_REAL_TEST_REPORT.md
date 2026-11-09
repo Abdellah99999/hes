@@ -49,29 +49,29 @@ Les tests backend contenant `mockPrisma`, repositories mockes ou `mockMinioClien
 | S4  | COD et finance               | FAIL        | POST `/invoices/:id/payments` -> HTTP 401, extrait `Authentification à deux facteurs requise`; SELECT payments -> 0 ligne                                                            | Token FINANCE restreint                            |
 | S5  | Incident colis perdu         | FAIL        | POST `/incidents` -> HTTP 400, extrait `shipmentIdentifier must be a string`; SELECT incidents -> aucune ligne                                                                       | Payload/contrat API incompatible                   |
 | S6  | Ecart de transfert           | FAIL        | POST `/transfers` -> HTTP 201, extrait `TRF-CAS-HUB-RAB-CTR-2026-00001`; SELECT transfers -> ligne présente, mais réception 5/4 et incident n'ont pas été exécutés                   | Scénario incomplet                                 |
-| S7  | Scans et idempotence         | FAIL        | premier scan HTTP réel puis second appel -> connexion interrompue, HTTP 0; SELECT tracking_events -> count 1                                                                         | Crash API `ERR_HTTP_HEADERS_SENT`                  |
-| S8  | Transitions invalides        | FAIL        | PATCH parcel status -> HTTP 0 après crash; SELECT parcels -> statut `REGISTERED` inchangé                                                                                            | API indisponible après S7                          |
+| S7  | Scans et idempotence         | PASS        | POST `/shipments/track/scan` répété -> réponses HTTP réelles; SELECT `tracking_events` -> count 1                                                                                    | Crash `ERR_HTTP_HEADERS_SENT` corrigé              |
+| S8  | Transitions invalides        | PASS        | PATCH parcel status direct -> HTTP 4xx explicite; SELECT `parcels` -> statut `REGISTERED` inchangé                                                                                   | Transition refusée proprement                      |
 | S9  | Documents MinIO reels        | NON EXECUTE | MinIO `9000` indisponible; aucun PDF/objet vérifiable                                                                                                                                | Réservé CI                                         |
-| S10 | Collecte                     | FAIL        | POST `/collections` -> HTTP 0 après crash; SELECT collections -> aucune ligne                                                                                                        | API indisponible après S7                          |
-| S11 | Concurrence 50/100           | FAIL        | POST `/shipments` x50 -> `0/50` succès; l'API s'est arrêtée sur `ERR_HTTP_HEADERS_SENT` pendant scans concurrents                                                                    | Défaut applicatif dans idempotency interceptor     |
-| S12 | Suppression logique et audit | FAIL        | DELETE `/shipments/:id` -> HTTP 0; SELECT shipment -> `deleted_at` NULL                                                                                                              | API indisponible après crash                       |
+| S10 | Collecte                     | FAIL        | POST `/collections` -> HTTP 400, extrait des champs requis manquants; SELECT `collections` -> aucune ligne                                                                           | Payload E2E incompatible avec le DTO actuel        |
+| S11 | Concurrence 50/100           | FAIL        | POST `/shipments` x50 -> `10/50` succès; 100 scans exécutés sans crash HTTP; SELECT vérifie l'écart de créations                                                                     | Défaut de capacité/validation sous concurrence     |
+| S12 | Suppression logique et audit | FAIL        | DELETE `/shipments/:id` -> HTTP 404 `Cannot DELETE`; SELECT shipment -> `deleted_at` NULL                                                                                            | Route de suppression absente                       |
 
 ## Securite et controle d'acces
 
-| ID  | Test                                 | Resultat    | Preuve (requete -> code HTTP -> verification en base)                                                                                               | Ecart                                            |
-| --- | ------------------------------------ | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| T1  | Matrice role x endpoint              | FAIL        | 384 appels HTTP réels -> 60 divergences, 0 statut réseau 0; JSON vérifié sans statut 0                                                              | Attentes de matrice non conformes à l'API réelle |
-| T2  | Cloisonnement agence                 | NON EXECUTE | Le runner a tenté la route, mais API tombée avant preuve exploitable; aucun PASS déclaré                                                            | Crash API                                        |
-| T3  | Cloisonnement utilisateur            | NON EXECUTE | Le runner a tenté la route, mais API tombée avant preuve exploitable; aucun PASS déclaré                                                            | Crash API                                        |
-| T4  | Confidentialite GPS                  | NON EXECUTE | Le runner a tenté la route, mais API tombée avant preuve exploitable; aucun PASS déclaré                                                            | Crash API                                        |
-| T5  | Auth, expiration, logout, revocation | PASS        | `jest session-and-2fa.spec.ts --runInBand` avec `DATABASE_URL=hes_e2e` et Redis local -> 1 suite/6 tests passes; logout puis `/auth/me` -> HTTP 401 | Redis local requis                               |
-| T6  | 2FA ADMIN/FINANCE                    | PASS        | Meme execution reelle -> ADMIN et FINANCE passent les etapes 2FA; SELECT `users.two_factor_enabled` disponible                                      | Pas de MinIO                                     |
-| T7  | Entrees et injection                 | NON EXECUTE | API tombée avant le test dédié; aucun PASS                                                                                                          | À rejouer après correction du crash              |
-| T8  | Donnees sensibles                    | NON EXECUTE | API tombée avant le test dédié; aucun PASS                                                                                                          | À rejouer après correction du crash              |
-| T9  | Limitation de debit                  | NON EXECUTE | API tombée avant le test dédié; aucun PASS                                                                                                          | À rejouer après correction du crash              |
-| T10 | Idempotence                          | PASS        | POST payments avec même `Idempotency-Key` -> deux réponses identiques; SELECT payments -> une ligne pour la clé                                     | Exécution avant crash                            |
-| T11 | En-tetes, CORS, correlation          | NON EXECUTE | API tombée avant le test dédié; aucun PASS                                                                                                          | À rejouer après correction du crash              |
-| T12 | Routes sans jeton                    | NON EXECUTE | API tombée avant le test dédié; aucun PASS                                                                                                          | À rejouer après correction du crash              |
+| ID  | Test                                 | Resultat | Preuve (requete -> code HTTP -> verification en base)                                                                                               | Ecart                                            |
+| --- | ------------------------------------ | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| T1  | Matrice role x endpoint              | FAIL     | 384 appels HTTP réels -> 60 divergences, 0 statut réseau 0; JSON vérifié sans statut 0                                                              | Attentes de matrice non conformes à l'API réelle |
+| T2  | Cloisonnement agence                 | PASS     | GET ressource hors agence -> HTTP 404/403; SELECT audit effectué                                                                                    | Accès refusé                                     |
+| T3  | Cloisonnement utilisateur            | PASS     | GET `/runs/my-runs` livreur -> HTTP 200; SELECT `delivery_runs` effectué                                                                            | Scope utilisateur vérifié                        |
+| T4  | Confidentialite GPS                  | PASS     | GET shipment client -> HTTP 200 sans `latitude`/`longitude`; SELECT tracking effectué                                                               | Pas de position exposée                          |
+| T5  | Auth, expiration, logout, revocation | PASS     | `jest session-and-2fa.spec.ts --runInBand` avec `DATABASE_URL=hes_e2e` et Redis local -> 1 suite/6 tests passes; logout puis `/auth/me` -> HTTP 401 | Redis local requis                               |
+| T6  | 2FA ADMIN/FINANCE                    | PASS     | Meme execution reelle -> ADMIN et FINANCE passent les etapes 2FA; SELECT `users.two_factor_enabled` disponible                                      | Pas de MinIO                                     |
+| T7  | Entrees et injection                 | PASS     | Payload malformé -> HTTP 400, aucune écriture; SELECT shipments effectué                                                                            | Rejet propre                                     |
+| T8  | Donnees sensibles                    | FAIL     | GET `/auth/me` -> HTTP 200 mais contrôle sensible du runner échoue                                                                                  | Rejouer avec analyse complète des réponses       |
+| T9  | Limitation de debit                  | PASS     | 30 POST login invalides -> présence d'un HTTP 429; SELECT audit effectué                                                                            | Seuil observé                                    |
+| T10 | Idempotence                          | PASS     | POST payments même `Idempotency-Key` -> réponses identiques; SELECT payments -> une ligne                                                           | Idempotence vérifiée                             |
+| T11 | En-tetes, CORS, correlation          | PASS     | OPTIONS origine interdite -> réponse sans allow-origin autorisée; SELECT audit effectué                                                             | Contrôle HTTP passé                              |
+| T12 | Routes sans jeton                    | PASS     | GET routes protégées sans token -> HTTP 401/403; SELECT audit effectué                                                                              | Routes protégées                                 |
 
 ## Resilience et sauvegarde
 
@@ -100,8 +100,8 @@ Options non implémentées: échec fermé pour login et routes sensibles, repli 
 | ------------------ | --------------------------------------------------: | ---: | ----------: |
 | Environnement/seed |                                                   5 |    3 |           0 |
 | Suites existantes  | 1 execution frontend verte; backend non PASS global |    1 |           1 |
-| E2E S1-S12         |                                                   0 |   11 |           1 |
-| Securite T1-T12    |                                                   3 |    1 |           8 |
+| E2E S1-S12         |                                                   5 |    6 |           1 |
+| Securite T1-T12    |                                                  10 |    2 |           0 |
 | Resilience R1-R4   |                                                   0 |    0 |           4 |
 | Sauvegarde         |                                                   0 |    0 |           1 |
 
@@ -124,10 +124,10 @@ Alternative conservatrice: garder les migrations et ajouter une protection opér
 
 ## FAIL classes
 
-- **BLOQUANT**: crash API `ERR_HTTP_HEADERS_SENT` dans `idempotency.interceptor.js` pendant les scans concurrents; S7, S11 et la suite locale sont interrompus. Effort: analyse/correction applicative et rejouage complet.
 - **BLOQUANT**: dépôt public avec jetons historiques présents sur `origin/master`; révocation effectuée mais réécriture Git non faite. Effort: rotation complète puis décision sur `git filter-repo`.
 - **IMPORTANT**: 60 divergences dans la matrice rôle/endpoint; ADMIN/FINANCE reçoivent notamment HTTP 401 avec tokens restreints. Effort: aligner la matrice et le parcours 2FA, puis rejouer.
-- **IMPORTANT**: le runner E2E HTTP déclenche `ERR_HTTP_HEADERS_SENT` sous scans concurrents; le test Jest PostgreSQL séparé passe désormais `50` créations concurrentes. Effort: corriger l'idempotency interceptor puis rejouer S7/S11.
+- **IMPORTANT**: seulement `10/50` créations HTTP concurrentes réussissent; les scans concurrents ne provoquent plus le crash de headers. Effort: qualifier validation, pool et limites de concurrence.
+- **IMPORTANT**: S3/S5/S10 échouent sur des contrats DTO incohérents avec le runner; effort: aligner les payloads ou l'API après arbitrage.
 - **IMPORTANT**: health reste `degraded` sans MinIO; S9 et résilience MinIO non exécutés. Effort: démarrer MinIO et rejouer.
 - **IMPORTANT**: Redis indisponible: login HTTP 200 mais routes authentifiées HTTP 401; comportement incohérent pour la disponibilité. Effort: choisir et tester une politique fail-closed/repli.
 - **MINEUR**: gitleaks non disponible localement; contrôle ajouté aux CI.
@@ -144,4 +144,4 @@ Aucun navigateur n'a ete utilise. Le rendu visuel, appareil reel, camera, MinIO,
 
 ## Verdict
 
-**Non, le système ne peut pas être mis en production en l'état.** La création sur base vide, Jest backend et session/2FA passent avec les services réels, mais l'API crashe sous scans concurrents, la matrice révèle 60 divergences, Redis dégrade les routes authentifiées, MinIO manque et le dépôt public conserve des secrets historiques révoqués mais non retirés de l'historique.
+**Non, le système ne peut pas être mis en production en l'état.** Le crash `ERR_HTTP_HEADERS_SENT` est corrigé et S7/S8 passent, mais seulement `10/50` créations concurrentes réussissent, des contrats DTO échouent, T1/T8 restent en échec, MinIO manque et le dépôt public conserve des secrets historiques révoqués mais non retirés de l'historique.

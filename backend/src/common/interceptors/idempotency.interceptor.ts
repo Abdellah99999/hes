@@ -105,19 +105,21 @@ export class IdempotencyInterceptor implements NestInterceptor {
     await this.setCache(idempotencyKey, "IN_PROGRESS", 60);
 
     return next.handle().pipe(
-      tap(async (responseBody) => {
+      tap((responseBody) => {
         const cachePayload: CachedIdempotentResponse = {
           statusCode: res.statusCode || 200,
           body: responseBody,
           savedAt: new Date().toISOString(),
         };
-        await this.setCache(
+
+        // Set headers before awaiting storage so Express has them before the response is committed.
+        res.setHeader("X-Idempotent-Replayed", "false");
+        res.setHeader("X-Idempotency-Key", rawKey.trim());
+        void this.setCache(
           idempotencyKey,
           JSON.stringify(cachePayload),
           IDEMPOTENCY_TTL_SECONDS,
         );
-        res.setHeader("X-Idempotent-Replayed", "false");
-        res.setHeader("X-Idempotency-Key", rawKey.trim());
       }),
       catchError(async (err) => {
         // Unlock on error so client can retry
