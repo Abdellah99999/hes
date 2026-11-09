@@ -48,6 +48,7 @@ build/
 
 # QA runtime credentials and tokens
 docs/qa/audit-scripts/tokens.json
+e2e-results-local/
 
 # SSL Certificates & Keys
 infrastructure/docker/nginx/ssl/*.key

@@ -1,0 +1,209 @@
+name: E2E real platform
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  e2e-real:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://postgres:0000@localhost:5432/hes_e2e?schema=public
+      SHADOW_DATABASE_URL: postgresql://postgres:0000@localhost:5432/hes_shadow?schema=public
+      REDIS_HOST: localhost
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: hes_redis_dev_password_2026
+      MINIO_ENDPOINT: localhost
+      MINIO_PORT: "9000"
+      MINIO_USE_SSL: "false"
+      MINIO_ACCESS_KEY: hes_minio_admin
+      MINIO_SECRET_KEY: hes_minio_secret_key_2026
+      MINIO_BUCKET_DOCS: hes-documents
+      MINIO_BUCKET_POD: hes-proof-of-delivery
+      JWT_ACCESS_SECRET: ci-e2e-access-secret-012345678901234567890123
+      JWT_REFRESH_SECRET: ci-e2e-refresh-secret-012345678901234567890123
+      CORS_ORIGIN: http://localhost:5173
+      BASE_URL: http://127.0.0.1:3000/api/v1
+      E2E_OUTPUT_DIR: e2e-results
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.5.2
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Start real infrastructure
+        run: docker compose up -d postgres redis minio
+
+      - name: Wait for service healthchecks
+        run: |
+          for i in {1..60}; do
+            postgres=$(docker inspect --format='{{.State.Health.Status}}' hes_postgres 2>/dev/null || true)
+            redis=$(docker inspect --format='{{.State.Health.Status}}' hes_redis 2>/dev/null || true)
+            minio=$(docker inspect --format='{{.State.Health.Status}}' hes_minio 2>/dev/null || true)
+            echo "postgres=$postgres redis=$redis minio=$minio"
+            if [ "$postgres" = healthy ] && [ "$redis" = healthy ] && [ "$minio" = healthy ]; then exit 0; fi
+            sleep 2
+          done
+          docker compose ps
+          exit 1
+
+      - name: Create databases
+        run: |
+          docker compose exec -T postgres psql -U postgres -d postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE hes_e2e;" || true
+          docker compose exec -T postgres psql -U postgres -d postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE hes_shadow;" || true
+
+      - name: Create MinIO buckets
+        run: |
+          docker compose exec -T minio mc alias set local http://localhost:9000 "$MINIO_ACCESS_KEY" "$MINIO_SECRET_KEY"
+          docker compose exec -T minio mc mb --ignore-existing local/$MINIO_BUCKET_DOCS
+          docker compose exec -T minio mc mb --ignore-existing local/$MINIO_BUCKET_POD
+
+      - name: Deploy migrations
+        run: pnpm --dir backend prisma:deploy
+
+      - name: Verify migrations and schema
+        run: |
+          pnpm --dir backend exec prisma migrate diff --from-migrations prisma/migrations --to-schema-datamodel prisma/schema.prisma --shadow-database-url "$SHADOW_DATABASE_URL" --script | tee migration-diff.sql
+          test ! -s migration-diff.sql || ! grep -vE '^-- (This is an empty migration\.)?$' migration-diff.sql
+
+      - name: Seed official data
+        run: pnpm --dir backend seed
+
+      - name: Build API
+        run: pnpm --dir backend build
+
+      - name: Start API
+        run: |
+          nohup node backend/dist/src/main.js > api.log 2>&1 &
+          echo $! > api.pid
+
+      - name: Wait for API health
+        run: |
+          for i in {1..60}; do
+            body=$(curl -sS "$BASE_URL/health" || true)
+            echo "$body"
+            if echo "$body" | jq -e '.status == "ok" and .services.database.status == "up" and .services.redis.status == "up" and .services.storage.status == "up"' >/dev/null 2>&1; then exit 0; fi
+            sleep 2
+          done
+          exit 1
+
+      - name: Backend Jest with real services
+        id: backend_tests
+        continue-on-error: true
+        run: |
+          set +e
+          pnpm test:backend 2>&1 | tee backend-jest.log
+          echo ${PIPESTATUS[0]} > backend-jest.exit
+
+      - name: Real HTTP and PostgreSQL E2E S/T
+        id: real_e2e
+        continue-on-error: true
+        run: |
+          set +e
+          node --test e2e/real/real-e2e.test.mjs 2>&1 | tee e2e-real.log
+          echo ${PIPESTATUS[0]} > e2e-real.exit
+
+      - name: Resilience Redis
+        if: always()
+        run: |
+          docker compose stop redis
+          curl -sS -i "$BASE_URL/health" | tee resilience-redis-health.txt || true
+          curl -sS -i "$BASE_URL/auth/me" | tee resilience-redis-auth.txt || true
+          docker compose start redis
+
+      - name: Resilience MinIO
+        if: always()
+        run: |
+          docker compose stop minio
+          curl -sS -i "$BASE_URL/documents/generate" -H 'Content-Type: application/json' --data '{"documentType":"REPORT","entityId":"invalid"}' | tee resilience-minio.txt || true
+          docker compose start minio
+
+      - name: Resilience PostgreSQL atomicity
+        if: always()
+        run: |
+          docker compose stop postgres
+          curl -sS -i "$BASE_URL/health" | tee resilience-postgres-health.txt || true
+          docker compose start postgres
+
+      - name: Resilience API restart
+        if: always()
+        run: |
+          kill "$(cat api.pid)" || true
+          nohup node backend/dist/src/main.js > api-restart.log 2>&1 &
+          echo $! > api.pid
+          for i in {1..60}; do curl -fsS "$BASE_URL/health" >/dev/null && exit 0 || true; sleep 2; done
+          exit 1
+
+      - name: Backup and restore comparison
+        if: always()
+        run: |
+          docker compose exec -T postgres pg_dump -U postgres -d hes_e2e --format=plain > hes_e2e.sql
+          docker compose exec -T postgres psql -U postgres -d postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE hes_restore;" || true
+          cat hes_e2e.sql | docker compose exec -T postgres psql -U postgres -d hes_restore -v ON_ERROR_STOP=1
+          docker compose exec -T postgres psql -U postgres -d hes_e2e -Atc "select table_name from information_schema.tables where table_schema='public' order by table_name" > backup-source-tables.txt
+          docker compose exec -T postgres psql -U postgres -d hes_restore -Atc "select table_name from information_schema.tables where table_schema='public' order by table_name" > backup-restore-tables.txt
+          diff -u backup-source-tables.txt backup-restore-tables.txt | tee backup-table-diff.txt
+          for table in shipments parcels audit_logs; do
+            docker compose exec -T postgres psql -U postgres -d hes_e2e -Atc "select '$table', count(*), md5(coalesce(string_agg(row_to_json(t)::text, '' order by row_to_json(t)::text), '')) from (select * from \"$table\") t" >> backup-checksums.txt
+            docker compose exec -T postgres psql -U postgres -d hes_restore -Atc "select '$table', count(*), md5(coalesce(string_agg(row_to_json(t)::text, '' order by row_to_json(t)::text), '')) from (select * from \"$table\") t" >> backup-checksums.txt
+          done
+
+      - name: Publish report and logs
+        if: always()
+        run: |
+          mkdir -p e2e-results
+          {
+            echo "# GitHub Actions E2E real"
+            echo
+            echo "Commit: $GITHUB_SHA"
+            echo
+            echo '```text'
+            cat backend-jest.exit e2e-real.exit migration-diff.sql 2>/dev/null || true
+            echo '```'
+            echo
+            echo "## E2E results"
+            cat e2e-results/e2e-real-results.md 2>/dev/null || echo "E2E result file unavailable"
+            echo
+            echo "## Backup checksums"
+            cat backup-checksums.txt 2>/dev/null || true
+          } | tee e2e-results/E2E_REAL_TEST_REPORT.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload evidence artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-real-evidence-${{ github.run_id }}
+          if-no-files-found: warn
+          path: |
+            e2e-results/
+            *.log
+            *.txt
+            *.sql
+            api.log
+            api-restart.log
+
+      - name: Fail job on test failure
+        if: always()
+        run: |
+          backend_code=$(cat backend-jest.exit 2>/dev/null || echo 1)
+          e2e_code=$(cat e2e-real.exit 2>/dev/null || echo 1)
+          if [ "$backend_code" != 0 ] || [ "$e2e_code" != 0 ] || grep -q 'FAIL' e2e-results/e2e-real-results.json 2>/dev/null; then
+            exit 1
+          fi
