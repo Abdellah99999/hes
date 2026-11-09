@@ -1,16 +1,19 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { customFetch, setAccessToken } from "../../../lib/api-client";
 import { LoginFormData } from "../schemas/auth.schema";
-import {
-  AuthContext,
-  User,
-} from "./auth-context.types";
+import { AuthContext, User } from "./auth-context.types";
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [pendingTwoFactor, setPendingTwoFactor] = useState<{
+    enrolled: boolean;
+    tempToken?: string;
+    setupSecret?: string;
+    otpauthUrl?: string;
+  } | null>(null);
 
   const fetchCurrentUser = useCallback(async () => {
     try {
@@ -54,7 +57,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       const result = await customFetch<{
         user: User;
-        tokens: { accessToken: string };
+        tokens?: { accessToken: string };
+        requires2fa?: boolean;
+        twoFactorEnrolled?: boolean;
+        tempToken?: string;
       }>("/auth/login", {
         method: "POST",
         body: JSON.stringify({
@@ -63,11 +69,63 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         }),
       });
 
+      if (result.requires2fa) {
+        if (result.twoFactorEnrolled && result.tempToken) {
+          setPendingTwoFactor({ enrolled: true, tempToken: result.tempToken });
+        } else if (result.tokens?.accessToken) {
+          setAccessToken(result.tokens.accessToken);
+          const setup = await customFetch<{
+            secret: string;
+            otpauthUrl: string;
+          }>("/auth/2fa/setup", { method: "POST" });
+          setPendingTwoFactor({
+            enrolled: false,
+            setupSecret: setup.secret,
+            otpauthUrl: setup.otpauthUrl,
+          });
+        } else {
+          throw new Error(
+            "Le parcours 2FA n'a pas fourni de jeton temporaire.",
+          );
+        }
+        return;
+      }
+
+      if (!result.tokens?.accessToken) {
+        throw new Error("Réponse de connexion invalide.");
+      }
       setAccessToken(result.tokens.accessToken);
       setUser(result.user);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const verifyTwoFactor = async (code: string) => {
+    if (!pendingTwoFactor) {
+      throw new Error("Aucun parcours 2FA en attente.");
+    }
+
+    const result = pendingTwoFactor.enrolled
+      ? await customFetch<{
+          user: User;
+          tokens: { accessToken: string };
+        }>("/auth/2fa/verify", {
+          method: "POST",
+          skipAuth: true,
+          body: JSON.stringify({ tempToken: pendingTwoFactor.tempToken, code }),
+        })
+      : await customFetch<{
+          user: User;
+          tokens: { accessToken: string };
+        }>("/auth/2fa/verify-setup", {
+          method: "POST",
+          body: JSON.stringify({ code }),
+        });
+
+    setAccessToken(result.tokens.accessToken);
+    setUser(result.user);
+    setPendingTwoFactor(null);
   };
 
   const logout = async () => {
@@ -106,6 +164,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         isAuthenticated: !!user,
         isLoading,
         login,
+        pendingTwoFactor,
+        verifyTwoFactor,
         logout,
         refreshSession,
         fetchCurrentUser,

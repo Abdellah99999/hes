@@ -24,10 +24,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({
   onSuccess,
   onNavigateToForgotPassword,
 }) => {
-  const { login } = useAuth();
+  const { login, pendingTwoFactor, verifyTwoFactor } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [twoFactorCode, setTwoFactorCode] = useState("");
 
   const {
     register,
@@ -53,6 +54,21 @@ export const LoginPage: React.FC<LoginPageProps> = ({
         (err as Error).message ||
           "Identifiants invalides ou service temporairement indisponible.",
       );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const onVerifyTwoFactor = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setIsSubmitting(true);
+    setServerError(null);
+    try {
+      if (!verifyTwoFactor) throw new Error("Vérification 2FA indisponible.");
+      await verifyTwoFactor(twoFactorCode);
+      onSuccess?.();
+    } catch (err) {
+      setServerError((err as Error).message || "Code 2FA invalide.");
     } finally {
       setIsSubmitting(false);
     }
@@ -88,136 +104,174 @@ export const LoginPage: React.FC<LoginPageProps> = ({
           </div>
         )}
 
-        {/* Formulaire de connexion */}
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="space-y-4"
-          noValidate
-        >
-          {/* Champ Email */}
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1"
-            >
-              Adresse Email Professionnelle
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                <Mail className="w-4 h-4" />
-              </div>
-              <input
-                id="email"
-                type="email"
-                autoComplete="email"
-                placeholder="prenom.nom@hes.ma"
-                {...register("email")}
-                className={`w-full pl-9 pr-3 py-2.5 min-h-[44px] bg-white dark:bg-slate-950 border rounded-lg text-slate-900 dark:text-slate-100 placeholder-slate-400 text-base sm:text-sm focus:outline-none transition-colors ${
-                  errors.email
-                    ? "border-red-500 focus:border-red-600"
-                    : "border-slate-300 dark:border-slate-700 focus:border-blue-700"
-                }`}
-              />
+        {pendingTwoFactor ? (
+          <form onSubmit={onVerifyTwoFactor} className="space-y-4" noValidate>
+            <div className="rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-900">
+              {pendingTwoFactor.enrolled
+                ? "Saisissez le code de votre application d'authentification."
+                : "Scannez le compte 2FA, puis saisissez le code généré."}
             </div>
-            {errors.email && (
-              <p className="mt-1 text-xs text-red-600 dark:text-red-400 font-medium">
-                {errors.email.message}
+            {!pendingTwoFactor.enrolled && pendingTwoFactor.otpauthUrl && (
+              <p className="break-all text-xs text-slate-600">
+                {pendingTwoFactor.otpauthUrl}
               </p>
             )}
-          </div>
-
-          {/* Champ Mot de passe */}
-          <div>
             <label
-              htmlFor="password"
-              className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1"
+              htmlFor="twoFactorCode"
+              className="block text-xs font-semibold uppercase tracking-wider"
             >
-              Mot de Passe
+              Code 2FA
             </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                <Lock className="w-4 h-4" />
+            <input
+              id="twoFactorCode"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              maxLength={6}
+              value={twoFactorCode}
+              onChange={(event) =>
+                setTwoFactorCode(event.target.value.replace(/\D/g, ""))
+              }
+              className="w-full min-h-[44px] rounded-lg border border-slate-300 px-3 text-center text-lg tracking-[0.3em]"
+            />
+            <button
+              type="submit"
+              disabled={isSubmitting || twoFactorCode.length !== 6}
+              className="w-full min-h-[44px] rounded-lg bg-blue-700 px-4 text-sm font-semibold text-white disabled:opacity-50"
+            >
+              {isSubmitting ? "Vérification..." : "Vérifier le code"}
+            </button>
+          </form>
+        ) : (
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-4"
+            noValidate
+          >
+            {/* Champ Email */}
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1"
+              >
+                Adresse Email Professionnelle
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <Mail className="w-4 h-4" />
+                </div>
+                <input
+                  id="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="prenom.nom@hes.ma"
+                  {...register("email")}
+                  className={`w-full pl-9 pr-3 py-2.5 min-h-[44px] bg-white dark:bg-slate-950 border rounded-lg text-slate-900 dark:text-slate-100 placeholder-slate-400 text-base sm:text-sm focus:outline-none transition-colors ${
+                    errors.email
+                      ? "border-red-500 focus:border-red-600"
+                      : "border-slate-300 dark:border-slate-700 focus:border-blue-700"
+                  }`}
+                />
               </div>
-              <input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                autoComplete="current-password"
-                placeholder="••••••••••••"
-                {...register("password")}
-                className={`w-full pl-9 pr-11 py-2.5 min-h-[44px] bg-white dark:bg-slate-950 border rounded-lg text-slate-900 dark:text-slate-100 placeholder-slate-400 text-base sm:text-sm focus:outline-none transition-colors ${
-                  errors.password
-                    ? "border-red-500 focus:border-red-600"
-                    : "border-slate-300 dark:border-slate-700 focus:border-blue-700"
-                }`}
-              />
+              {errors.email && (
+                <p className="mt-1 text-xs text-red-600 dark:text-red-400 font-medium">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+
+            {/* Champ Mot de passe */}
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1"
+              >
+                Mot de Passe
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                  <Lock className="w-4 h-4" />
+                </div>
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  placeholder="••••••••••••"
+                  {...register("password")}
+                  className={`w-full pl-9 pr-11 py-2.5 min-h-[44px] bg-white dark:bg-slate-950 border rounded-lg text-slate-900 dark:text-slate-100 placeholder-slate-400 text-base sm:text-sm focus:outline-none transition-colors ${
+                    errors.password
+                      ? "border-red-500 focus:border-red-600"
+                      : "border-slate-300 dark:border-slate-700 focus:border-blue-700"
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center min-h-[44px] min-w-[44px] justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                  aria-label={
+                    showPassword
+                      ? "Masquer le mot de passe"
+                      : "Afficher le mot de passe"
+                  }
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
+              {errors.password && (
+                <p className="mt-1 text-xs text-red-600 dark:text-red-400 font-medium">
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
+
+            {/* Mémoriser cet appareil & Mot de passe oublié sur la même ligne */}
+            <div className="flex items-center justify-between text-xs pt-1">
+              <div className="flex items-center gap-2">
+                <input
+                  id="rememberMe"
+                  type="checkbox"
+                  {...register("rememberMe")}
+                  className="w-4 h-4 rounded border-slate-300 text-blue-700 focus:ring-blue-700"
+                />
+                <label
+                  htmlFor="rememberMe"
+                  className="text-slate-600 dark:text-slate-400 select-none cursor-pointer"
+                >
+                  Mémoriser cet appareil
+                </label>
+              </div>
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center min-h-[44px] min-w-[44px] justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
-                aria-label={
-                  showPassword
-                    ? "Masquer le mot de passe"
-                    : "Afficher le mot de passe"
-                }
+                onClick={onNavigateToForgotPassword}
+                className="text-blue-700 dark:text-blue-400 hover:underline font-medium"
               >
-                {showPassword ? (
-                  <EyeOff className="w-4 h-4" />
-                ) : (
-                  <Eye className="w-4 h-4" />
-                )}
+                Mot de passe oublié ?
               </button>
             </div>
-            {errors.password && (
-              <p className="mt-1 text-xs text-red-600 dark:text-red-400 font-medium">
-                {errors.password.message}
-              </p>
-            )}
-          </div>
 
-          {/* Mémoriser cet appareil & Mot de passe oublié sur la même ligne */}
-          <div className="flex items-center justify-between text-xs pt-1">
-            <div className="flex items-center gap-2">
-              <input
-                id="rememberMe"
-                type="checkbox"
-                {...register("rememberMe")}
-                className="w-4 h-4 rounded border-slate-300 text-blue-700 focus:ring-blue-700"
-              />
-              <label
-                htmlFor="rememberMe"
-                className="text-slate-600 dark:text-slate-400 select-none cursor-pointer"
-              >
-                Mémoriser cet appareil
-              </label>
-            </div>
+            {/* Bouton de soumission pleine largeur ≥ 44px */}
             <button
-              type="button"
-              onClick={onNavigateToForgotPassword}
-              className="text-blue-700 dark:text-blue-400 hover:underline font-medium"
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full min-h-[44px] h-11 px-4 bg-blue-700 hover:bg-blue-800 disabled:opacity-50 text-white font-semibold rounded-lg shadow-sm flex items-center justify-center gap-2 transition-colors text-sm mt-2"
             >
-              Mot de passe oublié ?
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Connexion en cours...</span>
+                </>
+              ) : (
+                <>
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>Se connecter en toute sécurité</span>
+                </>
+              )}
             </button>
-          </div>
-
-          {/* Bouton de soumission pleine largeur ≥ 44px */}
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full min-h-[44px] h-11 px-4 bg-blue-700 hover:bg-blue-800 disabled:opacity-50 text-white font-semibold rounded-lg shadow-sm flex items-center justify-center gap-2 transition-colors text-sm mt-2"
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Connexion en cours...</span>
-              </>
-            ) : (
-              <>
-                <ShieldCheck className="w-4 h-4" />
-                <span>Se connecter en toute sécurité</span>
-              </>
-            )}
-          </button>
-        </form>
+          </form>
+        )}
       </div>
     </div>
   );

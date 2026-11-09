@@ -21,6 +21,12 @@ export interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (data: LoginFormData) => Promise<void>;
+  pendingTwoFactor?: {
+    enrolled: boolean;
+    setupSecret?: string;
+    otpauthUrl?: string;
+  } | null;
+  verifyTwoFactor?: (code: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshSession: () => Promise<void>;
   fetchCurrentUser: () => Promise<void>;
