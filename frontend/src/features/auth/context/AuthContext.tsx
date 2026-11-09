@@ -1,5 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { customFetch, setAccessToken } from "../../../lib/api-client";
+import {
+  customFetch,
+  getAccessToken,
+  setAccessToken,
+} from "../../../lib/api-client";
 import { LoginFormData } from "../schemas/auth.schema";
 import { AuthContext, User } from "./auth-context.types";
 
@@ -28,6 +32,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const refreshSession = useCallback(async () => {
+    if (!getAccessToken()) {
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const result = await customFetch<{
         user: User;
